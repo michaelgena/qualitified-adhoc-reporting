@@ -1,0 +1,8 @@
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .
+Manifest-Version: 1.0
+Bundle-Vendor: org.qualitified.reporting.adhoc
+Bundle-Version: 1.0.0
+Bundle-Name: qualitified-adhoc-reporting-core
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.qualitified.reporting.adhoc.qualitified-adhoc-reporting-core;singleton=true
