@@ -16,7 +16,6 @@ limitations under the License.
 Contributors:
 Gabriel Barata <gbarata@nuxeo.com>
 -->
-
 <!--
 `nuxeo-home`
 @group Nuxeo UI
@@ -80,6 +79,18 @@ Gabriel Barata <gbarata@nuxeo.com>
         top: 8px;
         right: 8px;
       }
+
+      chart-line,
+      ::content #canvas.chart-line,
+      chart-pie,
+      ::content #canvas.chart-pie {
+        margin: 25px auto 0 auto;
+        width: 100% !important;
+        min-width: 30em;
+        display: block;
+        font-size: .8em;
+      }
+
     </style>
 
     <nuxeo-page>
@@ -234,10 +245,9 @@ Gabriel Barata <gbarata@nuxeo.com>
                 </div>
               </form>
             </paper-dialog>
-
           </paper-card>
 
-          <!-- Document count per type -->
+          <!-- chart-pie -->
           <nuxeo-repository-data start-date="[[startDate]]" end-date="[[endDate]]"
                                  ecm-primary-type="[[documentType]]"
                                  grouped-by="ecm:currentLifeCycleState"
@@ -251,9 +261,9 @@ Gabriel Barata <gbarata@nuxeo.com>
             <paper-tooltip for="button">Settings</paper-tooltip>
             <div class="card-content">
               <chart-pie values="[[_values(amountCount)]]"
-                         series="[[_series(amountCount)]]"
+                         labels="[[_labels(amountCount)]]"
                          colors="[[colors]]"
-                         options='{"responsive": true, "animation": false}'>
+                         options='{ "legend": { "display": true, "position": "bottom", "labels": { "boxWidth": 12 } }, "animation": false }'>
               </chart-pie>
             </div>
 
@@ -281,8 +291,89 @@ Gabriel Barata <gbarata@nuxeo.com>
                 </div>
               </form>
             </paper-dialog>
-
           </paper-card>
+
+          <!-- chart-line -->
+          <nuxeo-repository-data start-date="[[startDate]]" end-date="[[endDate]]"
+                                 ecm-primary-type="[[documentType]]"
+                                 with-date-intervals="week"
+                                 date-field="dc:created"
+                                 data="{{docsCreatedPerWeek}}"
+                                 index="[[index]]">
+          </nuxeo-repository-data>
+
+          <paper-card heading="{{documentType}}" elevation="0">
+            <paper-icon-button class="settings" id="button" icon="icons:settings" on-tap="_toggleGraphDialog"></paper-icon-button>
+            <paper-tooltip for="button">Settings</paper-tooltip>
+            <div class="card-content">
+              <chart-line labels="[[_labels(docsCreatedPerWeek)]]"
+                          values="[[_values(docsCreatedPerWeek)]]"
+                          options='{ "legend": { "display": false }, "animation": false }'>
+              </chart-line>
+            </div>
+          </paper-card>
+
+
+
+          <!-- Top Downloads -->
+          <nuxeo-audit-data event-id="download"
+                            where='{"extended.downloadReason": "download"}'
+                            grouped-by="docUUID"
+                            group-limit="10"
+                            start-date="[[startDate]]" end-date="[[_extendEndDate(endDate)]]"
+                            data="{{downloads}}">
+          </nuxeo-audit-data>
+
+          <nuxeo-page-provider auto page-size="10"
+            query="[[_downloadsQuery(downloads)]]"
+            schemas="dublincore, common"
+            current-page="{{downloadedDocs}}">
+          </nuxeo-page-provider>
+
+          <paper-card heading="[[i18n('repositoryAnalytics.topDownloads.heading')]]" elevation="0">
+            <template is="dom-if" if="[[!_isEmpty(downloads)]]">
+              <nuxeo-data-table items="[[downloadedDocs]]">
+                <nuxeo-data-table-column name="[[i18n('repositoryAnalytics.topDownloads.file')]]">
+                  <template>[[item.title]]</template>
+                </nuxeo-data-table-column>
+                <nuxeo-data-table-column name="[[i18n('repositoryAnalytics.topDownloads.downloads')]]">
+                  <template>[[_numberOfDownloads(item)]]</template>
+                </nuxeo-data-table-column>
+              </nuxeo-data-table>
+            </template>
+            <template is="dom-if" if="[[_isEmpty(downloads)]]">
+              <div class="message">[[i18n('repositoryAnalytics.noResults')]]</div>
+            </template>
+          </paper-card>
+
+
+
+
+
+
+
+          <!-- Number of calls per hour -->
+          <nuxeo-search-data start-date="[[startDate]]" end-date="[[_extendEndDate(endDate)]]"
+                            with-date-intervals="hour"
+                            without-extended-bounds
+                            date-format="HH"
+                            data="{{callsPerHour}}"
+                            index="[[index]]">
+          </nuxeo-search-data>
+
+          <paper-card heading="[[i18n('searchAnalytics.callsPerHour.heading')]]" elevation="0">
+            <chart-bar labels="[[_range(0,23)]]"
+                      values="[[_aggregatePerHourOfDay(callsPerHour)]]"
+                      series="[[_range(0,23)]]"
+                      options='{ "legend": { "display": false }, "animation": false }'>
+            </chart-bar>
+          </paper-card>
+
+
+
+
+
+
 
         </section>
       </div>
@@ -298,6 +389,10 @@ Gabriel Barata <gbarata@nuxeo.com>
       documentType: {
         type: String,
         value: "Opportunity"
+      },
+      index: {
+        type: String,
+        value: 'nuxeo'
       }
     },
 
@@ -354,7 +449,53 @@ Gabriel Barata <gbarata@nuxeo.com>
           return;
       }
       this.$.dialog.close();
+    },
+
+
+
+    // builds page provider query to get info about downloaded docs
+    _downloadsQuery: function(entries) {
+      if (entries.length > 0) {
+        var values = entries.map(function(entry) {
+          return '\'' + entry.key + '\'';
+        }).join(',');
+        return 'SELECT * FROM Document WHERE ecm:uuid IN (' + values + ')';
+      }
+    },
+
+    _numberOfDownloads: function(doc) {
+      return this.downloads.find(function(entry) {
+        return entry.key === doc.uid;
+      }).value;
+    },
+
+    _range: function(start, end) {
+      var res = [];
+      for (var i = start; i <= end; i++) {
+        res.push(i);
+      }
+      return res;
+    },
+
+    _aggregatePerHourOfDay: function(entries) {
+      // aggregate our buckets by key
+      var agg = {};
+      entries.forEach(function(e) {
+        agg[e.key] = agg[e.key] || [];
+        agg[e.key].push(e.value);
+      });
+      // build our total per bucket
+      var hours = this._range(this.hoursBounds.min, this.hoursBounds.max);
+      return [hours.map(function(i) {
+        if (!agg[i] || !agg[i].length) { return 0; }
+        // TODO: use Array.reduce once prototype.js is removed!
+        // return agg[i].reduce(function(a, b) { return a + b; });
+        var sum = 0;
+        agg[i].forEach(function(v) { sum += v; });
+        return sum;
+      })];
     }
+
 
   });
   </script>
