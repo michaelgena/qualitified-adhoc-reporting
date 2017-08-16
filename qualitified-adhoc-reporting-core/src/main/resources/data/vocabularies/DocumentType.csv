@@ -1,0 +1,5 @@
+id,label,obsolete,ordering
+File,File,0,0
+Folder,Folder,0,10
+Picture,Picture,0,20
+Workspace,Workspace,0,30

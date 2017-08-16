@@ -1,0 +1,5 @@
+id,label,obsolete,ordering
+chart-pie,Chart Pie,0,0
+chart-line,Chart Line,0,10
+count,Count,0,20
+table,Table,0,30

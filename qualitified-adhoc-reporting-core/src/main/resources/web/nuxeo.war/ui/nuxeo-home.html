@@ -91,6 +91,18 @@ Gabriel Barata <gbarata@nuxeo.com>
         font-size: .8em;
       }
 
+      #trayReport {
+        position: absolute;
+        bottom: 32px;
+        right: 32px;
+        z-index: 10;
+      }
+
+      #createReportBtn {
+        color: var(--nuxeo-button-primary-text);
+        --paper-fab-background: var(--nuxeo-button-primary);
+        --paper-fab-keyboard-focus-background: var(--nuxeo-button-primary-focus);
+      }
     </style>
 
     <nuxeo-page>
@@ -98,107 +110,39 @@ Gabriel Barata <gbarata@nuxeo.com>
       <div class="content">
         <section name="dashboard" class="flex-layout">
 
-          <!-- recently edited -->
-          <paper-card>
-            <h3><iron-icon icon="editor:mode-edit" name="Latest Documents Edited"></iron-icon>[[i18n('home.latestDocumentsEdited')]]</h3>
-            <nuxeo-page-provider auto
-                                 id="latestQuery"
-                                 page-size="20"
-                                 query="SELECT * FROM Document WHERE ecm:mixinType = 'Versionable' AND ecm:isCheckedInVersion = 0 AND ecm:mixinType != 'HiddenInNavigation' AND ecm:currentLifeCycleState != 'deleted' ORDER BY dc:modified DESC"
-                                 schemas="dublincore,common,uid"
-                                 enrichers="thumbnail"
-                                 headers='{"X-NXfetch.document": "properties"}'>
-            </nuxeo-page-provider>
-            <nuxeo-data-table id="latestEditedDocs"
-                              nx-provider="latestQuery"
-                              empty-label="[[i18n('queryWidget.noDocuments')]]"
-                              on-row-clicked="_navigate">
-              <nuxeo-data-table-column name="[[i18n('documentContentView.datatable.header.title')]]" flex="100">
-                <template>
-                  <nuxeo-document-thumbnail document="[[item]]"></nuxeo-document-thumbnail>
-                  <a class="ellipsis" href$="[[urlFor('browse', item.path)]]">[[item.title]]</a>
-                </template>
-              </nuxeo-data-table-column>
-              <nuxeo-data-table-column name="[[i18n('documentContentView.datatable.header.modified')]]" flex="50">
-                <template>
-                  [[formatDate(item.properties.dc:modified)]]
-                </template>
-              </nuxeo-data-table-column>
-              <nuxeo-data-table-column name="[[i18n('documentContentView.datatable.header.lastContributor')]]" flex="50">
-                <template>
-                  <nuxeo-user-tag user="[[item.properties.dc:lastContributor]]"></nuxeo-user-tag>
-                </template>
-              </nuxeo-data-table-column>
-            </nuxeo-data-table>
+          <nuxeo-repository-data
+                                 ecm-primary-type="Opportunity"
+                                 ecm-lifecycle-state="new" metrics="sum(opportunity:amount)"
+                                 data="{{newAmount}}"
+                                 index="[[index]]">
+          </nuxeo-repository-data>
+          <paper-card class="graph-flex-layout" heading="New Deals" elevation="0" style="width: 33%; height: 210px">
+              <h1><strong><span style="font-size: -webkit-xxx-large;">[[_formatCurrency(newAmount)]] €</span></strong></h1>
           </paper-card>
 
-          <!-- tasks -->
-          <paper-card>
-            <h3><iron-icon icon="icons:check-box" name="Tasks"></iron-icon>[[i18n('home.tasks')]]</h3>
-            <nuxeo-tasks-list id="taskLists" tasks="[[tasks]]"></nuxeo-tasks-list>
+
+          <nuxeo-repository-data
+                                 ecm-primary-type="Opportunity"
+                                 ecm-lifecycle-state="ongoing"
+                                 metrics="sum(opportunity:amount)"
+                                 data="{{ongoingAmount}}"
+                                 index="[[index]]">
+          </nuxeo-repository-data>
+          <paper-card class="graph-flex-layout" heading="Deals in Progress" elevation="0" style="width: 33%; height: 210px">
+              <h1><strong><span style="color: #3599DC; font-size: -webkit-xxx-large;">[[_formatCurrency(ongoingAmount)]] €</span></strong></h1>
           </paper-card>
 
-          <!-- recently viewed -->
-          <paper-card>
-            <h3><iron-icon icon="icons:restore" name="Recently Viewed"></iron-icon>[[i18n('app.recentlyViewed')]]</h3>
-            <nuxeo-document-storage id="recentStorage" name="nuxeo-recent-documents" documents="{{recentDocuments}}"></nuxeo-document-storage>
-            <nuxeo-data-table id="latestViewedDocs"
-                              items="[[recentDocuments]]"
-                              empty-label="[[i18n('recentDocuments.empty')]]"
-                              empty-label-when-filtered="[[i18n('recentDocuments.empty')]]"
-                              on-row-clicked="_navigate">
-              <nuxeo-data-table-column name="[[i18n('documentContentView.datatable.header.title')]]" flex="100">
-                <template>
-                  <nuxeo-document-thumbnail document="[[item]]"></nuxeo-document-thumbnail>
-                  <a class="ellipsis" href$="[[urlFor('browse', item.path)]]">[[item.title]]</a>
-                </template>
-              </nuxeo-data-table-column>
-              <nuxeo-data-table-column name="[[i18n('recentDocumentsTable.type')]]" flex="50">
-                <template>
-                  [[item.type]]
-                </template>
-              </nuxeo-data-table-column>
-              <nuxeo-data-table-column name="[[i18n('recentDocumentsTable.lastViewed')]]" flex="50">
-                <template>
-                  [[formatDate(item.lastViewed)]]
-                </template>
-              </nuxeo-data-table-column>
-            </nuxeo-data-table>
-          </paper-card>
 
-          <!-- favorites -->
-          <paper-card>
-            <h3><iron-icon icon="icons:star" name="Favorites"></iron-icon>[[i18n('home.favorites')]]</h3>
-            <nuxeo-operation id="fetchFavOp" op="Favorite.Fetch" response="favorite"></nuxeo-operation>
-            <nuxeo-page-provider id="favoritesProvider"
-                                 provider="default_content_collection"
-                                 page-size="20"
-                                 schemas="dublincore,common,uid"
-                                 headers='{"X-NXfetch.document": "properties"}'
-                                 enrichers="thumbnail">
-            </nuxeo-page-provider>
-            <nuxeo-data-table
-                              id="favoriteDocs"
-                              nx-provider="favoritesProvider"
-                              empty-label="[[i18n('favorites.empty')]]"
-                              on-row-clicked="_navigate">
-              <nuxeo-data-table-column name="[[i18n('documentContentView.datatable.header.title')]]" flex="100">
-                <template>
-                  <nuxeo-document-thumbnail document="[[item]]"></nuxeo-document-thumbnail>
-                  <a class="ellipsis" href$="[[urlFor('browse', item.path)]]">[[item.title]]</a>
-                </template>
-              </nuxeo-data-table-column>
-              <nuxeo-data-table-column name="[[i18n('documentContentView.datatable.header.modified')]]" flex="50">
-                <template>
-                  [[formatDate(item.properties.dc:modified)]]
-                </template>
-              </nuxeo-data-table-column>
-              <nuxeo-data-table-column name="[[i18n('documentContentView.datatable.header.lastContributor')]]" flex="50">
-                <template>
-                  <nuxeo-user-tag user="[[item.properties.dc:lastContributor]]"></nuxeo-user-tag>
-                </template>
-              </nuxeo-data-table-column>
-            </nuxeo-data-table>
+          <nuxeo-repository-data
+                                 ecm-primary-type="Opportunity"
+                                 ecm-lifecycle-state="won"
+                                 metrics="sum(opportunity:amount)"
+                                 data="{{wonAmount}}"
+                                 index="[[index]]">
+          </nuxeo-repository-data>
+
+          <paper-card class="graph-flex-layout" heading="Won Deals" elevation="0" style="width: 33%; height: 210px">
+              <h1><strong><span style="color: #43C35E; font-size: -webkit-xxx-large;">[[_formatCurrency(wonAmount)]] €</span></strong></h1>
           </paper-card>
 
 
@@ -379,6 +323,13 @@ Gabriel Barata <gbarata@nuxeo.com>
       </div>
     </nuxeo-page>
 
+
+    <div id="trayReport">
+      <paper-fab id="createReportBtn" noink="" icon="nuxeo:add" on-tap="_toggleGraphDialog"></paper-fab>
+       <paper-tooltip for="createReportBtn" position="left">Create Report</paper-tooltip>
+    </div>
+
+
   </template>
 
   <script>
@@ -393,6 +344,11 @@ Gabriel Barata <gbarata@nuxeo.com>
       index: {
         type: String,
         value: 'nuxeo'
+      },
+      startDate: String,
+      endDate: String,
+      hoursBounds: {
+        value: {min: 0, max: 23}
       }
     },
 
@@ -412,11 +368,12 @@ Gabriel Barata <gbarata@nuxeo.com>
     },
 
     ready: function() {
-      this._fetchFavorite().then(function(favorite) {
+      jQuery("#tray").css("display","none");
+      /*this._fetchFavorite().then(function(favorite) {
         this.$.favoritesProvider.params = [favorite.uid];
         this.$.favoritesProvider.page = 1;
         this.$.favoritesProvider.fetch();
-      }.bind(this));
+      }.bind(this));*/
     },
 
     _fetchFavorite: function() {
@@ -494,9 +451,10 @@ Gabriel Barata <gbarata@nuxeo.com>
         agg[i].forEach(function(v) { sum += v; });
         return sum;
       })];
+    },
+    _formatCurrency: function(val) {
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
-
-
   });
   </script>
 
