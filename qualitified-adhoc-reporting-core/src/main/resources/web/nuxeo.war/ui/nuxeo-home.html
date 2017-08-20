@@ -1,29 +1,14 @@
-<!--
-(C) Copyright 2015 Nuxeo SA (http://nuxeo.com/) and others.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-Contributors:
-Gabriel Barata <gbarata@nuxeo.com>
--->
-<!--
-`nuxeo-home`
-@group Nuxeo UI
-@element nuxeo-home
--->
+<!-- Imports -->
+<link rel="import" href="document/countreport/nuxeo-countreport-view-layout.html">
+<link rel="import" href="document/countreport/nuxeo-countreport-create-layout.html">
 <dom-module id="nuxeo-home">
   <template>
     <style>
+      :host {
+        display: block;
+        @apply(--layout-flex);
+        @apply(--layout-vertical);
+      }
 
       .flex-layout {
         display: flex;
@@ -103,6 +88,92 @@ Gabriel Barata <gbarata@nuxeo.com>
         --paper-fab-background: var(--nuxeo-button-primary);
         --paper-fab-keyboard-focus-background: var(--nuxeo-button-primary-focus);
       }
+
+      #container {
+        @apply(--layout-vertical);
+        @apply(--layout-center);
+        @apply(--layout-flex);
+        @apply(--layout-center-justified);
+        border-radius: 2px;
+        border: 1px dashed var(--paper-input-container-color);
+        min-height: 64px;
+        height: calc(100% - 2px);
+      }
+
+      .container {
+        overflow: auto;
+        flex: 1 1 auto;
+        height: 400px;
+      }
+
+      .typeSelection {
+        overflow-y: auto;
+        margin: 1rem 0;
+        align-items: center;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        min-height: 20em;
+        justify-content: flex-start;
+      }
+
+      .typeSelection paper-button {
+        width: var(--nuxeo-document-creation-form-button-width, 128px);
+        height: var(--nuxeo-document-creation-form-button-height, 128px);
+        box-shadow: none;
+        background-color: var(--nuxeo-dialog-buttons-bar);
+      }
+
+      .typeSelection paper-button:hover {
+        color: var(--nuxeo-link-hover-color);
+        filter: brightness(102%);
+        -webkit-filter: brightness(102%);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3), 0 -3px 0 var(--nuxeo-link-hover-color) inset;
+      }
+
+      .typeSelection iron-icon {
+        width: var(--nuxeo-document-creation-form-icon-width, 42px);
+        height: var(--nuxeo-document-creation-form-icon-height, 42px);
+        filter: brightness(1.5);
+        -webkit-filter: brightness(1.5);
+      }
+
+      .typeSelection span {
+        margin-top: 1em;
+        word-break: break-word;
+      }
+
+      .docTypeButton {
+        margin: 4px;
+        border: none;
+      }
+
+      .buttons {
+        @apply(--buttons-bar);
+      }
+
+      .heading {
+        text-transform: uppercase;
+        font-size: 1.1rem;
+        padding: 1.7rem 2.5rem;
+      }
+
+      .heading iron-icon {
+        width: 1.2rem;
+        height: 1.2rem;
+        margin-right: 8px;
+      }
+
+      .editor {
+        margin: 0 2rem;
+        overflow-y: auto;
+        padding: 0 1rem 0 0;
+      }
+
+      #document-create {
+        margin-bottom: 2.5em;
+      }
+
     </style>
 
     <nuxeo-page>
@@ -110,9 +181,32 @@ Gabriel Barata <gbarata@nuxeo.com>
       <div class="content">
         <section name="dashboard" class="flex-layout">
 
+		  <!--Get the list of Reports-->
+		  <nuxeo-page-provider
+                               role="widget"
+                               id="reportProvider"
+                               auto
+                               query="select * from Document where ecm:primaryType in ('CountReport', 'ChartBarReport', 'ChartPieReport', 'ChartLineReport', 'TableReport') and ecm:currentLifeCycleState != 'deleted'"
+                               params="[[params]]"
+                               current-page="{{reports}}">
+          </nuxeo-page-provider>
+
+		  <template is="dom-repeat" items="[[reports]]" as="report">
+		  	<template is="dom-if" if="[[report.type == 'Count']]">
+		  		<nuxeo-countreport-view-layout document="[[report]]"></nuxeo-countreport-view-layout>
+		  	</template>
+		  </template>
+
+
+		  <!--End list of Reports-->
+
+
+
+
           <nuxeo-repository-data
                                  ecm-primary-type="Opportunity"
-                                 ecm-lifecycle-state="new" metrics="sum(opportunity:amount)"
+                                 ecm-lifecycle-state="new"
+                                 metrics="sum(opportunity:amount)"
                                  data="{{newAmount}}"
                                  index="[[index]]">
           </nuxeo-repository-data>
@@ -325,17 +419,60 @@ Gabriel Barata <gbarata@nuxeo.com>
 
 
     <div id="trayReport">
-      <paper-fab id="createReportBtn" noink="" icon="nuxeo:add" on-tap="_toggleGraphDialog"></paper-fab>
+      <paper-fab id="createReportBtn" noink="" icon="nuxeo:add" on-tap="_toggleReportCreationDialog"></paper-fab>
        <paper-tooltip for="createReportBtn" position="left">Create Report</paper-tooltip>
     </div>
 
+	<paper-dialog id="reportCreationDialog" modal on-iron-overlay-closed="_resetPopup" no-auto-focus>
+    <iron-pages selected="[[stage]]" attr-for-selected="name" class="vertical layout flex">
 
+      <div name="choose" class="vertical layout flex">
+        <div class="editor flex container">
+          <div name="typeSelection" class="typeSelection">
+            <template is="dom-repeat" items="[[reportTypes]]" as="type">
+              <paper-button noink="" name$="[[type.type]]" class="docTypeButton vertical layout" on-tap="_selectType" data-args$="[[type]]">
+                <iron-icon src="[[_getTypeIcon(type)]]"></iron-icon>
+                <span>[[_getTypeLabel(type)]]</span>
+              </paper-button>
+            </template>
+          </div>
+        </div>
+        <div class="buttons horizontal end-justified layout">
+          <div class="flex start-justified">
+            <paper-button noink="" dialog-dismiss="" on-tap="_cancel">[[i18n('command.cancel')]]</paper-button>
+          </div>
+        </div>
+      </div>
+
+      <div name="edit" class="vertical layout flex">
+        <div class="horizontal layout heading center">
+          <iron-icon src="[[_getTypeIcon(selectedDocType)]]"></iron-icon>
+          <span>[[_newDocumentLabel(selectedDocType)]]</span>
+        </div>
+        <div id="editor" class="editor flex container">
+          <form is="iron-form" id="form" class="form vertical layout flex">
+            <iron-a11y-keys keys="enter" on-keys-pressed="_submitKeyHandler"></iron-a11y-keys>
+            <nuxeo-document-layout id="document-create" layout="create" document="[[document]]"></nuxeo-document-layout>
+          </form>
+        </div>
+        <div class="buttons horizontal end-justified layout">
+          <div class="flex start-justified">
+            <paper-button noink="" dialog-dismiss="" on-tap="_cancel">[[i18n('command.cancel')]]</paper-button>
+          </div>
+          <paper-button noink="" on-tap="_back">[[i18n('command.back')]]</paper-button>
+          <paper-button noink="" class="primary" on-tap="_create" disabled$="[[!canCreate]]">[[i18n('command.create')]]</paper-button>
+        </div>
+      </div>
+
+
+    </iron-pages>
+  </paper-dialog>
   </template>
 
   <script>
   Polymer({
     is: 'nuxeo-home',
-    behaviors: [Nuxeo.RoutingBehavior, Nuxeo.FormatBehavior, Nuxeo.ChartDataBehavior],
+    behaviors: [Nuxeo.RoutingBehavior, Nuxeo.FormatBehavior, Nuxeo.ChartDataBehavior,Nuxeo.DocumentCreationBehavior],
     properties: {
       documentType: {
         type: String,
@@ -349,8 +486,57 @@ Gabriel Barata <gbarata@nuxeo.com>
       endDate: String,
       hoursBounds: {
         value: {min: 0, max: 23}
+      },
+
+
+      reportTypes: {
+      	type: Array
+      },
+
+
+      stage: {
+          type: String,
+          value: 'choose'
+        },
+
+        visible: {
+          type: Boolean
+        },
+
+        _showTabs: {
+          type: Boolean,
+          value: true
+        },
+        selectedTab: {
+          type: String,
+          value: ''
+        },
+
+
+    },
+
+    listeners: {
+      'nx-creation-wizard-hide-tabs': '_hideTabs',
+      'nx-creation-wizard-show-tabs': '_displayTabs',
+      'nx-document-creation-finished': '_close'
+    },
+
+
+    _hideTabs: function() {
+      this._showTabs = false;
+    },
+
+    _displayTabs: function() {
+      this._showTabs = true;
+    },
+
+    _close: function() {
+      if (this.$.reportCreationDialog.opened) {
+        this.$.reportCreationDialog.toggle();
+        this._showTabs = true;
       }
     },
+
 
     _navigate: function(e) {
       var detail;
@@ -369,6 +555,9 @@ Gabriel Barata <gbarata@nuxeo.com>
 
     ready: function() {
       jQuery("#tray").css("display","none");
+
+      this.reportTypes = ['CountReport', 'ChartBarReport', 'ChartPieReport', 'ChartLineReport', 'TableReport'];
+
       /*this._fetchFavorite().then(function(favorite) {
         this.$.favoritesProvider.params = [favorite.uid];
         this.$.favoritesProvider.page = 1;
@@ -392,9 +581,8 @@ Gabriel Barata <gbarata@nuxeo.com>
       this.$.dialog.toggle();
     },
 
-    _validate: function() {
+    /*_validate: function() {
         var valid = true;
-        // fake submit to trigger native validation checks and UI
         if (valid) {
           this.$.form._doFakeSubmitForValidation();
         }
@@ -406,7 +594,7 @@ Gabriel Barata <gbarata@nuxeo.com>
           return;
       }
       this.$.dialog.close();
-    },
+    },*/
 
 
 
@@ -454,7 +642,160 @@ Gabriel Barata <gbarata@nuxeo.com>
     },
     _formatCurrency: function(val) {
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
+    },
+    _isEmpty: function(items) {
+      return items && items.length === 0;
+    },
+
+    _toggleReportCreationDialog: function(){
+    	this.$.reportCreationDialog.toggle();
+    },
+
+
+    /**
+       * Retrieves and creates the layout for the current document type
+       */
+    _updateDocument: function() {
+        /*if (!this._isValidType(this.selectedDocType) || !this.parent) {
+          this.document = null;
+          return;
+        }*/
+
+        this.newDocument(this.selectedDocType, this._getDocumentProperties()).then(function(document) {
+          //document.parentRef = this.parent.uid;
+          this.document = document;
+          this.stage = 'edit';
+    	}.bind(this));
+    },
+
+    newDocument: function(type, properties) {
+      var doc = {
+        'entity-type': 'document',
+        'type': type,
+        'name': '',
+        'properties': {
+          'dc:title': '',
+          'dc:description': ''
+        }
+      };
+      var schemaFetcher = null;
+      var schemaRegistry = {};
+      // NXP-22300: initialize complex properties
+      if (!(type in schemaRegistry)) {
+        if (!schemaFetcher) {
+          schemaFetcher = document.createElement('nuxeo-resource');
+        }
+        schemaFetcher.path = '/config/types/' + this.selectedDocType;
+        return schemaFetcher.get().then(function(doctype) {
+          // cache doctype schemas
+          schemaRegistry[doctype.name] = doctype;
+          return this._newDocument(doctype, doc, properties);
+        }.bind(this));
+      } else {
+        return Promise.resolve(this._newDocument(schemaRegistry[type], doc, properties));
+      }
+    },
+
+    _newDocument: function(doctype, doc, properties) {
+      if (doctype.schemas) {
+        doctype.schemas.forEach(function(schema) {
+          this._initializeFields(doc, schema);
+        }.bind(this));
+      }
+      if (properties) {
+        for (var prop in properties) {
+          doc.properties[prop] = properties[prop];
+        }
+      }
+      return doc;
+    },
+
+    _initializeFields: function(doc, node, nodePath) {
+      if (typeof nodePath === 'undefined') {
+        nodePath = '';
+      }
+      var prefix = (node['@prefix'] ? node['@prefix'] : node['name']);
+      Object.keys(node.fields).forEach(function(fieldName) {
+        var field = node.fields[fieldName]
+        if (field !== null && typeof field === 'object' &&
+            field.type && field.type === 'complex') {
+          this._deepFind(doc.properties, nodePath)[prefix + ':' + fieldName] = {};
+          this._initializeFields(doc, field, field, nodePath === '' ? fieldName : nodePath + '.' + fieldName);
+        }
+      }.bind(this));
+    },
+
+    _deepFind: function(node, path) {
+      return path ? path.split('.').reduce(function(obj,p) { return obj[p]; }, node) : node;
+    },
+
+
+
+
+    // extension point
+    _getDocumentProperties: function() {
+      return null;
+    },
+
+    _selectType: function(e) {
+        this.selectedDocType = e.model.type;
+        this._updateDocument();
+        //this.fire('nx-creation-wizard-hide-tabs');
+    },
+
+    _validate: function() {
+        // run our custom validation function first to allow setting custom native validity
+        var valid = this.$['document-create'].validate();
+
+        // fake submit to trigger native validation checks and UI
+        if (valid) {
+          this.$.form._doFakeSubmitForValidation();
+        }
+
+        // XXX: could rely on onsubmit to avoid rechecking for validity
+        return this.$.form.validate() && this.$.form.checkValidity() && valid;
+      },
+
+      _create: function() {
+        if (!this._validate() || !this.canCreate) {
+          return;
+        }
+        this.document.name = this._sanitizeName(this.document.properties['dc:title']);
+        this.$.docRequest.post().then(function(response) {
+          this.$.creationStats.storeType(this.selectedDocType);
+          this._clear();
+          this.navigateTo('browse', response.path);
+          this._notify(response);
+        }.bind(this));
+      },
+
+      _back: function() {
+        this._clear();
+        this.fire('nx-creation-wizard-show-tabs');
+      },
+
+      _cancel: function() {
+        this._clear();
+        this.fire('nx-creation-wizard-show-tabs');
+      },
+
+      _newDocumentLabel: function() {
+        return this.selectedDocType;
+      },
+
+      _clear: function() {
+        this.stage = 'choose';
+        this.selectedDocType = {};
+      },
+
+      _getTypeLabel: function(type) {
+        return type? this.i18n('label.document.type.' + type.toLowerCase()):'';
+      },
+
+      _getTypeIcon: function(type) {
+        return type? 'images/doctypes/' + type.toLowerCase() + '.svg' :'';
+      },
+
   });
   </script>
 

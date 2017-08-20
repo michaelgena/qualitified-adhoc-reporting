@@ -1,0 +1,7 @@
+{
+  "label.document.type.countreport":"Number",
+  "label.document.type.chartpiereport":"Chart Pie",
+  "label.document.type.chartbarreport":"Chart Bar",
+  "label.document.type.chartlinereport":"Chart Line",
+  "label.document.type.tablereport":"Table"
+}

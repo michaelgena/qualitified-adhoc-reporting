@@ -1,0 +1,131 @@
+<link rel="import" href="nuxeo-countreport-metadata-layout.html">
+<link rel="import" href="nuxeo-countreport-edit-layout.html">
+<dom-module id="nuxeo-countreport-view-layout">
+  <template>
+    <style>
+      *[role=widget] {
+        padding: 5px;
+      }
+	  paper-card {
+        min-width: 25em;
+        width: 49%;
+        height: 420px;
+      }
+      @media (max-width: 1024px) {
+        paper-card {
+          width: 100%;
+        }
+      }
+    </style>
+    <nuxeo-repository-data
+    	ecm-primary-type="[[document.properties.report.documentType]]"
+        ecm-lifecycle-state="[[document.properties.report.lifeCycleState]]"
+        metrics="[[document.properties.report.metrics]]"
+        data="{{countData}}"
+        index="[[index]]">
+    </nuxeo-repository-data>
+
+    <!--nuxeo-search-data start-date="[[startDate]]" end-date="[[_extendEndDate(endDate)]]"
+                            with-date-intervals="hour"
+                            without-extended-bounds
+                            date-format="HH"
+                            data="{{callsPerHour}}"
+                            index="[[index]]">
+          </nuxeo-search-data-->
+    <!--nuxeo-audit-data event-id="download"
+                            where='{"extended.downloadReason": "download"}'
+                            grouped-by="docUUID"
+                            group-limit="10"
+                            start-date="[[startDate]]" end-date="[[_extendEndDate(endDate)]]"
+                            data="{{downloads}}">
+          </nuxeo-audit-data-->
+
+    <paper-card class="graph-flex-layout" heading="[[document.properties.dc.title]]" elevation="0" style="width: [[document.properties.report.cardWidth]]%; height: [[document.properties.report.cardWidth]]px">
+    	<paper-icon-button class="settings" id="button" icon="icons:settings" on-tap="_toggleGraphDialog"></paper-icon-button>
+        <paper-tooltip for="button">Settings</paper-tooltip>
+    	<h1>
+    		<strong>
+    			<span style="[[document.properties.count.style]]">
+    				[[document.properties.count.prefix]] [[_getValue(countData)]] [[document.properties.count.suffix]]
+    			</span>
+    		</strong>
+    	</h1>
+    	<paper-dialog id="dialog" modal no-auto-focus>
+            <h2>Settings</h2>
+            <nuxeo-countreport-metadata-layout document="[[document]]"></nuxeo-countreport-metadata-layout>
+            <div class="buttons horizontal end-justified layout">
+        		<div class="flex start-justified">
+                	<paper-button noink dialog-dismiss>Cancel</paper-button>
+                </div>
+                <paper-button noink class="primary" on-tap="_edit">Edit</paper-button>
+            </div>
+            <!--form id="form" is="iron-form">
+            	<nuxeo-count-edit-layout document="[[document]]"></nuxeo-count-edit-layout>
+                <div class="buttons horizontal end-justified layout">
+                  <div class="flex start-justified">
+                    <paper-button noink dialog-dismiss>Cancel</paper-button>
+                  </div>
+                  <paper-button noink class="primary" on-tap="_save">Save</paper-button>
+                </div>
+            </form-->
+        </paper-dialog>
+    </paper-card>
+  </template>
+  <script>
+  (function() {
+    'use strict';
+    Polymer({
+      is: 'nuxeo-countreport-view-layout',
+      properties: {
+        /**
+           * @doctype Contact
+           */
+        document: {
+          type: Object
+        },
+        params: {
+          type: Object,
+          value: {},
+          notify: true
+        }
+      },
+      ready: function() {
+
+      },
+      _getValue: function(val){
+      	if(_isCurrency(this.document)){
+      		return _formatCurrency(val);
+      	}else{
+      		return val;
+      	}
+      },
+      _isCurrency: function(doc){
+      	return doc? doc.properties['count:valueType'] == 'currency' : false;
+      },
+      _formatCurrency: function(val) {
+      	return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      },
+       _toggleGraphDialog: function(){
+      	this.$.dialog.toggle();
+      },
+      _validate: function() {
+        var valid = true;
+        // fake submit to trigger native validation checks and UI
+        if (valid) {
+          this.$.form._doFakeSubmitForValidation();
+        }
+        return valid && this.$.form.validate() && this.$.form.checkValidity();
+     },
+     _save: function(){
+      if (!this._validate()) {
+          return;
+      }
+      this.$.dialog.close();
+     },
+     _edit: function(){
+
+     }
+    });
+  })();
+  </script>
+</dom-module>

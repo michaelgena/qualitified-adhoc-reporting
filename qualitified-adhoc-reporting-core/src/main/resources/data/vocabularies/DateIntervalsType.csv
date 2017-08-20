@@ -1,0 +1,5 @@
+id,label,obsolete,ordering
+day,Day,0,0
+hour,Hour,0,10
+week,Week,0,20
+year,Year,0,30

@@ -1,10 +1,48 @@
 <component name="adhoc.reporting.extensions" version="1.0.0">
-<require>org.nuxeo.runtime.started</require>
+<!--require>org.nuxeo.runtime.started</require-->
 <extension target="org.nuxeo.ecm.core.schema.TypeService" point="schema">
   <schema name="report" prefix="report" override="true" src="data/schemas/report.xsd"/>
+  <schema name="chartpie" prefix="chartpie" override="true" src="data/schemas/chartpie.xsd"/>
+  <schema name="chartline" prefix="chartline" override="true" src="data/schemas/chartline.xsd"/>
+  <schema name="count" prefix="count" override="true" src="data/schemas/count.xsd"/>
+  <schema name="table" prefix="table" override="true" src="data/schemas/table.xsd"/>
+  <schema name="chartbar" prefix="chartbar" override="true" src="data/schemas/chartbar.xsd"/>
 </extension>
 <extension target="org.nuxeo.ecm.core.schema.TypeService" point="doctype">
-  <doctype name="Report" extends="Document">
+  <doctype name="ChartPieReport" extends="Document">
+    <schema name="chartpie"/>
+    <schema name="report"/>
+    <schema name="dublincore"/>
+    <schema name="common"/>
+    <schema name="uid"/>
+    <facet name="HiddenInNavigation"/>
+  </doctype>
+  <doctype name="ChartLineReport" extends="Document">
+    <schema name="chartline"/>
+    <schema name="report"/>
+    <schema name="dublincore"/>
+    <schema name="common"/>
+    <schema name="uid"/>
+    <facet name="HiddenInNavigation"/>
+  </doctype>
+  <doctype name="CountReport" extends="Document">
+    <schema name="count"/>
+    <schema name="report"/>
+    <schema name="dublincore"/>
+    <schema name="common"/>
+    <schema name="uid"/>
+    <facet name="HiddenInNavigation"/>
+  </doctype>
+  <doctype name="TableReport" extends="Document">
+    <schema name="table"/>
+    <schema name="report"/>
+    <schema name="dublincore"/>
+    <schema name="common"/>
+    <schema name="uid"/>
+    <facet name="HiddenInNavigation"/>
+  </doctype>
+  <doctype name="ChartBarReport" extends="Document">
+    <schema name="chartbar"/>
     <schema name="report"/>
     <schema name="dublincore"/>
     <schema name="common"/>
@@ -14,7 +52,7 @@
 </extension>
 <require>org.nuxeo.ecm.directory.sql.storage</require>
 <extension target="org.nuxeo.ecm.directory.sql.SQLDirectoryFactory" point="directories">
-  <directory name="ReportType">
+  <directory name="DataType">
     <schema>vocabulary</schema>
     <dataSource>java:/nxsqldirectory</dataSource>
     <cacheTimeout>3600</cacheTimeout>
@@ -22,19 +60,8 @@
     <idField>id</idField>
     <autoincrementIdField>false</autoincrementIdField>
     <createTablePolicy>on_missing_columns</createTablePolicy>
-    <table>adhoc_reporting_ReportType</table>
-    <dataFile>data/vocabularies/ReportType.csv</dataFile>
-  </directory>
-  <directory name="DocumentType">
-    <schema>vocabulary</schema>
-    <dataSource>java:/nxsqldirectory</dataSource>
-    <cacheTimeout>3600</cacheTimeout>
-    <cacheMaxSize>1000</cacheMaxSize>
-    <idField>id</idField>
-    <autoincrementIdField>false</autoincrementIdField>
-    <createTablePolicy>on_missing_columns</createTablePolicy>
-    <table>adhoc_reporting_DocumentType</table>
-    <dataFile>data/vocabularies/DocumentType.csv</dataFile>
+    <table>adhoc_reporting_DataType</table>
+    <dataFile>data/vocabularies/DataType.csv</dataFile>
   </directory>
   <directory name="ValueType">
     <schema>vocabulary</schema>
@@ -47,4 +74,16 @@
     <table>adhoc_reporting_ValueType</table>
     <dataFile>data/vocabularies/ValueType.csv</dataFile>
   </directory>
+  <directory name="DateIntervalsType">
+    <schema>vocabulary</schema>
+    <dataSource>java:/nxsqldirectory</dataSource>
+    <cacheTimeout>3600</cacheTimeout>
+    <cacheMaxSize>1000</cacheMaxSize>
+    <idField>id</idField>
+    <autoincrementIdField>false</autoincrementIdField>
+    <createTablePolicy>on_missing_columns</createTablePolicy>
+    <table>adhoc_reporting_DateIntervalsType</table>
+    <dataFile>data/vocabularies/DateIntervalsType.csv</dataFile>
+  </directory>
 </extension>
+</component>
