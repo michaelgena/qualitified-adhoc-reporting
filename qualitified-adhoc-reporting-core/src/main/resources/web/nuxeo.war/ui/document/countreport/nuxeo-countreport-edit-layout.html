@@ -7,7 +7,7 @@
     </style>
     <paper-input role="widget" value="{{document.properties.dc:title}}" label="Title"></paper-input>
 
-    <h1>Data</h1>
+    <h3>Data</h3>
 
     <nuxeo-directory-suggestion
       role="widget"
@@ -34,13 +34,13 @@
       min-chars="0">
     </nuxeo-directory-suggestion>
 
-    <h1>Display</h1>
+    <h3>Display</h3>
     <paper-input role="widget" value="{{document.properties.count:prefix}}" label="Prefix"></paper-input>
   	<paper-input role="widget" value="{{document.properties.count:suffix}}" label="Suffix"></paper-input>
   	<paper-input role="widget" value="{{document.properties.count:icon}}" label="Icon"></paper-input>
 	<paper-input role="widget" value="{{document.properties.count:style}}" label="Style"></paper-input>
   	<paper-input role="widget" value="{{document.properties.report:cardWidth}}" label="Width(%)" default="49" required="true"></paper-input>
-  	<paper-input role="widget" value="{{document.properties.report:cardWidth}}" label="Height(px)" default="420" required="true"></paper-input>
+  	<paper-input role="widget" value="{{document.properties.report:cardHeight}}" label="Height(px)" default="420" required="true"></paper-input>
 	<paper-input role="widget" value="{{document.properties.report:order}}" label="Order"></paper-input>
 
   </template>

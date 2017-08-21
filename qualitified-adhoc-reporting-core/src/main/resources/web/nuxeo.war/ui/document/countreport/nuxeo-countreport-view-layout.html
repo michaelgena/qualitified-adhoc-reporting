@@ -16,11 +16,31 @@
           width: 100%;
         }
       }
+      .graph-flex-layout {
+        flex: 1 0 calc(33% - 2em);
+        margin: 0 8px 16px;
+        text-align: center;
+      }
+      .editor {
+        margin: 0 2rem;
+        overflow-y: auto;
+        padding: 0 1rem 0 0;
+      }
+      .container {
+        overflow: auto;
+        flex: 1 1 auto;
+        height: 400px;
+      }
+      #button.settings{
+        position: absolute;
+        top: 8px;
+        right: 8px;
+      }
     </style>
     <nuxeo-repository-data
-    	ecm-primary-type="[[document.properties.report.documentType]]"
-        ecm-lifecycle-state="[[document.properties.report.lifeCycleState]]"
-        metrics="[[document.properties.report.metrics]]"
+    	ecm-primary-type="[[document.properties.report:documentType]]"
+        ecm-lifecycle-state="[[document.properties.report:lifeCycleState]]"
+        metrics="[[document.properties.report:metrics]]"
         data="{{countData}}"
         index="[[index]]">
     </nuxeo-repository-data>
@@ -40,42 +60,61 @@
                             data="{{downloads}}">
           </nuxeo-audit-data-->
 
-    <paper-card class="graph-flex-layout" heading="[[document.properties.dc.title]]" elevation="0" style="width: [[document.properties.report.cardWidth]]%; height: [[document.properties.report.cardWidth]]px">
+    <paper-card class="graph-flex-layout" heading="[[document.properties.dc:title]]" elevation="0" style="width: [[document.properties.report:cardWidth]]%; height: [[document.properties.report:cardHeight]]px">
     	<paper-icon-button class="settings" id="button" icon="icons:settings" on-tap="_toggleGraphDialog"></paper-icon-button>
         <paper-tooltip for="button">Settings</paper-tooltip>
-    	<h1>
-    		<strong>
-    			<span style="[[document.properties.count.style]]">
-    				[[document.properties.count.prefix]] [[_getValue(countData)]] [[document.properties.count.suffix]]
-    			</span>
-    		</strong>
-    	</h1>
-    	<paper-dialog id="dialog" modal no-auto-focus>
-            <h2>Settings</h2>
-            <nuxeo-countreport-metadata-layout document="[[document]]"></nuxeo-countreport-metadata-layout>
-            <div class="buttons horizontal end-justified layout">
-        		<div class="flex start-justified">
-                	<paper-button noink dialog-dismiss>Cancel</paper-button>
-                </div>
-                <paper-button noink class="primary" on-tap="_edit">Edit</paper-button>
+      	<h1>
+      		<strong>
+      			<span style="[[document.properties.count:style]]; font-size: -webkit-xxx-large;">
+      				[[document.properties.count:prefix]] [[_getValue(countData)]] [[document.properties.count:suffix]]
+      			</span>
+      		</strong>
+      	</h1>
+      	<paper-dialog id="dialog" modal no-auto-focus>
+          <nuxeo-document id="doc" doc-id="[[document.uid]]" response="{{document}}" headers="[[headers]]"></nuxeo-document>
+          <div class="horizontal layout heading center">
+            <iron-icon src="[[_getTypeIcon(document.type)]]"></iron-icon>
+            <span>[[_getTypeLabel(document.type)]]</span>
+          </div>
+          <iron-pages selected="[[stage]]" attr-for-selected="name" class="vertical layout flex">      
+            <div name="view" class="vertical layout flex">
+              <div class="editor flex container">
+                <nuxeo-countreport-metadata-layout document="[[document]]"></nuxeo-countreport-metadata-layout>
+              </div>
+              <div class="buttons horizontal end-justified layout">
+          		    <div class="flex start-justified">
+                  	<paper-button noink="" dialog-dismiss="" on-tap="_cancel">[[i18n('command.cancel')]]</paper-button>
+                  </div>
+                  <paper-button noink on-tap="_delete">Delete</paper-button>
+                  <paper-button noink class="primary" on-tap="_edit">Edit</paper-button>
+
+              </div>
             </div>
-            <!--form id="form" is="iron-form">
-            	<nuxeo-count-edit-layout document="[[document]]"></nuxeo-count-edit-layout>
+
+            <div name="edit" class="vertical layout flex">
+              <form id="form" is="iron-form">
+                <div class="editor flex container">
+              	   <nuxeo-countreport-edit-layout document="[[document]]"></nuxeo-countreport-edit-layout>
+                </div>
                 <div class="buttons horizontal end-justified layout">
                   <div class="flex start-justified">
-                    <paper-button noink dialog-dismiss>Cancel</paper-button>
+                    <paper-button noink="" dialog-dismiss="" on-tap="_cancel">[[i18n('command.cancel')]]</paper-button>
                   </div>
                   <paper-button noink class="primary" on-tap="_save">Save</paper-button>
                 </div>
-            </form-->
+              </form>
+            </div>
+
+          </iron-pages>
         </paper-dialog>
-    </paper-card>
-  </template>
+      </paper-card>
+    </template>
   <script>
   (function() {
     'use strict';
     Polymer({
       is: 'nuxeo-countreport-view-layout',
+      behaviors: [Nuxeo.FormatBehavior, Nuxeo.DocumentCreationBehavior],
       properties: {
         /**
            * @doctype Contact
@@ -87,20 +126,24 @@
           type: Object,
           value: {},
           notify: true
-        }
+        },
+        stage: {
+            type: String,
+            value: 'view'
+        },
       },
       ready: function() {
 
       },
       _getValue: function(val){
-      	if(_isCurrency(this.document)){
-      		return _formatCurrency(val);
+      	if(this._isCurrency(this.document)){
+      		return this._formatCurrency(val);
       	}else{
       		return val;
       	}
       },
       _isCurrency: function(doc){
-      	return doc? doc.properties['count:valueType'] == 'currency' : false;
+      	return doc? doc.properties['count:valueType'] == 'Currency' : false;
       },
       _formatCurrency: function(val) {
       	return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -116,15 +159,46 @@
         }
         return valid && this.$.form.validate() && this.$.form.checkValidity();
      },
+
      _save: function(){
       if (!this._validate()) {
           return;
       }
-      this.$.dialog.close();
-     },
-     _edit: function(){
 
-     }
+      this.$.doc.data = {
+        'entity-type': 'document',
+        uid: this.document.uid,
+        properties: this.document.properties
+      };
+
+      this.$.doc.put().then(this._refresh.bind(this));
+     },
+
+     _refresh: function() {
+       this._clear();
+       page('/');
+       //this.fire('document-updated');
+     },
+
+     _clear: function() {
+       this.stage = 'view';
+       this.$.dialog.close();
+     },
+
+     _cancel: function() {
+       this._clear();
+     },
+
+     _edit: function(){
+       this.stage = 'edit';
+     },
+     _getTypeLabel: function(type) {
+       return type? this.i18n('label.document.type.' + type.toLowerCase()):'';
+     },
+
+     _getTypeIcon: function(type) {
+       return type? 'images/doctypes/' + type.toLowerCase() + '.svg' :'';
+     },
     });
   })();
   </script>

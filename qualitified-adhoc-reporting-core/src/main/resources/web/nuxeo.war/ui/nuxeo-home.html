@@ -192,7 +192,7 @@
           </nuxeo-page-provider>
 
 		  <template is="dom-repeat" items="[[reports]]" as="report">
-		  	<template is="dom-if" if="[[report.type == 'Count']]">
+		  	<template is="dom-if" if="[[report.type == 'CountReport']]">
 		  		<nuxeo-countreport-view-layout document="[[report]]"></nuxeo-countreport-view-layout>
 		  	</template>
 		  </template>
@@ -424,6 +424,8 @@
     </div>
 
 	<paper-dialog id="reportCreationDialog" modal on-iron-overlay-closed="_resetPopup" no-auto-focus>
+    <nuxeo-document id="docRequest" doc-path="/" data="[[document]]" headers="{&quot;nx_es_sync&quot;: &quot;true&quot;}" enrichers="permissions, subtypes" response="{{createResponse}}"></nuxeo-document>
+    <nuxeo-document-creation-stats id="creationStats"></nuxeo-document-creation-stats>
     <iron-pages selected="[[stage]]" attr-for-selected="name" class="vertical layout flex">
 
       <div name="choose" class="vertical layout flex">
@@ -757,7 +759,10 @@
       },
 
       _create: function() {
-        if (!this._validate() || !this.canCreate) {
+        /*if (!this._validate() || !this.canCreate) {
+          return;
+        }*/
+        if (!this._validate()) {
           return;
         }
         this.document.name = this._sanitizeName(this.document.properties['dc:title']);
