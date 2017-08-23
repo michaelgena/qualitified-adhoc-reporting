@@ -1,6 +1,6 @@
 <!-- Imports -->
 <link rel="import" href="document/countreport/nuxeo-countreport-view-layout.html">
-<link rel="import" href="document/countreport/nuxeo-countreport-create-layout.html">
+<link rel="import" href="document/tablereport/nuxeo-tablereport-view-layout.html">
 <dom-module id="nuxeo-home">
   <template>
     <style>
@@ -173,7 +173,6 @@
       #document-create {
         margin-bottom: 2.5em;
       }
-
     </style>
 
     <nuxeo-page>
@@ -183,107 +182,66 @@
 
 		  <!--Get the list of Reports-->
 		  <nuxeo-page-provider
-                               role="widget"
-                               id="reportProvider"
-                               auto
-                               query="select * from Document where ecm:primaryType in ('CountReport', 'ChartBarReport', 'ChartPieReport', 'ChartLineReport', 'TableReport') and ecm:currentLifeCycleState != 'deleted'"
-                               params="[[params]]"
-                               current-page="{{reports}}">
-          </nuxeo-page-provider>
+       role="widget"
+       id="reportProvider"
+       auto
+       query="select * from Document where ecm:primaryType in ('CountReport', 'ChartBarReport', 'ChartPieReport', 'ChartLineReport', 'TableReport') and ecm:currentLifeCycleState != 'deleted' ORDER BY report:order ASC"
+       params="[[params]]"
+       current-page="{{reports}}">
+      </nuxeo-page-provider>
 
 		  <template is="dom-repeat" items="[[reports]]" as="report">
-		  	<template is="dom-if" if="[[report.type == 'CountReport']]">
+        <div hidden$="[[!isReport(report.type, 'CountReport')]]" >
 		  		<nuxeo-countreport-view-layout document="[[report]]"></nuxeo-countreport-view-layout>
-		  	</template>
+        </div>
+        <div hidden$="[[!isReport(report.type, 'TableReport')]]" >
+		  		<nuxeo-tablereport-view-layout document="[[report]]"></nuxeo-tablereport-view-layout>
+        </div>
 		  </template>
 
-
-		  <!--End list of Reports-->
-
-
-
-
-          <nuxeo-repository-data
-                                 ecm-primary-type="Opportunity"
-                                 ecm-lifecycle-state="new"
-                                 metrics="sum(opportunity:amount)"
-                                 data="{{newAmount}}"
-                                 index="[[index]]">
-          </nuxeo-repository-data>
-          <paper-card class="graph-flex-layout" heading="New Deals" elevation="0" style="width: 33%; height: 210px">
-              <h1><strong><span style="font-size: -webkit-xxx-large;">[[_formatCurrency(newAmount)]] €</span></strong></h1>
-          </paper-card>
-
-
-          <nuxeo-repository-data
-                                 ecm-primary-type="Opportunity"
-                                 ecm-lifecycle-state="ongoing"
-                                 metrics="sum(opportunity:amount)"
-                                 data="{{ongoingAmount}}"
-                                 index="[[index]]">
-          </nuxeo-repository-data>
-          <paper-card class="graph-flex-layout" heading="Deals in Progress" elevation="0" style="width: 33%; height: 210px">
-              <h1><strong><span style="color: #3599DC; font-size: -webkit-xxx-large;">[[_formatCurrency(ongoingAmount)]] €</span></strong></h1>
-          </paper-card>
-
-
-          <nuxeo-repository-data
-                                 ecm-primary-type="Opportunity"
-                                 ecm-lifecycle-state="won"
-                                 metrics="sum(opportunity:amount)"
-                                 data="{{wonAmount}}"
-                                 index="[[index]]">
-          </nuxeo-repository-data>
-
-          <paper-card class="graph-flex-layout" heading="Won Deals" elevation="0" style="width: 33%; height: 210px">
-              <h1><strong><span style="color: #43C35E; font-size: -webkit-xxx-large;">[[_formatCurrency(wonAmount)]] €</span></strong></h1>
-          </paper-card>
-
-
-          <!-- Edit graph dynamically -->
-
-          <!-- Number of documents -->
-          <nuxeo-repository-data
-            ecm-primary-type="[[documentType]]"
-            start-date="[[startDate]]"
-            end-date="[[_extendEndDate(endDate)]]"
-            metrics="cardinality(ecm:uuid)"
-            data="{{totalCount}}"
-            index="[[index]]">
-          </nuxeo-repository-data>
-          <paper-card class="graph-flex-layout" heading="{{documentType}}" elevation="0">
-
-            <paper-icon-button class="settings" id="button" icon="icons:settings" on-tap="_toggleGraphDialog"></paper-icon-button>
-            <paper-tooltip for="button">Settings</paper-tooltip>
-
-            <iron-icon class="graph-iron-icon" icon="icons:description"></iron-icon>
-            <h1>[[totalCount]]</h1>
-
-            <paper-dialog id="dialog" modal on-iron-overlay-closed="_resetPopup" no-auto-focus>
-              <!--nuxeo-document id="doc" doc-id="[[document.uid]]"
-                          data="{{document}}" response="{{document}}"
-                          headers="[[headers]]">
-              </nuxeo-document-->
-              <h2>Settings</h2>
-              <form id="form" is="iron-form">
-                <div class="container layout vertical">
-                  <div class="row layout horizontal">
-                    <div id="document-edit">
-                      <paper-input value="{{documentType}}" label="Document Type" type="string" role="widget"></paper-input>
-                    </div>
-                  </div>
-                </div>
-                <div class="buttons horizontal end-justified layout">
-                  <div class="flex start-justified">
-                    <paper-button noink dialog-dismiss>Cancel</paper-button>
-                  </div>
-                  <paper-button noink class="primary" on-tap="_save">
-                    Save
+    	<paper-dialog id="reportCreationDialog" modal on-iron-overlay-closed="_resetPopup" no-auto-focus>
+        <nuxeo-document id="docRequest" doc-path="/" data="[[document]]" headers="{&quot;nx_es_sync&quot;: &quot;true&quot;}" enrichers="permissions, subtypes" response="{{createResponse}}"></nuxeo-document>
+        <nuxeo-document-creation-stats id="creationStats"></nuxeo-document-creation-stats>
+        <iron-pages selected="[[stage]]" attr-for-selected="name" class="vertical layout flex">
+          <div name="choose" class="vertical layout flex">
+            <div class="editor flex container">
+              <div name="typeSelection" class="typeSelection">
+                <template is="dom-repeat" items="[[reportTypes]]" as="type">
+                  <paper-button noink="" name$="[[type.type]]" class="docTypeButton vertical layout" on-tap="_selectType" data-args$="[[type]]">
+                    <iron-icon src="[[_getTypeIcon(type)]]"></iron-icon>
+                    <span>[[_getTypeLabel(type)]]</span>
                   </paper-button>
-                </div>
+                </template>
+              </div>
+            </div>
+            <div class="buttons horizontal end-justified layout">
+              <div class="flex start-justified">
+                <paper-button noink="" dialog-dismiss="" on-tap="_cancel">[[i18n('command.cancel')]]</paper-button>
+              </div>
+            </div>
+          </div>
+          <div name="edit" class="vertical layout flex">
+            <div class="horizontal layout heading center">
+              <iron-icon src="[[_getTypeIcon(selectedDocType)]]"></iron-icon>
+              <span>[[_newDocumentLabel(selectedDocType)]]</span>
+            </div>
+            <div id="editor" class="editor flex container">
+              <form is="iron-form" id="form" class="form vertical layout flex">
+                <iron-a11y-keys keys="enter" on-keys-pressed="_submitKeyHandler"></iron-a11y-keys>
+                <nuxeo-document-layout id="document-create" layout="create" document="[[document]]"></nuxeo-document-layout>
               </form>
-            </paper-dialog>
-          </paper-card>
+            </div>
+            <div class="buttons horizontal end-justified layout">
+              <div class="flex start-justified">
+                <paper-button noink="" dialog-dismiss="" on-tap="_cancel">[[i18n('command.cancel')]]</paper-button>
+              </div>
+              <paper-button noink="" on-tap="_back">[[i18n('command.back')]]</paper-button>
+              <paper-button noink="" class="primary" on-tap="_create" disabled$="[[!canCreate]]">[[i18n('command.create')]]</paper-button>
+            </div>
+          </div>
+        </iron-pages>
+      </paper-dialog>
+
 
           <!-- chart-pie -->
           <nuxeo-repository-data start-date="[[startDate]]" end-date="[[endDate]]"
@@ -304,31 +262,6 @@
                          options='{ "legend": { "display": true, "position": "bottom", "labels": { "boxWidth": 12 } }, "animation": false }'>
               </chart-pie>
             </div>
-
-            <paper-dialog id="chartDialog" modal on-iron-overlay-closed="_resetPopup" no-auto-focus>
-              <!--nuxeo-document id="doc" doc-id="[[document.uid]]"
-                          data="{{document}}" response="{{document}}"
-                          headers="[[headers]]">
-              </nuxeo-document-->
-              <h2>Settings</h2>
-              <form id="form" is="iron-form">
-                <div class="container layout vertical">
-                  <div class="row layout horizontal">
-                    <div id="document-edit">
-                      <paper-input value="{{documentType}}" label="Document Type" type="string" role="widget"></paper-input>
-                    </div>
-                  </div>
-                </div>
-                <div class="buttons horizontal end-justified layout">
-                  <div class="flex start-justified">
-                    <paper-button noink dialog-dismiss>Cancel</paper-button>
-                  </div>
-                  <paper-button noink class="primary" on-tap="_save">
-                    Save
-                  </paper-button>
-                </div>
-              </form>
-            </paper-dialog>
           </paper-card>
 
           <!-- chart-line -->
@@ -352,44 +285,6 @@
           </paper-card>
 
 
-
-          <!-- Top Downloads -->
-          <nuxeo-audit-data event-id="download"
-                            where='{"extended.downloadReason": "download"}'
-                            grouped-by="docUUID"
-                            group-limit="10"
-                            start-date="[[startDate]]" end-date="[[_extendEndDate(endDate)]]"
-                            data="{{downloads}}">
-          </nuxeo-audit-data>
-
-          <nuxeo-page-provider auto page-size="10"
-            query="[[_downloadsQuery(downloads)]]"
-            schemas="dublincore, common"
-            current-page="{{downloadedDocs}}">
-          </nuxeo-page-provider>
-
-          <paper-card heading="[[i18n('repositoryAnalytics.topDownloads.heading')]]" elevation="0">
-            <template is="dom-if" if="[[!_isEmpty(downloads)]]">
-              <nuxeo-data-table items="[[downloadedDocs]]">
-                <nuxeo-data-table-column name="[[i18n('repositoryAnalytics.topDownloads.file')]]">
-                  <template>[[item.title]]</template>
-                </nuxeo-data-table-column>
-                <nuxeo-data-table-column name="[[i18n('repositoryAnalytics.topDownloads.downloads')]]">
-                  <template>[[_numberOfDownloads(item)]]</template>
-                </nuxeo-data-table-column>
-              </nuxeo-data-table>
-            </template>
-            <template is="dom-if" if="[[_isEmpty(downloads)]]">
-              <div class="message">[[i18n('repositoryAnalytics.noResults')]]</div>
-            </template>
-          </paper-card>
-
-
-
-
-
-
-
           <!-- Number of calls per hour -->
           <nuxeo-search-data start-date="[[startDate]]" end-date="[[_extendEndDate(endDate)]]"
                             with-date-intervals="hour"
@@ -406,71 +301,15 @@
                       options='{ "legend": { "display": false }, "animation": false }'>
             </chart-bar>
           </paper-card>
-
-
-
-
-
-
-
         </section>
       </div>
+
     </nuxeo-page>
-
-
     <div id="trayReport">
       <paper-fab id="createReportBtn" noink="" icon="nuxeo:add" on-tap="_toggleReportCreationDialog"></paper-fab>
        <paper-tooltip for="createReportBtn" position="left">Create Report</paper-tooltip>
     </div>
-
-	<paper-dialog id="reportCreationDialog" modal on-iron-overlay-closed="_resetPopup" no-auto-focus>
-    <nuxeo-document id="docRequest" doc-path="/" data="[[document]]" headers="{&quot;nx_es_sync&quot;: &quot;true&quot;}" enrichers="permissions, subtypes" response="{{createResponse}}"></nuxeo-document>
-    <nuxeo-document-creation-stats id="creationStats"></nuxeo-document-creation-stats>
-    <iron-pages selected="[[stage]]" attr-for-selected="name" class="vertical layout flex">
-
-      <div name="choose" class="vertical layout flex">
-        <div class="editor flex container">
-          <div name="typeSelection" class="typeSelection">
-            <template is="dom-repeat" items="[[reportTypes]]" as="type">
-              <paper-button noink="" name$="[[type.type]]" class="docTypeButton vertical layout" on-tap="_selectType" data-args$="[[type]]">
-                <iron-icon src="[[_getTypeIcon(type)]]"></iron-icon>
-                <span>[[_getTypeLabel(type)]]</span>
-              </paper-button>
-            </template>
-          </div>
-        </div>
-        <div class="buttons horizontal end-justified layout">
-          <div class="flex start-justified">
-            <paper-button noink="" dialog-dismiss="" on-tap="_cancel">[[i18n('command.cancel')]]</paper-button>
-          </div>
-        </div>
-      </div>
-
-      <div name="edit" class="vertical layout flex">
-        <div class="horizontal layout heading center">
-          <iron-icon src="[[_getTypeIcon(selectedDocType)]]"></iron-icon>
-          <span>[[_newDocumentLabel(selectedDocType)]]</span>
-        </div>
-        <div id="editor" class="editor flex container">
-          <form is="iron-form" id="form" class="form vertical layout flex">
-            <iron-a11y-keys keys="enter" on-keys-pressed="_submitKeyHandler"></iron-a11y-keys>
-            <nuxeo-document-layout id="document-create" layout="create" document="[[document]]"></nuxeo-document-layout>
-          </form>
-        </div>
-        <div class="buttons horizontal end-justified layout">
-          <div class="flex start-justified">
-            <paper-button noink="" dialog-dismiss="" on-tap="_cancel">[[i18n('command.cancel')]]</paper-button>
-          </div>
-          <paper-button noink="" on-tap="_back">[[i18n('command.back')]]</paper-button>
-          <paper-button noink="" class="primary" on-tap="_create" disabled$="[[!canCreate]]">[[i18n('command.create')]]</paper-button>
-        </div>
-      </div>
-
-
-    </iron-pages>
-  </paper-dialog>
   </template>
-
   <script>
   Polymer({
     is: 'nuxeo-home',
@@ -768,10 +607,23 @@
         this.document.name = this._sanitizeName(this.document.properties['dc:title']);
         this.$.docRequest.post().then(function(response) {
           this.$.creationStats.storeType(this.selectedDocType);
-          this._clear();
+          this._refresh();
+
+          /*this._clear();
           this.navigateTo('browse', response.path);
-          this._notify(response);
+          this._notify(response);*/
         }.bind(this));
+      },
+
+      _refresh: function() {
+        this._clear();
+        page('/');
+        //this.fire('document-updated');
+      },
+
+      _clear: function() {
+        this.stage = 'view';
+        this.$.dialog.close();
       },
 
       _back: function() {
@@ -800,7 +652,10 @@
       _getTypeIcon: function(type) {
         return type? 'images/doctypes/' + type.toLowerCase() + '.svg' :'';
       },
-
+      isReport: function(type, reportType){
+        console.log("type: "+ type);
+        return type?  type == reportType : false;
+      }
   });
   </script>
 

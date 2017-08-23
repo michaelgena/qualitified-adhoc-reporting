@@ -1,6 +1,6 @@
-<link rel="import" href="nuxeo-countreport-metadata-layout.html">
-<link rel="import" href="nuxeo-countreport-edit-layout.html">
-<dom-module id="nuxeo-countreport-view-layout">
+<link rel="import" href="nuxeo-tablereport-metadata-layout.html">
+<link rel="import" href="nuxeo-tablereport-edit-layout.html">
+<dom-module id="nuxeo-tablereport-view-layout">
   <template>
     <style>
       *[role=widget] {
@@ -36,14 +36,36 @@
         top: 8px;
         right: 8px;
       }
+      .line {
+        width:100%;
+        height:0px;
+        border-bottom: 1px solid rgba(179, 172, 172, 0.25);
+      }
     </style>
     <nuxeo-repository-data
     	ecm-primary-type="[[document.properties.report:documentType]]"
-        ecm-lifecycle-state="[[document.properties.report:lifeCycleState]]"
-        metrics="[[document.properties.report:metrics]]"
-        data="{{countData}}"
-        index="[[index]]">
+      ecm-lifecycle-state="[[document.properties.report:lifeCycleState]]"
+      metrics="[[document.properties.report:metrics]]"
+      grouped-by="[[document.properties.report:groupedBy]]"
+      group-limit="[[document.properties.report:groupLimit]]"
+      data="{{tableData}}"
+      index="[[index]]">
     </nuxeo-repository-data>
+
+    <!-- Top Downloads
+    <nuxeo-audit-data event-id="download"
+                      where='{"extended.downloadReason": "download"}'
+                      grouped-by="docUUID"
+                      group-limit="10"
+                      start-date="[[startDate]]" end-date="[[_extendEndDate(endDate)]]"
+                      data="{{downloads}}">
+    </nuxeo-audit-data>
+    -->
+    <nuxeo-page-provider auto page-size="10"
+      query="[[_query(tableData)]]"
+      schemas="dublincore, common"
+      current-page="{{documents}}">
+    </nuxeo-page-provider>
 
     <!--nuxeo-search-data start-date="[[startDate]]" end-date="[[_extendEndDate(endDate)]]"
                             with-date-intervals="hour"
@@ -63,14 +85,23 @@
     <paper-card class="graph-flex-layout" heading="[[document.properties.dc:title]]" elevation="0" style="width: [[document.properties.report:cardWidth]]%; height: [[document.properties.report:cardHeight]]px">
     	<paper-icon-button class="settings" id="button" icon="icons:settings" on-tap="_toggleGraphDialog"></paper-icon-button>
         <paper-tooltip for="button">Settings</paper-tooltip>
-        <!--iron-icon class="graph-iron-icon" icon="icons:description"></iron-icon-->
-      	<h1>
-      		<strong>
-      			<span style="[[document.properties.count:style]]; font-size: -webkit-xxx-large;">
-      				[[document.properties.count:prefix]] [[_getValue(countData)]] [[document.properties.count:suffix]]
-      			</span>
-      		</strong>
-      	</h1>
+        <template is="dom-if" if="[[!_isEmpty(tableData)]]">
+          <template is="dom-repeat" items="[[tableData]]" as="item">
+            <p style="clear:both;">
+              <span style="[[document.properties.table:keyStyle]]; font-size: larger;float:left;">
+        				[[item.key]]
+        			</span>
+              <span style="[[document.properties.table:valueStyle]]; font-size: x-large;float:right;">
+        				<strong>[[item.value]]</strong>
+        			</span>
+            </p>
+            <div class="line"/>
+          </template>
+        </template>
+        <template is="dom-if" if="[[_isEmpty(tableData)]]">
+          <div class="message">[[i18n('repositoryAnalytics.noResults')]]</div>
+        </template>
+
       	<paper-dialog id="dialog" modal no-auto-focus>
           <nuxeo-document id="doc" doc-id="[[document.uid]]" response="{{document}}" headers="[[headers]]"></nuxeo-document>
           <nuxeo-operation id="deleteOp" op="Document.Delete" headers="{&quot;nx_es_sync&quot;: &quot;true&quot;}"></nuxeo-operation>
@@ -81,7 +112,7 @@
           <iron-pages selected="[[stage]]" attr-for-selected="name" class="vertical layout flex">
             <div name="view" class="vertical layout flex">
               <div class="editor flex container">
-                <nuxeo-countreport-metadata-layout document="[[document]]"></nuxeo-countreport-metadata-layout>
+                <nuxeo-tablereport-metadata-layout document="[[document]]"></nuxeo-countreport-metadata-layout>
               </div>
               <div class="buttons horizontal end-justified layout">
           		    <div class="flex start-justified">
@@ -96,7 +127,7 @@
             <div name="edit" class="vertical layout flex">
               <form id="form" is="iron-form">
                 <div class="editor flex container">
-              	   <nuxeo-countreport-edit-layout document="[[document]]"></nuxeo-countreport-edit-layout>
+              	   <nuxeo-tablereport-edit-layout document="[[document]]"></nuxeo-countreport-edit-layout>
                 </div>
                 <div class="buttons horizontal end-justified layout">
                   <div class="flex start-justified">
@@ -115,7 +146,7 @@
   (function() {
     'use strict';
     Polymer({
-      is: 'nuxeo-countreport-view-layout',
+      is: 'nuxeo-tablereport-view-layout',
       behaviors: [Nuxeo.FormatBehavior, Nuxeo.DocumentCreationBehavior],
       properties: {
         /**
@@ -212,7 +243,26 @@
              this._clear();
            }.bind(this));
        }
+    },
+    // builds page provider query to get info about downloaded docs
+    _query: function(entries) {
+      if (entries.length > 0) {
+        var values = entries.map(function(entry) {
+          return '\'' + entry.key + '\'';
+        }).join(',');
+        console.log('query SELECT * FROM Document WHERE ecm:uuid IN (' + values + ')');
+        return 'SELECT * FROM Document WHERE ecm:uuid IN (' + values + ')';
+      }
+    },
+    _isEmpty: function(items) {
+      return items && items.length === 0;
+    },
+    _number: function(doc, documents) {
+      return documents.find(function(entry) {
+        return entry.key === doc.uid;
+      }).value;
     }
+
     });
   })();
   </script>
