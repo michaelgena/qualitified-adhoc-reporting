@@ -2,6 +2,16 @@
 
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:nxs="http://www.nuxeo.org/ecm/project/schemas/mgena-SANDBOX/chartpie" xmlns:nxsv="http://www.nuxeo.org/ecm/schemas/core/validation/" xmlns:ref="http://www.nuxeo.org/ecm/schemas/core/external-references/" targetNamespace="http://www.nuxeo.org/ecm/project/schemas/mgena-SANDBOX/chartpie">
 
+  <xs:element name="valueType" nillable="false" nxsv:nillable="false">
+    <xs:simpleType>
+      <xs:restriction base="xs:string" ref:resolver="directoryResolver" ref:directory="ValueType"/>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="prefix" type="xs:string"/>
+  <xs:element name="suffix" type="xs:string"/>
+
+  <xs:element name="keyMetadata" type="xs:string"/>
+  <xs:element name="valueMetadata" type="xs:string"/>
   <xs:element name="keyStyle" type="xs:string"/>
   <xs:element name="valueStyle" type="xs:string"/>
 

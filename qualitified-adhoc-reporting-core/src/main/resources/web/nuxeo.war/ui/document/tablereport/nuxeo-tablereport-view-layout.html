@@ -63,7 +63,7 @@
     -->
     <nuxeo-page-provider auto page-size="10"
       query="[[_query(tableData)]]"
-      schemas="dublincore, common"
+      schemas="*"
       current-page="{{documents}}">
     </nuxeo-page-provider>
 
@@ -85,19 +85,37 @@
     <paper-card class="graph-flex-layout" heading="[[document.properties.dc:title]]" elevation="0" style="width: [[document.properties.report:cardWidth]]%; height: [[document.properties.report:cardHeight]]px">
     	<paper-icon-button class="settings" id="button" icon="icons:settings" on-tap="_toggleGraphDialog"></paper-icon-button>
         <paper-tooltip for="button">Settings</paper-tooltip>
+
         <template is="dom-if" if="[[!_isEmpty(tableData)]]">
-          <template is="dom-repeat" items="[[tableData]]" as="item">
-            <p style="clear:both;">
-              <span style="[[document.properties.table:keyStyle]]; font-size: larger;float:left;">
-        				[[item.key]]
-        			</span>
-              <span style="[[document.properties.table:valueStyle]]; font-size: x-large;float:right;">
-        				<strong>[[item.value]]</strong>
-        			</span>
-            </p>
-            <div class="line"/>
+          <template is="dom-if" if="[[!_hasKeyOrValue()]]">
+            <template is="dom-repeat" items="[[tableData]]" as="item">
+              <p style="clear:both;">
+                <span style="[[document.properties.table:keyStyle]]; font-size: larger;float:left;">
+          				[[_getLabel(item, 'key')]]
+          			</span>
+                <span style="[[document.properties.table:valueStyle]]; font-size: x-large;float:right;">
+          				<strong>[[_getLabel(item, 'value')]]</strong>
+          			</span>
+              </p>
+              <div class="line"/>
+            </template>
+          </template>
+
+          <template is="dom-if" if="[[_hasKeyOrValue()]]">
+            <template is="dom-repeat" items="[[documents]]" as="item">
+              <p style="clear:both;">
+                <span style="[[document.properties.table:keyStyle]]; font-size: larger;float:left;">
+                  [[_getLabel(item, 'key')]]
+                </span>
+                <span style="[[document.properties.table:valueStyle]]; font-size: x-large;float:right;">
+                  <strong>[[document.properties.table:prefix]] [[_getLabel(item, 'value')]] [[document.properties.table:suffix]]</strong>
+                </span>
+              </p>
+              <div class="line"/>
+            </template>
           </template>
         </template>
+
         <template is="dom-if" if="[[_isEmpty(tableData)]]">
           <div class="message">[[i18n('repositoryAnalytics.noResults')]]</div>
         </template>
@@ -161,9 +179,9 @@
           notify: true
         },
         stage: {
-            type: String,
-            value: 'view'
-        },
+          type: String,
+          value: 'view'
+        }
       },
       ready: function() {
 
@@ -250,8 +268,8 @@
         var values = entries.map(function(entry) {
           return '\'' + entry.key + '\'';
         }).join(',');
-        console.log('query SELECT * FROM Document WHERE ecm:uuid IN (' + values + ')');
-        return 'SELECT * FROM Document WHERE ecm:uuid IN (' + values + ')';
+        console.log('query SELECT * FROM '+this.document.properties['report:primaryType']+' WHERE ecm:uuid IN (' + values + ')');
+        return 'SELECT * FROM '+this.document.properties['report:primaryType']+' WHERE ecm:uuid IN (' + values + ') ORDER BY dc:created DESC';
       }
     },
     _isEmpty: function(items) {
@@ -261,8 +279,37 @@
       return documents.find(function(entry) {
         return entry.key === doc.uid;
       }).value;
-    }
+    },
 
+    _getLabel: function(item, val){
+      if(val == 'key'){
+        //console.log(item.properties['dc:title']);
+        if(this.document.properties['table:keyMetadata']){
+          //console.log('item.properties '+ item.properties[this.document.properties['table:keyMetadata']]);
+          return item.properties[this.document.properties['table:keyMetadata']];
+        }else{
+          return item.key;
+        }
+      }
+      if(val == 'value'){
+        let value = "";
+        if(this.document.properties['table:valueMetadata']){
+          value = item.properties[this.document.properties['table:valueMetadata']];
+        }else{
+          value = item.value;
+        }
+        return this._isCurrency(this.document) ? this._formatCurrency(value) : value;
+      }
+    },
+    _hasKeyOrValue: function(){
+      return this.document && (this.document.properties['table:keyMetadata'] || this.document.properties['table:valueMetadata']);
+    },
+    _isCurrency: function(doc){
+      return doc? doc.properties['table:valueType'] == 'Currency' : false;
+    },
+    _formatCurrency: function(val) {
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
     });
   })();
   </script>

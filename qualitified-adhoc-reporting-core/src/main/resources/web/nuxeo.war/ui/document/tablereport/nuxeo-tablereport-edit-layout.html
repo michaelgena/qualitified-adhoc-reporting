@@ -29,7 +29,21 @@
     <paper-input role="widget" value="{{document.properties.report:groupedBy}}" label="Grouped by" required="true"></paper-input>
     <paper-input role="widget" value="{{document.properties.report:groupLimit}}" label="Group Limit"></paper-input>
 
+    <paper-input role="widget" value="{{document.properties.table:keyMetadata}}" label="Key Metadata"></paper-input>
+    <paper-input role="widget" value="{{document.properties.table:valueMetadata}}" label="Value Metadata"></paper-input>
+
+    <nuxeo-directory-suggestion
+      role="widget"
+      value="{{document.properties.table:valueType}}"
+      label="Value Type"
+      required="true"
+      directory-name="ValueType"
+      min-chars="0">
+    </nuxeo-directory-suggestion>
+
     <h3>Display</h3>
+    <paper-input role="widget" value="{{document.properties.table:prefix}}" label="Prefix"></paper-input>
+  	<paper-input role="widget" value="{{document.properties.table:suffix}}" label="Suffix"></paper-input>
     <paper-input role="widget" value="{{document.properties.table:keyStyle}}" label="Key Style"></paper-input>
     <paper-input role="widget" value="{{document.properties.table:valueStyle}}" label="Value Style"></paper-input>
 

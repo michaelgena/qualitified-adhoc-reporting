@@ -12,6 +12,7 @@
   <xs:element name="lifeCycleState" type="xs:string"/>
 
   <xs:element name="metrics" type="xs:string"/>
+  <xs:element name="metricsOp" type="xs:string"/>
   <xs:element name="eventId" type="xs:string"/>
   <xs:element name="startDate" type="xs:date"/>
   <xs:element name="endDate" type="xs:date"/>
