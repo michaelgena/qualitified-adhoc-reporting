@@ -8,8 +8,9 @@
       }
 	  paper-card {
         min-width: 25em;
-        width: 49%;
-        height: 420px;
+        /*width: 49%;
+        height: 420px;*/
+        background-color: white;
       }
       @media (max-width: 1024px) {
         paper-card {
@@ -18,7 +19,7 @@
       }
       .graph-flex-layout {
         flex: 1 0 calc(33% - 2em);
-        margin: 0 8px 16px;
+        /*margin: 0 8px 16px;*/
         text-align: center;
       }
       .editor {
@@ -62,7 +63,7 @@
                             data="{{downloads}}">
           </nuxeo-audit-data-->
 
-    <paper-card class="graph-flex-layout" heading="[[document.properties.dc:title]]" elevation="0" style="width: [[document.properties.report:cardWidth]]%; height: [[document.properties.report:cardHeight]]px">
+    <paper-card class="graph-flex-layout" heading="[[document.properties.dc:title]]" elevation="0">
     	<paper-icon-button class="settings" id="button" icon="icons:settings" on-tap="_toggleGraphDialog"></paper-icon-button>
         <paper-tooltip for="button">Settings</paper-tooltip>
         <!--iron-icon class="graph-iron-icon" icon="icons:description"></iron-icon-->
@@ -124,7 +125,9 @@
            * @doctype Contact
            */
         document: {
-          type: Object
+          type: Object,
+          notify:true,
+          observer:'_documentReady'
         },
         params: {
           type: Object,
@@ -135,9 +138,36 @@
             type: String,
             value: 'view'
         },
+        coordinates:{
+          type: Object,
+          notify: true
+        },
+        y:{
+          type: Number,
+          value: 0,
+          notify: true
+        },
+        width:{
+          type: Number,
+          value: 4,
+          notify: true
+        },
+        height:{
+          type: Number,
+          value: 4,
+          notify: true
+        },
       },
       ready: function() {
 
+      },
+      _documentReady: function(){
+        //TODO get document Properties for the following values
+        this.coordinates = {};
+        this.coordinates.x = 0;
+        this.coordinates.y = 0;
+        this.coordinates.width = 4;
+        this.coordinates.height = 3;
       },
       _getValue: function(val){
       	if(this._isCurrency(this.document)){
