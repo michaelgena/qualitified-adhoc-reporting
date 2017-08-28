@@ -28,9 +28,10 @@
 
   <xs:element name="date-format" type="xs:string"/>
 
-
-  <xs:element name="cardWidth" type="xs:integer"/>
-  <xs:element name="cardHeight" type="xs:integer"/>
+  <xs:element name="x" type="xs:integer"/>
+  <xs:element name="y" type="xs:integer"/>
+  <xs:element name="width" type="xs:integer"/>
+  <xs:element name="height" type="xs:integer"/>
 
   <xs:element name="order" type="xs:integer"/>
 

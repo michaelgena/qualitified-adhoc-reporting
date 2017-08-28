@@ -141,33 +141,18 @@
         coordinates:{
           type: Object,
           notify: true
-        },
-        y:{
-          type: Number,
-          value: 0,
-          notify: true
-        },
-        width:{
-          type: Number,
-          value: 4,
-          notify: true
-        },
-        height:{
-          type: Number,
-          value: 4,
-          notify: true
-        },
+        }
       },
       ready: function() {
 
       },
       _documentReady: function(){
-        //TODO get document Properties for the following values
         this.coordinates = {};
-        this.coordinates.x = 0;
-        this.coordinates.y = 0;
-        this.coordinates.width = 4;
-        this.coordinates.height = 3;
+        this.coordinates.uid = this.document.uid;
+        this.coordinates.x = this.document.properties['report:x'];
+        this.coordinates.y = this.document.properties['report:y'];
+        this.coordinates.width = this.document.properties['report:width'];
+        this.coordinates.height = this.document.properties['report:height'];
       },
       _getValue: function(val){
       	if(this._isCurrency(this.document)){

@@ -8,8 +8,8 @@
       }
 	  paper-card {
         min-width: 25em;
-        width: 49%;
-        height: 420px;
+        /*width: 49%;
+        height: 420px;*/
       }
       @media (max-width: 1024px) {
         paper-card {
@@ -171,7 +171,9 @@
            * @doctype Contact
            */
         document: {
-          type: Object
+          type: Object,
+          notify:true,
+          observer:'_documentReady'
         },
         params: {
           type: Object,
@@ -181,10 +183,22 @@
         stage: {
           type: String,
           value: 'view'
+        },
+        coordinates:{
+          type: Object,
+          notify: true
         }
       },
       ready: function() {
 
+      },
+      _documentReady: function(){
+        this.coordinates = {};
+        this.coordinates.uid = this.document.uid;
+        this.coordinates.x = this.document.properties['report:x'];
+        this.coordinates.y = this.document.properties['report:y'];
+        this.coordinates.width = this.document.properties['report:width'];
+        this.coordinates.height = this.document.properties['report:height'];
       },
       _getValue: function(val){
       	if(this._isCurrency(this.document)){
@@ -268,7 +282,7 @@
         var values = entries.map(function(entry) {
           return '\'' + entry.key + '\'';
         }).join(',');
-        console.log('query SELECT * FROM '+this.document.properties['report:primaryType']+' WHERE ecm:uuid IN (' + values + ')');
+        //console.log('query SELECT * FROM '+this.document.properties['report:primaryType']+' WHERE ecm:uuid IN (' + values + ')');
         return 'SELECT * FROM '+this.document.properties['report:primaryType']+' WHERE ecm:uuid IN (' + values + ') ORDER BY dc:created DESC';
       }
     },

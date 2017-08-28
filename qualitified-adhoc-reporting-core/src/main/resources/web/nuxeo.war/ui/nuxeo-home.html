@@ -203,7 +203,7 @@
         z-index: 0 !important;
         overflow-x: hidden;
         overflow-y: auto;
-        background-color: white;
+        /*background-color: white;*/
       }
 
     </style>
@@ -222,71 +222,65 @@
        params="[[params]]"
        current-page="{{reports}}">
       </nuxeo-page-provider>
-
       <div class="container-fluid">
-
-          <!--div>
-              <a class="btn btn-default" id="add-new-widget" href="#">Add Widget</a>
-          </div-->
-
           <div class="grid-stack">
-            <div id="1" data-gs-id="1" data-gs-x="0" data-gs-y="0" data-gs-width="1" data-gs-height="1" class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide">
-              <div class="grid-stack-item-content ui-draggable-handle">
+            <div id="0" data-gs-id="0" data-gs-x="0" data-gs-y="0" data-gs-width="4" data-gs-height="4" class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide">
+              <div id="O-doc" class="grid-stack-item-content ui-draggable-handle">
                 <template is="dom-repeat" items="[[reports]]" as="report">
                   <template is="dom-if" if="[[_equals(index,0)]]">
                   <div hidden$="[[!isReport(report.type, 'CountReport')]]">
-                    <nuxeo-countreport-view-layout coordinates={{coordinates1}} document="[[report]]"></nuxeo-countreport-view-layout>
+                    <nuxeo-countreport-view-layout coordinates={{coordinates0}} document="[[report]]"></nuxeo-countreport-view-layout>
                   </div>
                   <div hidden$="[[!isReport(report.type, 'TableReport')]]">
-                    <nuxeo-tablereport-view-layout coordinates={{coordinates1}} document="[[report]]"></nuxeo-tablereport-view-layout>
+                    <nuxeo-tablereport-view-layout coordinates={{coordinates0}} document="[[report]]"></nuxeo-tablereport-view-layout>
                   </div>
                   </template>
           		  </template>
               </div>
               <div></div>
             </div>
-            <div data-gs-id="2" data-gs-x="4" data-gs-y="0" data-gs-width="4" data-gs-height="4" class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide">
-              <div class="grid-stack-item-content ui-draggable-handle">
+            <div id="1" data-gs-id="1" data-gs-x="4" data-gs-y="0" data-gs-width="4" data-gs-height="4" class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide">
+              <div id="1-doc" class="grid-stack-item-content ui-draggable-handle">
                 <template is="dom-repeat" items="[[reports]]" as="report">
                   <template is="dom-if" if="[[_equals(index,1)]]">
                   <div hidden$="[[!isReport(report.type, 'CountReport')]]">
-          		  		  <nuxeo-countreport-view-layout document="[[report]]"></nuxeo-countreport-view-layout>
+          		  		  <nuxeo-countreport-view-layout coordinates={{coordinates1}} document="[[report]]"></nuxeo-countreport-view-layout>
                   </div>
                   <div hidden$="[[!isReport(report.type, 'TableReport')]]">
-          		  		  <nuxeo-tablereport-view-layout document="[[report]]"></nuxeo-tablereport-view-layout>
+          		  		  <nuxeo-tablereport-view-layout coordinates={{coordinates1}} document="[[report]]"></nuxeo-tablereport-view-layout>
                   </div>
                   </template>
           		  </template>
               </div>
               <div></div>
             </div>
-            <div data-gs-id="3" data-gs-x="0" data-gs-y="4" data-gs-width="4" data-gs-height="4" class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide">
-              <div class="grid-stack-item-content ui-draggable-handle">
+            <div id="2" data-gs-id="2" data-gs-x="0" data-gs-y="4" data-gs-width="4" data-gs-height="4" class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide">
+              <div id="2-doc" class="grid-stack-item-content ui-draggable-handle">
                 <template is="dom-repeat" items="[[reports]]" as="report">
                   <template is="dom-if" if="[[_equals(index,2)]]">
                   <div hidden$="[[!isReport(report.type, 'CountReport')]]">
-          		  		  <nuxeo-countreport-view-layout document="[[report]]"></nuxeo-countreport-view-layout>
+          		  		  <nuxeo-countreport-view-layout coordinates={{coordinates2}} document="[[report]]"></nuxeo-countreport-view-layout>
                   </div>
                   <div hidden$="[[!isReport(report.type, 'TableReport')]]">
-          		  		  <nuxeo-tablereport-view-layout document="[[report]]"></nuxeo-tablereport-view-layout>
+          		  		  <nuxeo-tablereport-view-layout coordinates={{coordinates2}} document="[[report]]"></nuxeo-tablereport-view-layout>
                   </div>
                   </template>
           		  </template>
               </div>
               <div></div>
             </div>
-            <div data-gs-id="4" data-gs-x="4" data-gs-y="4" data-gs-width="4" data-gs-height="4" class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide">
-              <div class="grid-stack-item-content ui-draggable-handle">
+            <div id="3" data-gs-id="3" data-gs-x="4" data-gs-y="4" data-gs-width="4" data-gs-height="4" class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide">
+              <div id="3-doc" class="grid-stack-item-content ui-draggable-handle">
                 <template is="dom-repeat" items="[[reports]]" as="report">
                   <template is="dom-if" if="[[_equals(index,3)]]">
                   <div hidden$="[[!isReport(report.type, 'CountReport')]]">
                     <div id="[[report.uid]]">
-          		  		  <nuxeo-countreport-view-layout document="[[report]]"></nuxeo-countreport-view-layout>
+          		  		  <nuxeo-countreport-view-layout coordinates={{coordinates3}} document="[[report]]"></nuxeo-countreport-view-layout>
                     </div>
                   </div>
                   <div hidden$="[[!isReport(report.type, 'TableReport')]]">
                     <div id="[[report.uid]]">
-          		  		  <nuxeo-tablereport-view-layout document="[[report]]"></nuxeo-tablereport-view-layout>
+          		  		  <nuxeo-tablereport-view-layout coordinates={{coordinates3}} document="[[report]]"></nuxeo-tablereport-view-layout>
                     </div>
                   </div>
                   </template>
@@ -407,6 +401,7 @@
       <paper-fab id="createReportBtn" noink="" icon="nuxeo:add" on-tap="_toggleReportCreationDialog"></paper-fab>
        <paper-tooltip for="createReportBtn" position="left">Create Report</paper-tooltip>
     </div>
+    <nuxeo-document id="doc" doc-id="[[uid]]" response="{{document}}" headers="[[headers]]"></nuxeo-document>
   </template>
   <script>
   HTMLImports.whenReady(_ => {
@@ -443,9 +438,25 @@
         type: String,
         value: ''
       },
+      coordinates0: {
+        type: Object,
+        notify:true,
+        observer:'_coordinates0Changed'
+      },
       coordinates1: {
         type: Object,
+        notify:true,
         observer:'_coordinates1Changed'
+      },
+      coordinates2: {
+        type: Object,
+        notify:true,
+        observer:'_coordinates2Changed'
+      },
+      coordinates3: {
+        type: Object,
+        notify:true,
+        observer:'_coordinates3Changed'
       }
     },
 
@@ -490,6 +501,7 @@
       this.reportTypes = ['CountReport', 'ChartBarReport', 'ChartPieReport', 'ChartLineReport', 'TableReport'];
       this._initializeGridStack();
     },
+
     _initializeGridStack: function(){
       var options = {
           float: true
@@ -497,31 +509,48 @@
       //set the default width
       jQuery('.grid-stack').css("width", jQuery(window).width() - 110);
       jQuery('.grid-stack').gridstack(options);
-      new function () {
-          this.items = [
-              {x: 0, y: 0, width: 2, height: 2},
-              {x: 3, y: 1, width: 1, height: 2},
-              {x: 4, y: 1, width: 1, height: 1},
-              {x: 2, y: 3, width: 3, height: 1},
-              {x: 2, y: 5, width: 1, height: 1}
-          ];
-          this.grid = jQuery('.grid-stack').data('gridstack');
-          this.addNewWidget = function () {
-              var node = this.items.pop() || {
-                          x: 12 * Math.random(),
-                          y: 5 * Math.random(),
-                          width: 1 + 3 * Math.random(),
-                          height: 1 + 3 * Math.random()
-                      };
-              this.grid.addWidget(jQuery('<div><div class="grid-stack-item-content" /><div/>'),
-                  node.x, node.y, node.width, node.height);
-              return false;
-          }.bind(this);
-          //jQuery('#add-new-widget').click(this.addNewWidget);
-      };
+
+      this._addDragStopAndResizeStopEventListener(0);
+      this._addDragStopAndResizeStopEventListener(1);
+      this._addDragStopAndResizeStopEventListener(2);
+      this._addDragStopAndResizeStopEventListener(3);
+    },
+
+    _addDragStopAndResizeStopEventListener: function(id){
+      jQuery("#"+id).on("dragstop resizestop", function(event) {
+        let gridStack = jQuery('.grid-stack').data();
+        let i = jQuery.map(gridStack.gridstack.grid.nodes, function(el, i){
+          if(el.id == id){
+            return i;
+          }
+        },this);
+
+        let doc = {
+          'uid': '',
+          'properties': {
+          }
+        };
+        doc.uid = gridStack.gridstack.grid.nodes[i].uid;
+        doc.properties['report:x'] = gridStack.gridstack.grid.nodes[i].x;
+        doc.properties['report:y'] = gridStack.gridstack.grid.nodes[i].y;
+        doc.properties['report:width'] = gridStack.gridstack.grid.nodes[i].width;
+        doc.properties['report:height'] = gridStack.gridstack.grid.nodes[i].height;
+        var nh=document.querySelector("nuxeo-home");
+        nh._save(doc);
+      });
+    },
+
+    _coordinates0Changed: function(coordinates){
+      this._coordinatesChanged(coordinates,0);
     },
     _coordinates1Changed: function(coordinates){
       this._coordinatesChanged(coordinates,1);
+    },
+    _coordinates2Changed: function(coordinates){
+      this._coordinatesChanged(coordinates,2);
+    },
+    _coordinates3Changed: function(coordinates){
+      this._coordinatesChanged(coordinates,3);
     },
 
     _coordinatesChanged: function(coordinates, id){
@@ -529,6 +558,9 @@
       jQuery('#'+id).attr('data-gs-y',coordinates.y);
       jQuery('#'+id).attr('data-gs-width',coordinates.width);
       jQuery('#'+id).attr('data-gs-height',coordinates.height);
+      //set background color
+      jQuery('#'+id+' > .grid-stack-item-content').css('background-color','white');
+      //jQuery('#'+id+' > .grid-stack-item-content').addClass('paper-card-1');
 
       //update the coordinates in the data of the gridStack
       let gridStack = jQuery('.grid-stack').data();
@@ -538,6 +570,7 @@
         }
       },this);
 
+      gridStack.gridstack.grid.nodes[i].uid = coordinates.uid;
       gridStack.gridstack.grid.nodes[i].x = coordinates.x;
       gridStack.gridstack.grid.nodes[i].y = coordinates.y;
       gridStack.gridstack.grid.nodes[i].width = coordinates.width;
@@ -549,38 +582,19 @@
         return index == val;
     },
 
-    _fetchFavorite: function() {
-      if (this.favorite) {
-        return Promise.resolve(this.favorite);
-      } else {
-        return this.$.fetchFavOp.execute()
-          .then(function(resp) {
-          this.favorite = resp;
-          return resp;
-        }.bind(this));
-      }
+    _save: function(doc){
+      this.uid = doc.uid;
+      this.$.doc.data = {
+        'entity-type': 'document',
+        uid: doc.uid,
+        properties: doc.properties
+      };
+      this.$.doc.put().then(console.log('saved coordinates.'));
     },
 
     _toggleGraphDialog: function(){
       this.$.dialog.toggle();
     },
-
-    /*_validate: function() {
-        var valid = true;
-        if (valid) {
-          this.$.form._doFakeSubmitForValidation();
-        }
-        return valid && this.$.form.validate() && this.$.form.checkValidity();
-    },
-
-    _save: function(){
-      if (!this._validate()) {
-          return;
-      }
-      this.$.dialog.close();
-    },*/
-
-
 
     // builds page provider query to get info about downloaded docs
     _downloadsQuery: function(entries) {
@@ -743,6 +757,12 @@
         if (!this._validate()) {
           return;
         }
+        //set default value for x,y, width and height
+        this.document.properties['report:x'] = 0;
+        this.document.properties['report:y'] = 0;
+        this.document.properties['report:width'] = 4;
+        this.document.properties['report:height'] = 4;
+
         this.document.name = this._sanitizeName(this.document.properties['dc:title']);
         this.$.docRequest.post().then(function(response) {
           this.$.creationStats.storeType(this.selectedDocType);
