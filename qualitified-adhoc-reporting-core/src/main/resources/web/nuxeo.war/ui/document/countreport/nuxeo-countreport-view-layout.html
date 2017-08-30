@@ -34,8 +34,8 @@
       }
       #button.settings{
         position: absolute;
-        top: 8px;
-        right: 8px;
+        top: 0px;
+        right: 0px;
       }
     </style>
     <nuxeo-repository-data
@@ -63,7 +63,9 @@
                             data="{{downloads}}">
           </nuxeo-audit-data-->
 
-    <paper-card class="graph-flex-layout" heading="[[document.properties.dc:title]]" elevation="0">
+    <div class="graph-flex-layout" elevation="0">
+      <br/>
+      <h3>[[document.properties.dc:title]]</h3>
     	<paper-icon-button class="settings" id="button" icon="icons:settings" on-tap="_toggleGraphDialog"></paper-icon-button>
         <paper-tooltip for="button">Settings</paper-tooltip>
         <!--iron-icon class="graph-iron-icon" icon="icons:description"></iron-icon-->
@@ -112,7 +114,7 @@
 
           </iron-pages>
         </paper-dialog>
-      </paper-card>
+      </div>
     </template>
   <script>
   (function() {
@@ -126,7 +128,6 @@
            */
         document: {
           type: Object,
-          notify:true,
           observer:'_documentReady'
         },
         params: {
@@ -141,18 +142,27 @@
         coordinates:{
           type: Object,
           notify: true
+        },
+        isLoaded:{
+          type:Boolean,
+          notify: true
         }
       },
       ready: function() {
-
+        //this.isLoaded = true;
+        this.isLoaded = true;
       },
       _documentReady: function(){
-        this.coordinates = {};
-        this.coordinates.uid = this.document.uid;
-        this.coordinates.x = this.document.properties['report:x'];
-        this.coordinates.y = this.document.properties['report:y'];
-        this.coordinates.width = this.document.properties['report:width'];
-        this.coordinates.height = this.document.properties['report:height'];
+        if(this.document){
+          this.coordinates = {};
+          this.coordinates.uid = this.document.uid;
+          this.coordinates.x = this.document.properties['report:x'];
+          this.coordinates.y = this.document.properties['report:y'];
+          this.coordinates.width = this.document.properties['report:width'];
+          this.coordinates.height = this.document.properties['report:height'];
+
+          //console.log("is loaded " + this.isLoaded);
+        }
       },
       _getValue: function(val){
       	if(this._isCurrency(this.document)){

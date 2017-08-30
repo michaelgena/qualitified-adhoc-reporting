@@ -200,10 +200,10 @@
         right: 10px;
         bottom: 0;
         width: auto;
-        z-index: 0 !important;
+        /*z-index: 0 !important;*/
         overflow-x: hidden;
         overflow-y: auto;
-        /*background-color: white;*/
+        background-color: white !important;
       }
 
     </style>
@@ -222,6 +222,7 @@
        params="[[params]]"
        current-page="{{reports}}">
       </nuxeo-page-provider>
+
       <div class="container-fluid">
           <div class="grid-stack">
             <div id="0" data-gs-id="0" data-gs-x="0" data-gs-y="0" data-gs-width="4" data-gs-height="4" class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide">
@@ -288,8 +289,98 @@
               </div>
               <div></div>
             </div>
+            <div id="4" data-gs-id="4" data-gs-x="4" data-gs-y="0" data-gs-width="4" data-gs-height="4" class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide">
+              <div id="4-doc" class="grid-stack-item-content ui-draggable-handle">
+                <template is="dom-repeat" items="[[reports]]" as="report">
+                  <template is="dom-if" if="[[_equals(index,4)]]">
+                  <div hidden$="[[!isReport(report.type, 'CountReport')]]">
+                    <div id="[[report.uid]]">
+          		  		  <nuxeo-countreport-view-layout coordinates={{coordinates4}} document="[[report]]"></nuxeo-countreport-view-layout>
+                    </div>
+                  </div>
+                  <div hidden$="[[!isReport(report.type, 'TableReport')]]">
+                    <div id="[[report.uid]]">
+          		  		  <nuxeo-tablereport-view-layout coordinates={{coordinates4}} document="[[report]]"></nuxeo-tablereport-view-layout>
+                    </div>
+                  </div>
+                  </template>
+          		  </template>
+              </div>
+              <div></div>
+            </div>
+            <div id="5" data-gs-id="5" data-gs-x="8" data-gs-y="4" data-gs-width="4" data-gs-height="4" class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide">
+              <div id="5-doc" class="grid-stack-item-content ui-draggable-handle">
+                <template is="dom-repeat" items="[[reports]]" as="report">
+                  <template is="dom-if" if="[[_equals(index,5)]]">
+                  <div hidden$="[[!isReport(report.type, 'CountReport')]]">
+                    <div id="[[report.uid]]">
+          		  		  <nuxeo-countreport-view-layout coordinates={{coordinates5}} document="[[report]]"></nuxeo-countreport-view-layout>
+                    </div>
+                  </div>
+                  <div hidden$="[[!isReport(report.type, 'TableReport')]]">
+                    <div id="[[report.uid]]">
+          		  		  <nuxeo-tablereport-view-layout coordinates={{coordinates5}} document="[[report]]"></nuxeo-tablereport-view-layout>
+                    </div>
+                  </div>
+                  </template>
+          		  </template>
+              </div>
+              <div></div>
+            </div>
+            <div id="6" data-gs-id="6" data-gs-x="8" data-gs-y="8" data-gs-width="4" data-gs-height="4" class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide">
+              <div id="6-doc" class="grid-stack-item-content ui-draggable-handle">
+                <template is="dom-repeat" items="[[reports]]" as="report">
+                  <template is="dom-if" if="[[_equals(index,6)]]">
+                  <div hidden$="[[!isReport(report.type, 'CountReport')]]">
+                    <div id="[[report.uid]]">
+          		  		  <nuxeo-countreport-view-layout coordinates={{coordinates6}} document="[[report]]"></nuxeo-countreport-view-layout>
+                    </div>
+                  </div>
+                  <div hidden$="[[!isReport(report.type, 'TableReport')]]">
+                    <div id="[[report.uid]]">
+          		  		  <nuxeo-tablereport-view-layout coordinates={{coordinates6}} document="[[report]]"></nuxeo-tablereport-view-layout>
+                    </div>
+                  </div>
+                  </template>
+          		  </template>
+              </div>
+              <div></div>
+            </div>
+            <div id="7" data-gs-id="7" data-gs-x="4" data-gs-y="8" data-gs-width="4" data-gs-height="4" class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide">
+              <div id="7-doc" class="grid-stack-item-content ui-draggable-handle">
+                <template is="dom-repeat" items="[[reports]]" as="report">
+                  <template is="dom-if" if="[[_equals(index,7)]]">
+                  <div hidden$="[[!isReport(report.type, 'CountReport')]]">
+                    <div id="[[report.uid]]">
+          		  		  <nuxeo-countreport-view-layout coordinates={{coordinates7}} document="[[report]]"></nuxeo-countreport-view-layout>
+                    </div>
+                  </div>
+                  <div hidden$="[[!isReport(report.type, 'TableReport')]]">
+                    <div id="[[report.uid]]">
+          		  		  <nuxeo-tablereport-view-layout coordinates={{coordinates7}} document="[[report]]"></nuxeo-tablereport-view-layout>
+                    </div>
+                  </div>
+                  </template>
+          		  </template>
+              </div>
+              <div></div>
+            </div>
         </div>
       </div>
+
+      <!--div id="report" style="display:block;">
+        <template is="dom-repeat" items="[[reports]]" as="report">
+          <div id="report-[[index]]">
+            <div hidden$="[[!isReport(report.type, 'CountReport')]]">
+              <nuxeo-countreport-view-layout id="countreport-[[index]]" is-loaded="{{isLoaded}}" document="[[report]]"></nuxeo-countreport-view-layout>
+            </div>
+            <div hidden$="[[!isReport(report.type, 'TableReport')]]">
+              <nuxeo-tablereport-view-layout id="tablereport-[[index]]" is-loaded="{{isLoaded}}" document="[[report]]"></nuxeo-tablereport-view-layout>
+            </div>
+          </div>
+        </template>
+      </div-->
+
 
     	<paper-dialog id="reportCreationDialog" modal on-iron-overlay-closed="_resetPopup" no-auto-focus>
         <nuxeo-document id="docRequest" doc-path="/" data="[[document]]" headers="{&quot;nx_es_sync&quot;: &quot;true&quot;}" enrichers="permissions, subtypes" response="{{createResponse}}"></nuxeo-document>
@@ -438,6 +529,19 @@
         type: String,
         value: ''
       },
+      reports: {
+        type: Array,
+        observer:'_reportsLoaded'
+      },
+      isLoaded: {
+        type: Boolean,
+        notify:true,
+        observer:'_reportsLoaded'
+      },
+      alreadyLoaded: {
+        type: Boolean,
+        value: false
+      },
       coordinates0: {
         type: Object,
         notify:true,
@@ -457,6 +561,26 @@
         type: Object,
         notify:true,
         observer:'_coordinates3Changed'
+      },
+      coordinates4: {
+        type: Object,
+        notify:true,
+        observer:'_coordinates4Changed'
+      },
+      coordinates5: {
+        type: Object,
+        notify:true,
+        observer:'_coordinates5Changed'
+      },
+      coordinates6: {
+        type: Object,
+        notify:true,
+        observer:'_coordinates6Changed'
+      },
+      coordinates7: {
+        type: Object,
+        notify:true,
+        observer:'_coordinates7Changed'
       }
     },
 
@@ -500,7 +624,44 @@
       jQuery("#tray").css("display","none");
       this.reportTypes = ['CountReport', 'ChartBarReport', 'ChartPieReport', 'ChartLineReport', 'TableReport'];
       this._initializeGridStack();
+
     },
+
+    /*_reportsLoaded: function() {
+      console.log("this.isLoaded "+ this.isLoaded);
+      console.log("!this.alreadyLoaded "+ !this.alreadyLoaded);
+      console.log("this.reports.length "+ this.reports.length);
+      if (this.isLoaded && !this.alreadyLoaded && this.reports && this.reports.length > 0) {
+        this.alreadyLoaded = true;
+        //console.log(this.$['report-0']);
+        let grid = jQuery('.grid-stack').data('gridstack');
+        this.reports.map(function(report, i) {
+          console.log(this.$.report);
+          console.log(this.$["#report-"+i]);
+          console.log(this.$["#countreport-"+i]);
+          let gridContent = '<div id="'+i+'" data-gs-id="'+i+'" data-gs-x="'+report.properties['report:x']+'" data-gs-y="'+report.properties['report:y']+'" data-gs-width="'+report.properties['report:width']+'" data-gs-height="'+report.properties['report:height']+'" class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide">'+
+            '<div id="'+i+'-doc" class="grid-stack-item-content ui-draggable-handle">';
+            gridContent += '<div id="container-'+i+'"></div>';
+            gridContent += '</div>'+
+            '<div></div>'+
+          '</div>';
+
+          grid.addWidget(jQuery(gridContent),
+          report.properties['report:x'],
+          report.properties['report:y'],
+          report.properties['report:width'],
+          report.properties['report:height']);
+
+          //append the Polymer element to the grid
+          jQuery("#container-"+i).append(jQuery("#report-"+i));
+          jQuery('#'+i+' > .grid-stack-item-content').css('background-color','white');
+          //add event listener
+          var nh=document.querySelector("nuxeo-home");
+          nh._addDragStopAndResizeStopEventListener(i);
+        });
+
+      }
+    },*/
 
     _initializeGridStack: function(){
       var options = {
@@ -514,6 +675,10 @@
       this._addDragStopAndResizeStopEventListener(1);
       this._addDragStopAndResizeStopEventListener(2);
       this._addDragStopAndResizeStopEventListener(3);
+      this._addDragStopAndResizeStopEventListener(4);
+      this._addDragStopAndResizeStopEventListener(5);
+      this._addDragStopAndResizeStopEventListener(6);
+      this._addDragStopAndResizeStopEventListener(7);
     },
 
     _addDragStopAndResizeStopEventListener: function(id){
@@ -552,7 +717,18 @@
     _coordinates3Changed: function(coordinates){
       this._coordinatesChanged(coordinates,3);
     },
-
+    _coordinates4Changed: function(coordinates){
+      this._coordinatesChanged(coordinates,4);
+    },
+    _coordinates5Changed: function(coordinates){
+      this._coordinatesChanged(coordinates,5);
+    },
+    _coordinates6Changed: function(coordinates){
+      this._coordinatesChanged(coordinates,6);
+    },
+    _coordinates7Changed: function(coordinates){
+      this._coordinatesChanged(coordinates,7);
+    },
     _coordinatesChanged: function(coordinates, id){
       jQuery('#'+id).attr('data-gs-x',coordinates.x);
       jQuery('#'+id).attr('data-gs-y',coordinates.y);
@@ -758,10 +934,12 @@
           return;
         }
         //set default value for x,y, width and height
-        this.document.properties['report:x'] = 0;
-        this.document.properties['report:y'] = 0;
-        this.document.properties['report:width'] = 4;
-        this.document.properties['report:height'] = 4;
+        if(!this.document.uuid){
+          this.document.properties['report:x'] = 0;
+          this.document.properties['report:y'] = 0;
+          this.document.properties['report:width'] = 4;
+          this.document.properties['report:height'] = 4;
+        }
 
         this.document.name = this._sanitizeName(this.document.properties['dc:title']);
         this.$.docRequest.post().then(function(response) {
@@ -814,8 +992,7 @@
       isReport: function(type, reportType){
         return type?  type == reportType : false;
       }
-  });
-
+    });
   });
   </script>
 
