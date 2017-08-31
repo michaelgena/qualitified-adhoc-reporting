@@ -26,7 +26,8 @@
     </xs:simpleType>
   </xs:element>
 
-  <xs:element name="date-format" type="xs:string"/>
+  <xs:element name="dateFormat" type="xs:string"/>
+  <xs:element name="dateField" type="xs:string"/>
 
   <xs:element name="x" type="xs:integer"/>
   <xs:element name="y" type="xs:integer"/>

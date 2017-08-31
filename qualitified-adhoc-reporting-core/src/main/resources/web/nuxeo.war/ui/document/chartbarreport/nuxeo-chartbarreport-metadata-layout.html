@@ -1,0 +1,86 @@
+<dom-module id="nuxeo-chartbarreport-metadata-layout">
+  <template>
+    <style>
+      *[role=widget] {
+        padding: 5px;
+      }
+    </style>
+    <div role="widget">
+      <h1>[[document.properties.dc:title]]</h1>
+    </div>
+    <h3>Data</h3>
+    <div role="widget">
+      <label>Data Type</label>
+      <div>[[formatDirectory(document.properties.report:dataType)]]</div>
+    </div>
+    <div role="widget">
+      <label>Document Type</label>
+      <div>[[document.properties.report:primaryType]]</div>
+    </div>
+    <div role="widget">
+      <label>LifeCycle State</label>
+      <div>[[document.properties.report:lifeCycleState]]</div>
+    </div>
+    <div role="widget">
+      <label>Metrics</label>
+      <div>[[document.properties.report:metrics]]</div>
+    </div>
+
+    <h3>Display</h3>
+
+    <div role="widget">
+      <label>Value Type</label>
+      <div>[[formatDirectory(document.properties.count:valueType)]]</div>
+    </div>
+  	<div role="widget">
+      <label>Suffix</label>
+      <div>[[document.properties.count:Suffix]]</div>
+    </div>
+    <div role="widget">
+      <label>Prefix</label>
+      <div>[[document.properties.count:Prefix]]</div>
+    </div>
+     <div role="widget">
+      <label>Prefix</label>
+      <div>[[document.properties.count:icon]]</div>
+    </div>
+    <div role="widget">
+      <label>Style</label>
+      <div>[[document.properties.count:style]]</div>
+    </div>
+  </template>
+
+  <script>
+    (function() {
+      'use strict';
+      Polymer({
+        is: 'nuxeo-chartbarreport-metadata-layout',
+        properties: {
+
+          /**
+           * @doctype Count
+           */
+          document: {
+            type: Object
+          },
+
+        },
+        /**
+         * Returns the label for the given directory entry.
+         */
+        formatDirectory: function(value) {
+          if (value && value['entity-type'] && value['entity-type'] === 'directoryEntry') {
+            if (value.properties && value.properties.label) {
+              return value.properties.label;
+            } else {
+              var label = 'label_' + ((window.nuxeo.I18n.language) ? window.nuxeo.I18n.language.split('-')[0] : 'en');
+              return value.properties[label] || value.properties['label_en']
+            }
+          } else {
+            return value;
+          }
+        }
+      });
+    })();
+  </script>
+</dom-module>

@@ -1,6 +1,9 @@
 <!-- Imports -->
 <link rel="import" href="document/countreport/nuxeo-countreport-view-layout.html">
 <link rel="import" href="document/tablereport/nuxeo-tablereport-view-layout.html">
+<link rel="import" href="document/chartlinereport/nuxeo-chartlinereport-view-layout.html">
+<link rel="import" href="document/chartbarreport/nuxeo-chartbarreport-view-layout.html">
+<link rel="import" href="document/chartpiereport/nuxeo-chartpiereport-view-layout.html">
 
 <link rel="stylesheet" href="dist/gridstack.css"/>
 <link rel="stylesheet" href="dist/bootstrap.min.css">
@@ -229,12 +232,21 @@
               <div id="O-doc" class="grid-stack-item-content ui-draggable-handle">
                 <template is="dom-repeat" items="[[reports]]" as="report">
                   <template is="dom-if" if="[[_equals(index,0)]]">
-                  <div hidden$="[[!isReport(report.type, 'CountReport')]]">
-                    <nuxeo-countreport-view-layout coordinates={{coordinates0}} document="[[report]]"></nuxeo-countreport-view-layout>
-                  </div>
-                  <div hidden$="[[!isReport(report.type, 'TableReport')]]">
-                    <nuxeo-tablereport-view-layout coordinates={{coordinates0}} document="[[report]]"></nuxeo-tablereport-view-layout>
-                  </div>
+                    <div hidden$="[[!isReport(report.type, 'CountReport')]]">
+                      <nuxeo-countreport-view-layout coordinates={{coordinates0}} document="[[report]]"></nuxeo-countreport-view-layout>
+                    </div>
+                    <div hidden$="[[!isReport(report.type, 'TableReport')]]">
+                      <nuxeo-tablereport-view-layout coordinates={{coordinates0}} document="[[report]]"></nuxeo-tablereport-view-layout>
+                    </div>
+                    <div hidden$="[[!isReport(report.type, 'ChartLineReport')]]">
+                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates0}} document="[[report]]"></nuxeo-chartlinereport-view-layout>
+                    </div>
+                    <div hidden$="[[!isReport(report.type, 'ChartBarReport')]]">
+                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates0}} document="[[report]]"></nuxeo-chartbarreport-view-layout>
+                    </div>
+                    <div hidden$="[[!isReport(report.type, 'ChartPieReport')]]">
+                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates0}} document="[[report]]"></nuxeo-chartpiereport-view-layout>
+                    </div>
                   </template>
           		  </template>
               </div>
@@ -244,12 +256,21 @@
               <div id="1-doc" class="grid-stack-item-content ui-draggable-handle">
                 <template is="dom-repeat" items="[[reports]]" as="report">
                   <template is="dom-if" if="[[_equals(index,1)]]">
-                  <div hidden$="[[!isReport(report.type, 'CountReport')]]">
-          		  		  <nuxeo-countreport-view-layout coordinates={{coordinates1}} document="[[report]]"></nuxeo-countreport-view-layout>
-                  </div>
-                  <div hidden$="[[!isReport(report.type, 'TableReport')]]">
-          		  		  <nuxeo-tablereport-view-layout coordinates={{coordinates1}} document="[[report]]"></nuxeo-tablereport-view-layout>
-                  </div>
+                    <div hidden$="[[!isReport(report.type, 'CountReport')]]">
+            		  		  <nuxeo-countreport-view-layout coordinates={{coordinates1}} document="[[report]]"></nuxeo-countreport-view-layout>
+                    </div>
+                    <div hidden$="[[!isReport(report.type, 'TableReport')]]">
+            		  		  <nuxeo-tablereport-view-layout coordinates={{coordinates1}} document="[[report]]"></nuxeo-tablereport-view-layout>
+                    </div>
+                    <div hidden$="[[!isReport(report.type, 'ChartLineReport')]]">
+                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates1}} document="[[report]]"></nuxeo-chartlinereport-view-layout>
+                    </div>
+                    <div hidden$="[[!isReport(report.type, 'ChartBarReport')]]">
+                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates1}} document="[[report]]"></nuxeo-chartbarreport-view-layout>
+                    </div>
+                    <div hidden$="[[!isReport(report.type, 'ChartPieReport')]]">
+                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates1}} document="[[report]]"></nuxeo-chartpiereport-view-layout>
+                    </div>
                   </template>
           		  </template>
               </div>
@@ -259,12 +280,21 @@
               <div id="2-doc" class="grid-stack-item-content ui-draggable-handle">
                 <template is="dom-repeat" items="[[reports]]" as="report">
                   <template is="dom-if" if="[[_equals(index,2)]]">
-                  <div hidden$="[[!isReport(report.type, 'CountReport')]]">
-          		  		  <nuxeo-countreport-view-layout coordinates={{coordinates2}} document="[[report]]"></nuxeo-countreport-view-layout>
-                  </div>
-                  <div hidden$="[[!isReport(report.type, 'TableReport')]]">
-          		  		  <nuxeo-tablereport-view-layout coordinates={{coordinates2}} document="[[report]]"></nuxeo-tablereport-view-layout>
-                  </div>
+                    <div hidden$="[[!isReport(report.type, 'CountReport')]]">
+            		  		  <nuxeo-countreport-view-layout coordinates={{coordinates2}} document="[[report]]"></nuxeo-countreport-view-layout>
+                    </div>
+                    <div hidden$="[[!isReport(report.type, 'TableReport')]]">
+            		  		  <nuxeo-tablereport-view-layout coordinates={{coordinates2}} document="[[report]]"></nuxeo-tablereport-view-layout>
+                    </div>
+                    <div hidden$="[[!isReport(report.type, 'ChartLineReport')]]">
+                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates2}} document="[[report]]"></nuxeo-chartlinereport-view-layout>
+                    </div>
+                    <div hidden$="[[!isReport(report.type, 'ChartBarReport')]]">
+                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates2}} document="[[report]]"></nuxeo-chartbarreport-view-layout>
+                    </div>
+                    <div hidden$="[[!isReport(report.type, 'ChartPieReport')]]">
+                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates2}} document="[[report]]"></nuxeo-chartpiereport-view-layout>
+                    </div>
                   </template>
           		  </template>
               </div>
@@ -274,16 +304,25 @@
               <div id="3-doc" class="grid-stack-item-content ui-draggable-handle">
                 <template is="dom-repeat" items="[[reports]]" as="report">
                   <template is="dom-if" if="[[_equals(index,3)]]">
-                  <div hidden$="[[!isReport(report.type, 'CountReport')]]">
-                    <div id="[[report.uid]]">
-          		  		  <nuxeo-countreport-view-layout coordinates={{coordinates3}} document="[[report]]"></nuxeo-countreport-view-layout>
+                    <div hidden$="[[!isReport(report.type, 'CountReport')]]">
+                      <div id="[[report.uid]]">
+            		  		  <nuxeo-countreport-view-layout coordinates={{coordinates3}} document="[[report]]"></nuxeo-countreport-view-layout>
+                      </div>
                     </div>
-                  </div>
-                  <div hidden$="[[!isReport(report.type, 'TableReport')]]">
-                    <div id="[[report.uid]]">
-          		  		  <nuxeo-tablereport-view-layout coordinates={{coordinates3}} document="[[report]]"></nuxeo-tablereport-view-layout>
+                    <div hidden$="[[!isReport(report.type, 'TableReport')]]">
+                      <div id="[[report.uid]]">
+            		  		  <nuxeo-tablereport-view-layout coordinates={{coordinates3}} document="[[report]]"></nuxeo-tablereport-view-layout>
+                      </div>
                     </div>
-                  </div>
+                    <div hidden$="[[!isReport(report.type, 'ChartLineReport')]]">
+                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates3}} document="[[report]]"></nuxeo-chartlinereport-view-layout>
+                    </div>
+                    <div hidden$="[[!isReport(report.type, 'ChartBarReport')]]">
+                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates3}} document="[[report]]"></nuxeo-chartbarreport-view-layout>
+                    </div>
+                    <div hidden$="[[!isReport(report.type, 'ChartPieReport')]]">
+                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates3}} document="[[report]]"></nuxeo-chartpiereport-view-layout>
+                    </div>
                   </template>
           		  </template>
               </div>
@@ -293,16 +332,25 @@
               <div id="4-doc" class="grid-stack-item-content ui-draggable-handle">
                 <template is="dom-repeat" items="[[reports]]" as="report">
                   <template is="dom-if" if="[[_equals(index,4)]]">
-                  <div hidden$="[[!isReport(report.type, 'CountReport')]]">
-                    <div id="[[report.uid]]">
-          		  		  <nuxeo-countreport-view-layout coordinates={{coordinates4}} document="[[report]]"></nuxeo-countreport-view-layout>
+                    <div hidden$="[[!isReport(report.type, 'CountReport')]]">
+                      <div id="[[report.uid]]">
+            		  		  <nuxeo-countreport-view-layout coordinates={{coordinates4}} document="[[report]]"></nuxeo-countreport-view-layout>
+                      </div>
                     </div>
-                  </div>
-                  <div hidden$="[[!isReport(report.type, 'TableReport')]]">
-                    <div id="[[report.uid]]">
-          		  		  <nuxeo-tablereport-view-layout coordinates={{coordinates4}} document="[[report]]"></nuxeo-tablereport-view-layout>
+                    <div hidden$="[[!isReport(report.type, 'TableReport')]]">
+                      <div id="[[report.uid]]">
+            		  		  <nuxeo-tablereport-view-layout coordinates={{coordinates4}} document="[[report]]"></nuxeo-tablereport-view-layout>
+                      </div>
                     </div>
-                  </div>
+                    <div hidden$="[[!isReport(report.type, 'ChartLineReport')]]">
+                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates4}} document="[[report]]"></nuxeo-chartlinereport-view-layout>
+                    </div>
+                    <div hidden$="[[!isReport(report.type, 'ChartBarReport')]]">
+                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates4}} document="[[report]]"></nuxeo-chartbarreport-view-layout>
+                    </div>
+                    <div hidden$="[[!isReport(report.type, 'ChartPieReport')]]">
+                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates4}} document="[[report]]"></nuxeo-chartpiereport-view-layout>
+                    </div>
                   </template>
           		  </template>
               </div>
@@ -312,16 +360,25 @@
               <div id="5-doc" class="grid-stack-item-content ui-draggable-handle">
                 <template is="dom-repeat" items="[[reports]]" as="report">
                   <template is="dom-if" if="[[_equals(index,5)]]">
-                  <div hidden$="[[!isReport(report.type, 'CountReport')]]">
-                    <div id="[[report.uid]]">
-          		  		  <nuxeo-countreport-view-layout coordinates={{coordinates5}} document="[[report]]"></nuxeo-countreport-view-layout>
+                    <div hidden$="[[!isReport(report.type, 'CountReport')]]">
+                      <div id="[[report.uid]]">
+            		  		  <nuxeo-countreport-view-layout coordinates={{coordinates5}} document="[[report]]"></nuxeo-countreport-view-layout>
+                      </div>
                     </div>
-                  </div>
-                  <div hidden$="[[!isReport(report.type, 'TableReport')]]">
-                    <div id="[[report.uid]]">
-          		  		  <nuxeo-tablereport-view-layout coordinates={{coordinates5}} document="[[report]]"></nuxeo-tablereport-view-layout>
+                    <div hidden$="[[!isReport(report.type, 'TableReport')]]">
+                      <div id="[[report.uid]]">
+            		  		  <nuxeo-tablereport-view-layout coordinates={{coordinates5}} document="[[report]]"></nuxeo-tablereport-view-layout>
+                      </div>
                     </div>
-                  </div>
+                    <div hidden$="[[!isReport(report.type, 'ChartLineReport')]]">
+                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates5}} document="[[report]]"></nuxeo-chartlinereport-view-layout>
+                    </div>
+                    <div hidden$="[[!isReport(report.type, 'ChartBarReport')]]">
+                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates5}} document="[[report]]"></nuxeo-chartbarreport-view-layout>
+                    </div>
+                    <div hidden$="[[!isReport(report.type, 'ChartPieReport')]]">
+                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates5}} document="[[report]]"></nuxeo-chartpiereport-view-layout>
+                    </div>
                   </template>
           		  </template>
               </div>
@@ -331,16 +388,25 @@
               <div id="6-doc" class="grid-stack-item-content ui-draggable-handle">
                 <template is="dom-repeat" items="[[reports]]" as="report">
                   <template is="dom-if" if="[[_equals(index,6)]]">
-                  <div hidden$="[[!isReport(report.type, 'CountReport')]]">
-                    <div id="[[report.uid]]">
-          		  		  <nuxeo-countreport-view-layout coordinates={{coordinates6}} document="[[report]]"></nuxeo-countreport-view-layout>
+                    <div hidden$="[[!isReport(report.type, 'CountReport')]]">
+                      <div id="[[report.uid]]">
+            		  		  <nuxeo-countreport-view-layout coordinates={{coordinates6}} document="[[report]]"></nuxeo-countreport-view-layout>
+                      </div>
                     </div>
-                  </div>
-                  <div hidden$="[[!isReport(report.type, 'TableReport')]]">
-                    <div id="[[report.uid]]">
-          		  		  <nuxeo-tablereport-view-layout coordinates={{coordinates6}} document="[[report]]"></nuxeo-tablereport-view-layout>
+                    <div hidden$="[[!isReport(report.type, 'TableReport')]]">
+                      <div id="[[report.uid]]">
+            		  		  <nuxeo-tablereport-view-layout coordinates={{coordinates6}} document="[[report]]"></nuxeo-tablereport-view-layout>
+                      </div>
                     </div>
-                  </div>
+                    <div hidden$="[[!isReport(report.type, 'ChartLineReport')]]">
+                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates6}} document="[[report]]"></nuxeo-chartlinereport-view-layout>
+                    </div>
+                    <div hidden$="[[!isReport(report.type, 'ChartBarReport')]]">
+                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates6}} document="[[report]]"></nuxeo-chartbarreport-view-layout>
+                    </div>
+                    <div hidden$="[[!isReport(report.type, 'ChartPieReport')]]">
+                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates6}} document="[[report]]"></nuxeo-chartpiereport-view-layout>
+                    </div>
                   </template>
           		  </template>
               </div>
@@ -350,16 +416,25 @@
               <div id="7-doc" class="grid-stack-item-content ui-draggable-handle">
                 <template is="dom-repeat" items="[[reports]]" as="report">
                   <template is="dom-if" if="[[_equals(index,7)]]">
-                  <div hidden$="[[!isReport(report.type, 'CountReport')]]">
-                    <div id="[[report.uid]]">
-          		  		  <nuxeo-countreport-view-layout coordinates={{coordinates7}} document="[[report]]"></nuxeo-countreport-view-layout>
+                    <div hidden$="[[!isReport(report.type, 'CountReport')]]">
+                      <div id="[[report.uid]]">
+            		  		  <nuxeo-countreport-view-layout coordinates={{coordinates7}} document="[[report]]"></nuxeo-countreport-view-layout>
+                      </div>
                     </div>
-                  </div>
-                  <div hidden$="[[!isReport(report.type, 'TableReport')]]">
-                    <div id="[[report.uid]]">
-          		  		  <nuxeo-tablereport-view-layout coordinates={{coordinates7}} document="[[report]]"></nuxeo-tablereport-view-layout>
+                    <div hidden$="[[!isReport(report.type, 'TableReport')]]">
+                      <div id="[[report.uid]]">
+            		  		  <nuxeo-tablereport-view-layout coordinates={{coordinates7}} document="[[report]]"></nuxeo-tablereport-view-layout>
+                      </div>
                     </div>
-                  </div>
+                    <div hidden$="[[!isReport(report.type, 'ChartLineReport')]]">
+                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates7}} document="[[report]]"></nuxeo-chartlinereport-view-layout>
+                    </div>
+                    <div hidden$="[[!isReport(report.type, 'ChartBarReport')]]">
+                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates7}} document="[[report]]"></nuxeo-chartbarreport-view-layout>
+                    </div>
+                    <div hidden$="[[!isReport(report.type, 'ChartPieReport')]]">
+                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates7}} document="[[report]]"></nuxeo-chartpiereport-view-layout>
+                    </div>
                   </template>
           		  </template>
               </div>
