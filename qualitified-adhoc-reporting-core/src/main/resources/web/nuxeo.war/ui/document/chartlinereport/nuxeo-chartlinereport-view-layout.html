@@ -50,14 +50,21 @@
       }
     </style>
 
-    <nuxeo-repository-data
+    <nuxeo-repository-data start-date="[[document.properties.report:startDate]]"
+                           end-date="[[document.properties.report:endDate]]"
                            ecm-primary-type="[[document.properties.report:documentType]]"
                            ecm-lifecycle-state="[[document.properties.report:lifeCycleState]]"
                            with-date-intervals="[[document.properties.report:withDateIntervals]]"
+                           metrics="[[document.properties.report:metrics]]"
+                           metrics-op="[[document.properties.report:metricsOp]]"
+                           grouped-by="[[document.properties.report:groupedBy]]"
+                           group-limit="[[document.properties.report:groupLimit]]"
                            date-field="[[document.properties.report:dateField]]"
+                           date-format="[[document.properties.report:dateFormat]]"
                            data="{{data}}"
                            index="[[index]]">
     </nuxeo-repository-data>
+
 
     <!--`metrics-op` to use as well, ex: `avg(field)` or `min`, `max -->
 
@@ -75,16 +82,20 @@
                             start-date="[[startDate]]" end-date="[[_extendEndDate(endDate)]]"
                             data="{{downloads}}">
           </nuxeo-audit-data-->
-
+    <nuxeo-page-provider auto page-size="10"
+      query="[[_query(data)]]"
+      schemas="*"
+      current-page="{{documents}}">
+    </nuxeo-page-provider>
     <div class="graph-flex-layout" elevation="0">
       <br/>
       <h3>[[document.properties.dc:title]]</h3>
     	<paper-icon-button class="settings" id="button" icon="icons:settings" on-tap="_toggleGraphDialog"></paper-icon-button>
         <paper-tooltip for="button">Settings</paper-tooltip>
         <div class="card-content">
-          <chart-line labels="[[_labels(data)]]"
-                      values="[[_values(data)]]"
-                      options='[[document.properties.chartline:options]]'>
+          <chart-line labels="[[_getLabels(documents)]]"
+                      values="[[_getValues(documents)]]"
+                      options='{ "legend": { "display": false }, "animation": false }'>
           </chart-line>
         </div>
 
@@ -252,7 +263,60 @@
              this._clear();
            }.bind(this));
        }
-    }
+    },
+    _options: function(){
+      if(this.document && this.document.properties['report:options']){
+        console.log('{ "legend": { "display": '+this.document.properties['report:options']+' }, "animation": false }');
+        return '{ "legend": { "display": false }, "animation": false }';
+      }
+        return '{ "legend": { "display": false }, "animation": false }';
+    },
+    _query: function(entries) {
+      if (this.document && entries.length > 0) {
+        var values = entries.map(function(entry) {
+          return '\'' + entry.key + '\'';
+        }).join(',');
+        console.log('query SELECT * FROM '+this.document.properties['report:primaryType']+' WHERE ecm:uuid IN (' + values + ')');
+        return 'SELECT * FROM '+this.document.properties['report:primaryType']+' WHERE ecm:uuid IN (' + values + ') ORDER BY '+this.document.properties['report:dateField']+' ASC';
+      }
+    },
+    _getLabels: function(entries){
+      //Labels should be based on a date metadata
+      let labels = [];
+      console.log("keyMetadata " + this.document.properties['report:keyMetadata']);
+      if(entries && entries.length>0 && this.document.properties['report:keyMetadata']){
+        //let labelsPart = [];
+        let keyMetadata = this.document.properties['report:keyMetadata'];
+        let datFormat = this.document.properties['report:dateFormat'];
+        for(let i = 0; i < entries.length; i++){
+          labels.push(this.formatDate(entries[i].properties[keyMetadata], datFormat));
+        }
+      }else{
+        labels = this._labels(this.data);
+      }
+      console.log("labels "+ labels);
+      return labels;
+    },
+    _getValues: function(entries){
+      let values = [];
+      if(entries && entries.length>0 && this.document && this.document.properties['report:valueMetadata']){
+        console.log("valueMetadata " + this.document.properties['report:valueMetadata']);
+        let valuesPart = [];
+        let valueMetadata = this.document.properties['report:valueMetadata'];
+        let value = 0;
+        for(let i = 0; i < entries.length; i++){
+          if(i>0 && this.document.properties['report:metrics']){
+            value += entries[i-1].properties[valueMetadata];
+          }
+          valuesPart.push(value + entries[i].properties[valueMetadata]);
+        }
+        values.push(valuesPart);
+      }else{
+        values = this._values(this.data);
+      }
+      console.log("values "+ values);
+      return values;
+    },
     });
   })();
   </script>

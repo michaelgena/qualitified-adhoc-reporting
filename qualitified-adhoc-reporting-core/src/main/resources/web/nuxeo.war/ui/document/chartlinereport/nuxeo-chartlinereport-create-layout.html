@@ -19,19 +19,19 @@
     </nuxeo-directory-suggestion>
 
     <paper-input role="widget" value="{{document.properties.report:primaryType}}" label="Document Type"></paper-input>
+    <paper-input role="widget" value="{{document.properties.report:mixinType}}" label="Facet"></paper-input>
 
     <paper-input role="widget" value="{{document.properties.report:lifeCycleState}}" label="LifeCycle State"></paper-input>
 
     <!--Add tooltip-->
     <paper-input role="widget" value="{{document.properties.report:metrics}}" label="Metrics"></paper-input>
+    <!--paper-input role="widget" value="{{document.properties.report:metricsOp}}" label="Metrics Operation"></paper-input-->
 
-    <nuxeo-directory-suggestion
-      role="widget"
-      value="{{document.properties.count:valueType}}"
-      label="Value Type"
-      directory-name="ValueType"
-      min-chars="0">
-    </nuxeo-directory-suggestion>
+    <paper-input role="widget" value="{{document.properties.report:groupedBy}}" label="Grouped by"></paper-input>
+    <paper-input role="widget" value="{{document.properties.report:groupLimit}}" label="Group Limit"></paper-input>
+
+    <paper-input role="widget" value="{{document.properties.report:keyMetadata}}" label="Key Metadata"></paper-input>
+    <paper-input role="widget" value="{{document.properties.report:valueMetadata}}" label="Value Metadata"></paper-input>
 
     <nuxeo-directory-suggestion
       role="widget"
@@ -44,7 +44,7 @@
     <paper-input role="widget" value="{{document.properties.report:dateFormat}}" label="Date Format"></paper-input>
     <paper-input role="widget" value="{{document.properties.report:dateField}}" label="Date Field"></paper-input>
     <h3>Display</h3>
-    <paper-input role="widget" value="{{document.properties.chartline:options}}" label="Options"></paper-input>
+    <paper-input role="widget" value="{{document.properties.report:options}}" label="Options"></paper-input>
   </template>
 
   <script>

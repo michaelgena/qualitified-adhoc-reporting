@@ -8,6 +8,7 @@
   </xs:element>
 
   <xs:element name="primaryType" type="xs:string"/>
+  <xs:element name="mixinType" type="xs:string"/>
 
   <xs:element name="lifeCycleState" type="xs:string"/>
 
@@ -19,6 +20,8 @@
   <xs:element name="where" type="xs:string"/>
   <xs:element name="groupedBy" type="xs:string"/>
   <xs:element name="groupLimit" type="xs:integer"/>
+  <xs:element name="keyMetadata" type="xs:string"/>
+  <xs:element name="valueMetadata" type="xs:string"/>
 
   <xs:element name="withDateIntervals">
     <xs:simpleType>
@@ -28,6 +31,7 @@
 
   <xs:element name="dateFormat" type="xs:string"/>
   <xs:element name="dateField" type="xs:string"/>
+  <xs:element name="options" type="xs:string"/>
 
   <xs:element name="x" type="xs:integer"/>
   <xs:element name="y" type="xs:integer"/>

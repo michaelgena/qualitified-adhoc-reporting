@@ -48,9 +48,25 @@
       metrics="[[document.properties.report:metrics]]"
       grouped-by="[[document.properties.report:groupedBy]]"
       group-limit="[[document.properties.report:groupLimit]]"
+      date-field="[[document.properties.report:dateField]]"
       data="{{tableData}}"
       index="[[index]]">
     </nuxeo-repository-data>
+
+    <!--nuxeo-repository-data start-date="[[document.properties.report:startDate]]"
+                           end-date="[[document.properties.report:endDate]]"
+                           ecm-primary-type="[[document.properties.report:documentType]]"
+                           ecm-lifecycle-state="[[document.properties.report:lifeCycleState]]"
+                           with-date-intervals="[[document.properties.report:withDateIntervals]]"
+                           metrics="[[document.properties.report:metrics]]"
+                           metrics-op="[[document.properties.report:metricsOp]]"
+                           grouped-by="[[document.properties.report:groupedBy]]"
+                           group-limit="[[document.properties.report:groupLimit]]"
+                           date-field="[[document.properties.report:dateField]]"
+                           date-format="[[document.properties.report:dateFormat]]"
+                           data="{{data}}"
+                           index="[[index]]">
+    </nuxeo-repository-data-->
 
     <!-- Top Downloads
     <nuxeo-audit-data event-id="download"
@@ -107,7 +123,7 @@
             <template is="dom-repeat" items="[[documents]]" as="item">
               <p style="clear:both;">
                 <span style="[[document.properties.table:keyStyle]]; font-size: larger;float:left;">
-                  [[_getLabel(item, 'key')]]
+                  <a href$="#!/browse[[item.path]]">[[_getLabel(item, 'key')]]</a>
                 </span>
                 <span style="[[document.properties.table:valueStyle]]; font-size: x-large;float:right;">
                   <strong>[[document.properties.table:prefix]] [[_getLabel(item, 'value')]] [[document.properties.table:suffix]]</strong>
@@ -290,8 +306,8 @@
         var values = entries.map(function(entry) {
           return '\'' + entry.key + '\'';
         }).join(',');
-        //console.log('query SELECT * FROM '+this.document.properties['report:primaryType']+' WHERE ecm:uuid IN (' + values + ')');
-        return 'SELECT * FROM '+this.document.properties['report:primaryType']+' WHERE ecm:uuid IN (' + values + ') ORDER BY dc:created DESC';
+        console.log('query SELECT * FROM '+this.document.properties['report:primaryType']+' WHERE ecm:uuid IN (' + values + ') ORDER BY '+this.document.properties['report:dateField']+' DESC');
+        return 'SELECT * FROM '+this.document.properties['report:primaryType']+' WHERE ecm:uuid IN (' + values + ') ORDER BY '+this.document.properties['report:dateField']+' DESC';
       }
     },
     _isEmpty: function(items) {
@@ -306,17 +322,17 @@
     _getLabel: function(item, val){
       if(val == 'key'){
         //console.log(item.properties['dc:title']);
-        if(this.document.properties['table:keyMetadata']){
+        if(this.document.properties['report:keyMetadata']){
           //console.log('item.properties '+ item.properties[this.document.properties['table:keyMetadata']]);
-          return item.properties[this.document.properties['table:keyMetadata']];
+          return item.properties[this.document.properties['report:keyMetadata']];
         }else{
           return item.key;
         }
       }
       if(val == 'value'){
         let value = "";
-        if(this.document.properties['table:valueMetadata']){
-          value = item.properties[this.document.properties['table:valueMetadata']];
+        if(this.document.properties['report:valueMetadata']){
+          value = item.properties[this.document.properties['report:valueMetadata']];
         }else{
           value = item.value;
         }
@@ -324,7 +340,7 @@
       }
     },
     _hasKeyOrValue: function(){
-      return this.document && (this.document.properties['table:keyMetadata'] || this.document.properties['table:valueMetadata']);
+      return this.document && (this.document.properties['report:keyMetadata'] || this.document.properties['report:valueMetadata']);
     },
     _isCurrency: function(doc){
       return doc? doc.properties['table:valueType'] == 'Currency' : false;

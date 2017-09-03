@@ -24,21 +24,26 @@
 
     <!--Add tooltip-->
     <paper-input role="widget" value="{{document.properties.report:metrics}}" label="Metrics" required="true"></paper-input>
+    <!--paper-input role="widget" value="{{document.properties.report:metricsOp}}" label="Metrics Operation"></paper-input-->
+
+    <paper-input role="widget" value="{{document.properties.report:groupedBy}}" label="Grouped by"></paper-input>
+    <paper-input role="widget" value="{{document.properties.report:groupLimit}}" label="Group Limit"></paper-input>
+
+    <paper-input role="widget" value="{{document.properties.report:keyMetadata}}" label="Key Metadata"></paper-input>
+    <paper-input role="widget" value="{{document.properties.report:valueMetadata}}" label="Value Metadata"></paper-input>
 
     <nuxeo-directory-suggestion
       role="widget"
-      value="{{document.properties.count:valueType}}"
-      label="Value Type"
-      required="true"
-      directory-name="ValueType"
+      value="{{document.properties.report:withDateIntervals}}"
+      label="With Date Interval"
+      directory-name="DateIntervalsType"
       min-chars="0">
     </nuxeo-directory-suggestion>
 
+    <paper-input role="widget" value="{{document.properties.report:dateFormat}}" label="Date Format"></paper-input>
+    <paper-input role="widget" value="{{document.properties.report:dateField}}" label="Date Field"></paper-input>
     <h3>Display</h3>
-    <paper-input role="widget" value="{{document.properties.count:prefix}}" label="Prefix"></paper-input>
-  	<paper-input role="widget" value="{{document.properties.count:suffix}}" label="Suffix"></paper-input>
-  	<paper-input role="widget" value="{{document.properties.count:icon}}" label="Icon"></paper-input>
-	  <paper-input role="widget" value="{{document.properties.count:style}}" label="Style"></paper-input>
+    <paper-input role="widget" value="{{document.properties.report:options}}" label="Options"></paper-input>
   </template>
 
   <script>

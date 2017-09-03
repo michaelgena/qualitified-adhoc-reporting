@@ -29,9 +29,11 @@
     <paper-input role="widget" value="{{document.properties.report:groupedBy}}" label="Grouped by" required="true"></paper-input>
     <paper-input role="widget" value="{{document.properties.report:groupLimit}}" label="Group Limit"></paper-input>
 
-    <paper-input role="widget" value="{{document.properties.table:keyMetadata}}" label="Key Metadata"></paper-input>
-    <paper-input role="widget" value="{{document.properties.table:valueMetadata}}" label="Value Metadata"></paper-input>
+    <paper-input role="widget" value="{{document.properties.report:keyMetadata}}" label="Key Metadata"></paper-input>
+    <paper-input role="widget" value="{{document.properties.report:valueMetadata}}" label="Value Metadata"></paper-input>
 
+    <paper-input role="widget" value="{{document.properties.report:dateField}}" label="Date Field"></paper-input>
+    
     <nuxeo-directory-suggestion
       role="widget"
       value="{{document.properties.table:valueType}}"
