@@ -1,4 +1,4 @@
-<dom-module id="nuxeo-countreport-create-layout">
+<dom-module id="nuxeo-chartpiereport-create-layout">
   <template>
     <style>
       *[role=widget] {
@@ -25,27 +25,18 @@
     <!--Add tooltip-->
     <paper-input role="widget" value="{{document.properties.report:metrics}}" label="Metrics" required="true"></paper-input>
 
-    <nuxeo-directory-suggestion
-      role="widget"
-      value="{{document.properties.count:valueType}}"
-      label="Value Type"
-      required="true"
-      directory-name="ValueType"
-      min-chars="0">
-    </nuxeo-directory-suggestion>
+    <paper-input role="widget" value="{{document.properties.report:groupedBy}}" label="Grouped by"></paper-input>
+    <paper-input role="widget" value="{{document.properties.report:groupLimit}}" label="Group Limit"></paper-input>
 
     <h3>Display</h3>
-    <paper-input role="widget" value="{{document.properties.count:prefix}}" label="Prefix"></paper-input>
-  	<paper-input role="widget" value="{{document.properties.count:suffix}}" label="Suffix"></paper-input>
-  	<paper-input role="widget" value="{{document.properties.count:icon}}" label="Icon"></paper-input>
-	  <paper-input role="widget" value="{{document.properties.count:style}}" label="Style"></paper-input>
+    <paper-input role="widget" value="{{document.properties.report:options}}" label="Options"></paper-input>
   </template>
 
   <script>
   (function() {
     'use strict';
     Polymer({
-      is: 'nuxeo-countreport-create-layout',
+      is: 'nuxeo-chartpiereport-create-layout',
       properties: {
 
         /**

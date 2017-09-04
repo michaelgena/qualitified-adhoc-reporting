@@ -38,13 +38,28 @@
         right: 0px;
       }
     </style>
-    <nuxeo-repository-data
-    	ecm-primary-type="[[document.properties.report:documentType]]"
-        ecm-lifecycle-state="[[document.properties.report:lifeCycleState]]"
-        metrics="[[document.properties.report:metrics]]"
-        data="{{countData}}"
-        index="[[index]]">
+    <nuxeo-repository-data start-date="[[document.properties.report:startDate]]"
+                           end-date="[[document.properties.report:endDate]]"
+                           ecm-primary-type="[[document.properties.report:documentType]]"
+                           ecm-lifecycle-state="[[document.properties.report:lifeCycleState]]"
+                           with-date-intervals="[[document.properties.report:withDateIntervals]]"
+                           metrics="[[document.properties.report:metrics]]"
+                           metrics-op="[[document.properties.report:metricsOp]]"
+                           grouped-by="[[document.properties.report:groupedBy]]"
+                           group-limit="[[document.properties.report:groupLimit]]"
+                           date-field="[[document.properties.report:dateField]]"
+                           date-format="[[document.properties.report:dateFormat]]"
+                           data="{{data}}"
+                           index="[[index]]">
     </nuxeo-repository-data>
+
+    <!--nuxeo-repository-data start-date="[[startDate]]" end-date="[[endDate]]"
+                           ecm-primary-type="[[document.properties.report:documentType]]"
+                           grouped-by="[[document.properties.report:groupedBy]]"
+                           metrics="[[document.properties.report:metrics]]"
+                           data="{{data}}"
+                           index="[[index]]">
+    </nuxeo-repository-data-->
 
     <!--`metrics-op` to use as well, ex: `avg(field)` or `min`, `max -->
 
@@ -68,14 +83,11 @@
       <h3>[[document.properties.dc:title]]</h3>
     	<paper-icon-button class="settings" id="button" icon="icons:settings" on-tap="_toggleGraphDialog"></paper-icon-button>
         <paper-tooltip for="button">Settings</paper-tooltip>
-        <!--iron-icon class="graph-iron-icon" icon="icons:description"></iron-icon-->
-      	<h1>
-      		<strong>
-      			<span style="[[document.properties.count:style]]; font-size: -webkit-xxx-large;">
-      				[[document.properties.count:prefix]] [[_getValue(countData)]] [[document.properties.count:suffix]]
-      			</span>
-      		</strong>
-      	</h1>
+        <chart-pie values="[[_values(data)]]"
+                   labels="[[_labels(data)]]"
+                   colors="[[colors]]"
+                   options='{ "legend": { "display": true, "position": "bottom", "labels": { "boxWidth": 12 } }, "animation": false }'>
+        </chart-pie>
       	<paper-dialog id="dialog" modal no-auto-focus>
           <nuxeo-document id="doc" doc-id="[[document.uid]]" response="{{document}}" headers="[[headers]]"></nuxeo-document>
           <nuxeo-operation id="deleteOp" op="Document.Delete" headers="{&quot;nx_es_sync&quot;: &quot;true&quot;}"></nuxeo-operation>
