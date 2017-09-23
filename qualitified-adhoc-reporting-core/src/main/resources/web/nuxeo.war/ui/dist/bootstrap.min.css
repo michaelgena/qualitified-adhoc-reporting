@@ -1724,7 +1724,7 @@ pre code {
     overflow-y: scroll
 }
 
-.container {
+/*.container {
     padding-right: 15px;
     padding-left: 15px;
     margin-right: auto;
@@ -1747,7 +1747,7 @@ pre code {
     .container {
         width: 1170px
     }
-}
+}*/
 
 .container-fluid {
     padding-right: 15px;

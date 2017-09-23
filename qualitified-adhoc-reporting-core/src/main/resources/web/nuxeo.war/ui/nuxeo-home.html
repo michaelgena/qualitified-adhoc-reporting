@@ -88,10 +88,10 @@
       }
 
       #trayReport {
-        position: absolute;
+        position: fixed;
         bottom: 32px;
         right: 32px;
-        z-index: 10;
+        z-index: 10000000;
       }
 
       #createReportBtn {
@@ -676,7 +676,7 @@
     },
 
     ready: function() {
-      jQuery("#tray").css("display","none");
+      //jQuery("#tray").css("display","none");
       this.reportTypes = ['CountReport', 'ChartBarReport', 'ChartPieReport', 'ChartLineReport', 'TableReport'];
       this._initializeGridStack();
 
