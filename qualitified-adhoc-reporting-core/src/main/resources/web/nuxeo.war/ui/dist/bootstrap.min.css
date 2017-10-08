@@ -1242,7 +1242,7 @@ hr {
     clip: auto
 }
 
-h1,
+/*h1,
 h2,
 h3,
 h4,
@@ -1258,7 +1258,7 @@ h6,
     font-weight: 500;
     line-height: 1.1;
     color: inherit
-}
+}*/
 
 h1 small,
 h2 small,
@@ -1354,20 +1354,20 @@ h3,
     font-size: 24px
 }
 
-h4,
+/*h4,
 .h4 {
     font-size: 18px
-}
+}*/
 
 h5,
 .h5 {
     font-size: 14px
 }
 
-h6,
+/*h6,
 .h6 {
     font-size: 12px
-}
+}*/
 
 p {
     margin: 0 0 10px
@@ -1724,7 +1724,7 @@ pre code {
     overflow-y: scroll
 }
 
-.container {
+/*.container {
     padding-right: 15px;
     padding-left: 15px;
     margin-right: auto;
@@ -1747,7 +1747,7 @@ pre code {
     .container {
         width: 1170px
     }
-}
+}*/
 
 .container-fluid {
     padding-right: 15px;
@@ -1756,10 +1756,10 @@ pre code {
     margin-left: auto
 }
 
-.row {
+/*.row {
     margin-right: -15px;
     margin-left: -15px
-}
+}*/
 
 .col-xs-1,
 .col-sm-1,
