@@ -1289,7 +1289,7 @@ h6 .small,
     color: #777
 }
 
-h1,
+/*h1,
 .h1,
 h2,
 .h2,
@@ -1297,7 +1297,7 @@ h3,
 .h3 {
     margin-top: 20px;
     margin-bottom: 10px
-}
+}*/
 
 h1 small,
 .h1 small,
@@ -1339,10 +1339,10 @@ h6 .small,
     font-size: 75%
 }
 
-h1,
+/*h1,
 .h1 {
     font-size: 36px
-}
+}*/
 
 h2,
 .h2 {
