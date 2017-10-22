@@ -1,0 +1,8 @@
+{
+  "label.document.type.countreport":"Comptage",
+  "label.document.type.chartpiereport":"Camembert",
+  "label.document.type.chartbarreport":"Histogramme",
+  "label.document.type.chartlinereport":"Courbe",
+  "label.document.type.tablereport":"Tableau",
+  "label.delete.report.document":"Supprimer le rapport"
+}

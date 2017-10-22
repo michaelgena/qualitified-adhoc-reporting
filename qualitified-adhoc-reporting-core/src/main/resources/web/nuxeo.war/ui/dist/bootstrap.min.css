@@ -2824,12 +2824,12 @@ legend {
     border-bottom: 1px solid #e5e5e5
 }
 
-label {
+/*label {
     display: inline-block;
     max-width: 100%;
     margin-bottom: 5px;
     font-weight: 700
-}
+}*/
 
 input[type=search] {
     -webkit-box-sizing: border-box;
@@ -5302,7 +5302,7 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
     background-color: #fff
 }
 
-.label {
+/*.label {
     display: inline;
     padding: .2em .6em .3em;
     font-size: 75%;
@@ -5313,7 +5313,7 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
     white-space: nowrap;
     vertical-align: baseline;
     border-radius: .25em
-}
+}*/
 
 a.label:hover,
 a.label:focus {
