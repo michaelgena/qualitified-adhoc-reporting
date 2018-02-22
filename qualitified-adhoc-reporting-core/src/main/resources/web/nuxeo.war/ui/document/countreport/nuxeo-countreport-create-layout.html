@@ -25,6 +25,9 @@
     <!--Add tooltip-->
     <paper-input role="widget" value="{{document.properties.report:metrics}}" label="Metrics" required="true"></paper-input>
 
+    <paper-input role="widget" value="{{document.properties.report:dateField}}" label="Date Field"></paper-input>
+
+    <h3>Display</h3>
     <nuxeo-directory-suggestion
       role="widget"
       value="{{document.properties.count:valueType}}"
@@ -33,8 +36,6 @@
       directory-name="ValueType"
       min-chars="0">
     </nuxeo-directory-suggestion>
-
-    <h3>Display</h3>
     <paper-input role="widget" value="{{document.properties.count:prefix}}" label="Prefix"></paper-input>
   	<paper-input role="widget" value="{{document.properties.count:suffix}}" label="Suffix"></paper-input>
   	<paper-input role="widget" value="{{document.properties.count:icon}}" label="Icon"></paper-input>

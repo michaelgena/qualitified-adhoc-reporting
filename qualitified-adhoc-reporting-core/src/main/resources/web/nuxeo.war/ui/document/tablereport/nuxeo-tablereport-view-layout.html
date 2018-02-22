@@ -50,7 +50,10 @@
       group-limit="[[document.properties.report:groupLimit]]"
       date-field="[[document.properties.report:dateField]]"
       data="{{tableData}}"
-      index="[[index]]">
+      index="[[index]]"
+      start-date="[[startDate]]"
+      end-date="[[endDate]]"
+      date-field="[[document.properties.report:dateField]]">
     </nuxeo-repository-data>
 
     <!--nuxeo-repository-data start-date="[[document.properties.report:startDate]]"
@@ -208,6 +211,14 @@
         isLoaded:{
           type:Boolean,
           notify: true
+        },
+        startDate: {
+          type: String,
+          value: ''
+        },
+        endDate: {
+          type: String,
+          value: ''
         }
       },
       ready: function() {

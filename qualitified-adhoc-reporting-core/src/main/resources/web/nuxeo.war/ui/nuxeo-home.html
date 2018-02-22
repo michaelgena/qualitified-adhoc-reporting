@@ -209,10 +209,29 @@
         background-color: white !important;
       }
 
+      .dates input {
+        border: 1px solid #c6c6c6;
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.0);
+        border-radius: 3px;
+        margin-left: .5em;
+        width: 125px;
+      }
+
+      nuxeo-date-picker {
+        padding-left: 8px;
+      }
+
     </style>
 
     <nuxeo-page>
-      <div class="header">[[i18n('home.dashboard')]]</div>
+      <div class="header">
+        [[i18n('home.dashboard')]]
+        <div class="horizontal flex end-justified layout">
+          <nuxeo-date-picker value="{{startDate::change}}" label="[[i18n('analytics.after')]]"></nuxeo-date-picker>
+          <nuxeo-date-picker value="{{endDate::change}}" label="[[i18n('analytics.before')]]"></nuxeo-date-picker>
+        </div>
+      </div>
+
       <div class="content">
         <section name="dashboard" class="flex-layout">
 
@@ -226,26 +245,29 @@
        current-page="{{reports}}">
       </nuxeo-page-provider>
 
+
+
       <div class="container-fluid">
+
           <div class="grid-stack">
             <div id="0" data-gs-id="0" data-gs-x="0" data-gs-y="0" data-gs-width="4" data-gs-height="4" class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide">
               <div id="O-doc" class="grid-stack-item-content ui-draggable-handle">
                 <template is="dom-repeat" items="[[reports]]" as="report">
                   <template is="dom-if" if="[[_equals(index,0)]]">
                     <template is="dom-if" if="[[isReport(report.type, 'CountReport')]]">
-                      <nuxeo-countreport-view-layout coordinates={{coordinates0}} document="[[report]]"></nuxeo-countreport-view-layout>
+                      <nuxeo-countreport-view-layout coordinates={{coordinates0}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-countreport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'TableReport')]]">
-                      <nuxeo-tablereport-view-layout coordinates={{coordinates0}} document="[[report]]"></nuxeo-tablereport-view-layout>
+                      <nuxeo-tablereport-view-layout coordinates={{coordinates0}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-tablereport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'ChartLineReport')]]">
-                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates0}} document="[[report]]"></nuxeo-chartlinereport-view-layout>
+                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates0}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-chartlinereport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'ChartBarReport')]]">
-                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates0}} document="[[report]]"></nuxeo-chartbarreport-view-layout>
+                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates0}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-chartbarreport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'ChartPieReport')]]">
-                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates0}} document="[[report]]"></nuxeo-chartpiereport-view-layout>
+                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates0}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-chartpiereport-view-layout>
                     </template>
                   </template>
           		  </template>
@@ -257,19 +279,19 @@
                 <template is="dom-repeat" items="[[reports]]" as="report">
                   <template is="dom-if" if="[[_equals(index,1)]]">
                     <template is="dom-if" if="[[isReport(report.type, 'CountReport')]]">
-            		  		  <nuxeo-countreport-view-layout coordinates={{coordinates1}} document="[[report]]"></nuxeo-countreport-view-layout>
+            		  		  <nuxeo-countreport-view-layout coordinates={{coordinates1}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-countreport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'TableReport')]]">
-            		  		  <nuxeo-tablereport-view-layout coordinates={{coordinates1}} document="[[report]]"></nuxeo-tablereport-view-layout>
+            		  		  <nuxeo-tablereport-view-layout coordinates={{coordinates1}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-tablereport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'ChartLineReport')]]">
-                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates1}} document="[[report]]"></nuxeo-chartlinereport-view-layout>
+                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates1}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-chartlinereport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'ChartBarReport')]]">
-                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates1}} document="[[report]]"></nuxeo-chartbarreport-view-layout>
+                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates1}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-chartbarreport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'ChartPieReport')]]">
-                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates1}} document="[[report]]"></nuxeo-chartpiereport-view-layout>
+                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates1}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-chartpiereport-view-layout>
                     </template>
                   </template>
           		  </template>
@@ -281,19 +303,19 @@
                 <template is="dom-repeat" items="[[reports]]" as="report">
                   <template is="dom-if" if="[[_equals(index,2)]]">
                     <template is="dom-if" if="[[isReport(report.type, 'CountReport')]]">
-            		  		  <nuxeo-countreport-view-layout coordinates={{coordinates2}} document="[[report]]"></nuxeo-countreport-view-layout>
+            		  		  <nuxeo-countreport-view-layout coordinates={{coordinates2}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-countreport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'TableReport')]]">
-            		  		  <nuxeo-tablereport-view-layout coordinates={{coordinates2}} document="[[report]]"></nuxeo-tablereport-view-layout>
+            		  		  <nuxeo-tablereport-view-layout coordinates={{coordinates2}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-tablereport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'ChartLineReport')]]">
-                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates2}} document="[[report]]"></nuxeo-chartlinereport-view-layout>
+                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates2}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-chartlinereport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'ChartBarReport')]]">
-                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates2}} document="[[report]]"></nuxeo-chartbarreport-view-layout>
+                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates2}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-chartbarreport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'ChartPieReport')]]">
-                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates2}} document="[[report]]"></nuxeo-chartpiereport-view-layout>
+                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates2}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-chartpiereport-view-layout>
                     </template>
                   </template>
           		  </template>
@@ -305,19 +327,19 @@
                 <template is="dom-repeat" items="[[reports]]" as="report">
                   <template is="dom-if" if="[[_equals(index,3)]]">
                     <template is="dom-if" if="[[isReport(report.type, 'CountReport')]]">
-                      <nuxeo-countreport-view-layout coordinates={{coordinates3}} document="[[report]]"></nuxeo-countreport-view-layout>
+                      <nuxeo-countreport-view-layout coordinates={{coordinates3}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-countreport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'TableReport')]]">
-                      <nuxeo-tablereport-view-layout coordinates={{coordinates3}} document="[[report]]"></nuxeo-tablereport-view-layout>
+                      <nuxeo-tablereport-view-layout coordinates={{coordinates3}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-tablereport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'ChartLineReport')]]">
-                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates3}} document="[[report]]"></nuxeo-chartlinereport-view-layout>
+                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates3}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-chartlinereport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'ChartBarReport')]]">
-                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates3}} document="[[report]]"></nuxeo-chartbarreport-view-layout>
+                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates3}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-chartbarreport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'ChartPieReport')]]">
-                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates3}} document="[[report]]"></nuxeo-chartpiereport-view-layout>
+                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates3}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]] start-date=[[startDate]] end-date=[[endDate]]></nuxeo-chartpiereport-view-layout>
                     </template>
                   </template>
           		  </template>
@@ -329,19 +351,19 @@
                 <template is="dom-repeat" items="[[reports]]" as="report">
                   <template is="dom-if" if="[[_equals(index,4)]]">
                     <template is="dom-if" if="[[isReport(report.type, 'CountReport')]]">
-                      <nuxeo-countreport-view-layout coordinates={{coordinates4}} document="[[report]]"></nuxeo-countreport-view-layout>
+                      <nuxeo-countreport-view-layout coordinates={{coordinates4}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-countreport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'TableReport')]]">
-                      <nuxeo-tablereport-view-layout coordinates={{coordinates4}} document="[[report]]"></nuxeo-tablereport-view-layout>
+                      <nuxeo-tablereport-view-layout coordinates={{coordinates4}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-tablereport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'ChartLineReport')]]">
-                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates4}} document="[[report]]"></nuxeo-chartlinereport-view-layout>
+                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates4}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-chartlinereport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'ChartBarReport')]]">
-                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates4}} document="[[report]]"></nuxeo-chartbarreport-view-layout>
+                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates4}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-chartbarreport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'ChartPieReport')]]">
-                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates4}} document="[[report]]"></nuxeo-chartpiereport-view-layout>
+                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates4}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-chartpiereport-view-layout>
                     </template>
                   </template>
           		  </template>
@@ -353,19 +375,19 @@
                 <template is="dom-repeat" items="[[reports]]" as="report">
                   <template is="dom-if" if="[[_equals(index,5)]]">
                     <template is="dom-if" if="[[isReport(report.type, 'CountReport')]]">
-                      <nuxeo-countreport-view-layout coordinates={{coordinates5}} document="[[report]]"></nuxeo-countreport-view-layout>
+                      <nuxeo-countreport-view-layout coordinates={{coordinates5}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-countreport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'TableReport')]]">
-                      <nuxeo-tablereport-view-layout coordinates={{coordinates5}} document="[[report]]"></nuxeo-tablereport-view-layout>
+                      <nuxeo-tablereport-view-layout coordinates={{coordinates5}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-tablereport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'ChartLineReport')]]">
-                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates5}} document="[[report]]"></nuxeo-chartlinereport-view-layout>
+                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates5}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-chartlinereport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'ChartBarReport')]]">
-                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates5}} document="[[report]]"></nuxeo-chartbarreport-view-layout>
+                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates5}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-chartbarreport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'ChartPieReport')]]">
-                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates5}} document="[[report]]"></nuxeo-chartpiereport-view-layout>
+                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates5}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-chartpiereport-view-layout>
                     </template>
                   </template>
           		  </template>
@@ -377,19 +399,19 @@
                 <template is="dom-repeat" items="[[reports]]" as="report">
                   <template is="dom-if" if="[[_equals(index,6)]]">
                     <template is="dom-if" if="[[isReport(report.type, 'CountReport')]]">
-                      <nuxeo-countreport-view-layout coordinates={{coordinates6}} document="[[report]]"></nuxeo-countreport-view-layout>
+                      <nuxeo-countreport-view-layout coordinates={{coordinates6}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-countreport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'TableReport')]]">
-                      <nuxeo-tablereport-view-layout coordinates={{coordinates6}} document="[[report]]"></nuxeo-tablereport-view-layout>
+                      <nuxeo-tablereport-view-layout coordinates={{coordinates6}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-tablereport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'ChartLineReport')]]">
-                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates6}} document="[[report]]"></nuxeo-chartlinereport-view-layout>
+                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates6}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-chartlinereport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'ChartBarReport')]]">
-                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates6}} document="[[report]]"></nuxeo-chartbarreport-view-layout>
+                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates6}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-chartbarreport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'ChartPieReport')]]">
-                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates6}} document="[[report]]"></nuxeo-chartpiereport-view-layout>
+                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates6}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-chartpiereport-view-layout>
                     </template>
                   </template>
           		  </template>
@@ -401,19 +423,19 @@
                 <template is="dom-repeat" items="[[reports]]" as="report">
                   <template is="dom-if" if="[[_equals(index,7)]]">
                     <template is="dom-if" if="[[isReport(report.type, 'CountReport')]]">
-                      <nuxeo-countreport-view-layout coordinates={{coordinates7}} document="[[report]]"></nuxeo-countreport-view-layout>
+                      <nuxeo-countreport-view-layout coordinates={{coordinates7}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-countreport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'TableReport')]]">
-            		  	  <nuxeo-tablereport-view-layout coordinates={{coordinates7}} document="[[report]]"></nuxeo-tablereport-view-layout>
+            		  	  <nuxeo-tablereport-view-layout coordinates={{coordinates7}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-tablereport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'ChartLineReport')]]">
-                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates7}} document="[[report]]"></nuxeo-chartlinereport-view-layout>
+                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates7}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-chartlinereport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'ChartBarReport')]]">
-                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates7}} document="[[report]]"></nuxeo-chartbarreport-view-layout>
+                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates7}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-chartbarreport-view-layout>
                     </template>
                     <template is="dom-if" if="[[isReport(report.type, 'ChartPieReport')]]">
-                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates7}} document="[[report]]"></nuxeo-chartpiereport-view-layout>
+                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates7}} document="[[report]]" start-date=[[startDate]] end-date=[[endDate]]></nuxeo-chartpiereport-view-layout>
                     </template>
                   </template>
           		  </template>
@@ -561,8 +583,14 @@
         type: String,
         value: 'nuxeo'
       },
-      startDate: String,
-      endDate: String,
+      startDate: {
+        type: String,
+        value: ''
+      },
+      endDate: {
+        type: String,
+        value: ''
+      },
       hoursBounds: {
         value: {min: 0, max: 23}
       },
@@ -679,7 +707,13 @@
       //jQuery("#tray").css("display","none");
       this.reportTypes = ['CountReport', 'ChartBarReport', 'ChartPieReport', 'ChartLineReport', 'TableReport'];
       this._initializeGridStack();
-
+      if(moment().format('M') > 6){
+        this.startDate = moment().format('YYYY')+'-07-01';
+        this.endDate = moment().format('YYYY')+'-12-31';
+      }else{
+        this.startDate = moment().format('YYYY')+'-01-01';
+        this.endDate = moment().format('YYYY')+'-06-30';
+      }
     },
 
     /*_reportsLoaded: function() {

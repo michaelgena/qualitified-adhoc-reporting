@@ -38,8 +38,8 @@
         right: 0px;
       }
     </style>
-    <nuxeo-repository-data start-date="[[document.properties.report:startDate]]"
-                           end-date="[[document.properties.report:endDate]]"
+    <nuxeo-repository-data start-date="[[startDate]]"
+                           end-date="[[endDate]]"
                            ecm-primary-type="[[document.properties.report:documentType]]"
                            ecm-lifecycle-state="[[document.properties.report:lifeCycleState]]"
                            with-date-intervals="[[document.properties.report:withDateIntervals]]"
@@ -48,7 +48,6 @@
                            grouped-by="[[document.properties.report:groupedBy]]"
                            group-limit="[[document.properties.report:groupLimit]]"
                            date-field="[[document.properties.report:dateField]]"
-                           date-format="[[document.properties.report:dateFormat]]"
                            data="{{data}}"
                            index="[[index]]">
     </nuxeo-repository-data>
@@ -154,6 +153,14 @@
         isLoaded:{
           type:Boolean,
           notify: true
+        },
+        startDate: {
+          type: String,
+          value: ''
+        },
+        endDate: {
+          type: String,
+          value: ''
         }
       },
       ready: function() {

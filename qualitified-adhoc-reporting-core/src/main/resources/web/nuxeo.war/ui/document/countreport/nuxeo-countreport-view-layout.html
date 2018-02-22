@@ -43,7 +43,10 @@
         ecm-lifecycle-state="[[document.properties.report:lifeCycleState]]"
         metrics="[[document.properties.report:metrics]]"
         data="{{countData}}"
-        index="[[index]]">
+        index="[[index]]"
+        start-date="[[startDate]]"
+        end-date="[[endDate]]"
+        date-field="[[document.properties.report:dateField]]">
     </nuxeo-repository-data>
 
     <!--`metrics-op` to use as well, ex: `avg(field)` or `min`, `max -->
@@ -146,11 +149,28 @@
         isLoaded:{
           type:Boolean,
           notify: true
+        },
+        startDate: {
+          type: String,
+          value: '',
+          observer:'_dateReady'
+        },
+        endDate: {
+          type: String,
+          value: '',
+          observer:'_dateReady'
         }
       },
       ready: function() {
         //this.isLoaded = true;
         this.isLoaded = true;
+      },
+      _dateReady: function(){
+        this._refresh();
+        if(this.startDate){
+          console.log("startDate: "+this.startDate);
+          console.log("endDate: "+this.endDate);
+        }
       },
       _documentReady: function(){
         if(this.document){
