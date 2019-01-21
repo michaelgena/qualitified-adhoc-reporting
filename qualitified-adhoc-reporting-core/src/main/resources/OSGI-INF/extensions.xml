@@ -1,89 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
 <component name="adhoc.reporting.extensions" version="1.0.0">
-<!--require>org.nuxeo.runtime.started</require-->
-<extension target="org.nuxeo.ecm.core.schema.TypeService" point="schema">
-  <schema name="report" prefix="report" override="true" src="data/schemas/report.xsd"/>
-  <schema name="chartpie" prefix="chartpie" override="true" src="data/schemas/chartpie.xsd"/>
-  <schema name="chartline" prefix="chartline" override="true" src="data/schemas/chartline.xsd"/>
-  <schema name="count" prefix="count" override="true" src="data/schemas/count.xsd"/>
-  <schema name="table" prefix="table" override="true" src="data/schemas/table.xsd"/>
-  <schema name="chartbar" prefix="chartbar" override="true" src="data/schemas/chartbar.xsd"/>
-</extension>
-<extension target="org.nuxeo.ecm.core.schema.TypeService" point="doctype">
-  <doctype name="ChartPieReport" extends="Document">
-    <schema name="chartpie"/>
-    <schema name="report"/>
-    <schema name="dublincore"/>
-    <schema name="common"/>
-    <schema name="uid"/>
-    <facet name="HiddenInNavigation"/>
-  </doctype>
-  <doctype name="ChartLineReport" extends="Document">
-    <schema name="chartline"/>
-    <schema name="report"/>
-    <schema name="dublincore"/>
-    <schema name="common"/>
-    <schema name="uid"/>
-    <facet name="HiddenInNavigation"/>
-  </doctype>
-  <doctype name="CountReport" extends="Document">
-    <schema name="count"/>
-    <schema name="report"/>
-    <schema name="dublincore"/>
-    <schema name="common"/>
-    <schema name="uid"/>
-    <facet name="HiddenInNavigation"/>
-  </doctype>
-  <doctype name="TableReport" extends="Document">
-    <schema name="table"/>
-    <schema name="report"/>
-    <schema name="dublincore"/>
-    <schema name="common"/>
-    <schema name="uid"/>
-    <facet name="HiddenInNavigation"/>
-  </doctype>
-  <doctype name="ChartBarReport" extends="Document">
-    <schema name="chartbar"/>
-    <schema name="report"/>
-    <schema name="dublincore"/>
-    <schema name="common"/>
-    <schema name="uid"/>
-    <facet name="HiddenInNavigation"/>
-  </doctype>
-</extension>
-<require>org.nuxeo.ecm.directory.sql.storage</require>
-<extension target="org.nuxeo.ecm.directory.sql.SQLDirectoryFactory" point="directories">
-  <directory name="DataType">
-    <schema>vocabulary</schema>
-    <dataSource>java:/nxsqldirectory</dataSource>
-    <cacheTimeout>3600</cacheTimeout>
-    <cacheMaxSize>1000</cacheMaxSize>
-    <idField>id</idField>
-    <autoincrementIdField>false</autoincrementIdField>
-    <createTablePolicy>on_missing_columns</createTablePolicy>
-    <table>adhoc_reporting_DataType</table>
-    <dataFile>data/vocabularies/DataType.csv</dataFile>
-  </directory>
-  <directory name="ValueType">
-    <schema>vocabulary</schema>
-    <dataSource>java:/nxsqldirectory</dataSource>
-    <cacheTimeout>3600</cacheTimeout>
-    <cacheMaxSize>1000</cacheMaxSize>
-    <idField>id</idField>
-    <autoincrementIdField>false</autoincrementIdField>
-    <createTablePolicy>on_missing_columns</createTablePolicy>
-    <table>adhoc_reporting_ValueType</table>
-    <dataFile>data/vocabularies/ValueType.csv</dataFile>
-  </directory>
-  <directory name="DateIntervalsType">
-    <schema>vocabulary</schema>
-    <dataSource>java:/nxsqldirectory</dataSource>
-    <cacheTimeout>3600</cacheTimeout>
-    <cacheMaxSize>1000</cacheMaxSize>
-    <idField>id</idField>
-    <autoincrementIdField>false</autoincrementIdField>
-    <createTablePolicy>on_missing_columns</createTablePolicy>
-    <table>adhoc_reporting_DateIntervalsType</table>
-    <dataFile>data/vocabularies/DateIntervalsType.csv</dataFile>
-  </directory>
-</extension>
+  <!--require>org.nuxeo.runtime.started</require-->
+  <extension target="org.nuxeo.ecm.core.schema.TypeService" point="schema">
+    <schema name="chartbar" prefix="chartbar" override="true" src="data/schemas/chartbar.xsd"/>
+    <schema name="chartline" prefix="chartline" override="true" src="data/schemas/chartline.xsd"/>
+    <schema name="chartpie" prefix="chartpie" override="true" src="data/schemas/chartpie.xsd"/>
+    <schema name="count" prefix="count" override="true" src="data/schemas/count.xsd"/>
+    <schema name="table" prefix="table" override="true" src="data/schemas/table.xsd"/>
+    <schema name="report" prefix="report" override="true" src="data/schemas/report.xsd"/>
+  </extension>
+  <extension target="org.nuxeo.ecm.core.schema.TypeService" point="doctype">
+    <doctype name="ChartBar" extends="Document">
+      <schema name="chartbar"/>
+      <schema name="dublincore"/>
+      <schema name="common"/>
+      <schema name="uid"/>
+      <schema name="report"/>
+      <facet name="HiddenInNavigation"/>
+    </doctype>
+    <doctype name="Root" append="true">
+      <subtypes>
+        <type>ChartBar</type>
+      </subtypes>
+    </doctype>
+    <doctype name="ChartLine" extends="Document">
+      <schema name="chartline"/>
+      <schema name="dublincore"/>
+      <schema name="common"/>
+      <schema name="uid"/>
+      <schema name="report"/>
+      <facet name="HiddenInNavigation"/>
+    </doctype>
+    <doctype name="Root" append="true">
+      <subtypes>
+        <type>ChartLine</type>
+      </subtypes>
+    </doctype>
+    <doctype name="ChartPie" extends="Document">
+      <schema name="chartpie"/>
+      <schema name="dublincore"/>
+      <schema name="common"/>
+      <schema name="uid"/>
+      <schema name="report"/>
+      <facet name="HiddenInNavigation"/>
+    </doctype>
+    <doctype name="Root" append="true">
+      <subtypes>
+        <type>ChartPie</type>
+      </subtypes>
+    </doctype>
+    <doctype name="Count" extends="Document">
+      <schema name="count"/>
+      <schema name="dublincore"/>
+      <schema name="common"/>
+      <schema name="uid"/>
+      <schema name="report"/>
+      <facet name="HiddenInNavigation"/>
+    </doctype>
+    <doctype name="Root" append="true">
+      <subtypes>
+        <type>Count</type>
+      </subtypes>
+    </doctype>
+    <doctype name="Table" extends="Document">
+      <schema name="table"/>
+      <schema name="dublincore"/>
+      <schema name="common"/>
+      <schema name="uid"/>
+      <schema name="report"/>
+      <facet name="HiddenInNavigation"/>
+    </doctype>
+    <doctype name="Root" append="true">
+      <subtypes>
+        <type>Table</type>
+      </subtypes>
+    </doctype>
+  </extension>
+  <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="types">
+    <types>
+      <type name="ChartBar">default</type>
+    </types>
+    <types>
+      <type name="ChartLine">default</type>
+    </types>
+    <types>
+      <type name="ChartPie">default</type>
+    </types>
+    <types>
+      <type name="Count">default</type>
+    </types>
+    <types>
+      <type name="Table">default</type>
+    </types>
+  </extension>
+  <extension target="org.nuxeo.ecm.platform.types.TypeService" point="types">
+    <type id="ChartBar">
+      <label>ChartBar</label>
+      <icon>/img/baseline_insert_chart_black_48dp.png</icon>
+      <bigIcon>/img/baseline_insert_chart_black_48dp.png</bigIcon>
+      <description></description>
+    </type>
+    <type id="ChartLine">
+      <label>ChartLine</label>
+      <icon>/img/baseline_timeline_black_48dp.png</icon>
+      <bigIcon>/img/baseline_timeline_black_48dp.png</bigIcon>
+      <description></description>
+    </type>
+    <type id="ChartPie">
+      <label>ChartPie</label>
+      <icon>/img/baseline_pie_chart_black_48dp.png</icon>
+      <bigIcon>/img/baseline_pie_chart_black_48dp.png</bigIcon>
+      <description></description>
+    </type>
+    <type id="Count">
+      <label>Count</label>
+      <icon>/img/baseline_looks_one_black_48dp.png</icon>
+      <bigIcon>/img/baseline_looks_one_black_48dp.png</bigIcon>
+      <description></description>
+    </type>
+    <type id="Table">
+      <label>Table</label>
+      <icon>/img/baseline_format_list_numbered_black_48dp.png</icon>
+      <bigIcon>/img/baseline_format_list_numbered_black_48dp.png</bigIcon>
+      <description></description>
+    </type>
+  </extension>
+  <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="lifecycle">
+    <lifecycle name="default" defaultInitial="project">
+      <transitions>
+        <transition name="approve" destinationState="approved">
+          <description></description>
+        </transition>
+        <transition name="obsolete" destinationState="obsolete">
+          <description></description>
+        </transition>
+        <transition name="delete" destinationState="deleted">
+          <description></description>
+        </transition>
+        <transition name="backToProject" destinationState="project">
+          <description></description>
+        </transition>
+        <transition name="delete" destinationState="deleted">
+          <description></description>
+        </transition>
+        <transition name="delete" destinationState="deleted">
+          <description></description>
+        </transition>
+        <transition name="undelete" destinationState="project">
+          <description></description>
+        </transition>
+      </transitions>
+      <states>
+        <state name="project" description="Default state" initial="true">
+          <transitions>
+            <transition>approve</transition>
+            <transition>obsolete</transition>
+            <transition>delete</transition>
+          </transitions>
+        </state>
+        <state name="approved" description="Content has been approved">
+          <transitions>
+            <transition>backToProject</transition>
+            <transition>delete</transition>
+          </transitions>
+        </state>
+        <state name="obsolete" description="Content becomes obsolete">
+          <transitions>
+            <transition>delete</transition>
+          </transitions>
+        </state>
+        <state name="deleted" description="Content is in the trash (before real deletion)">
+          <transitions>
+            <transition>undelete</transition>
+          </transitions>
+        </state>
+      </states>
+    </lifecycle>
+  </extension>
+  <extension target="org.nuxeo.ecm.platform.ec.notification.service.NotificationService" point="templates">
+    <template name="appReviewStarted" src="data/templates/appReviewStarted.ftl"/>
+    <template name="defaultNotifTemplate" src="data/templates/defaultNotifTemplate.ftl"/>
+    <template name="emailDocument" src="data/templates/emailDocument.ftl"/>
+    <template name="modif" src="data/templates/modif.ftl"/>
+    <template name="publish" src="data/templates/publish.ftl"/>
+    <template name="subscriptionsUpdated" src="data/templates/subscriptionsUpdated.ftl"/>
+    <template name="workflow" src="data/templates/workflow.ftl"/>
+    <template name="workflowTaskAssigned" src="data/templates/workflowTaskAssigned.ftl"/>
+    <template name="workflowTaskDelegated" src="data/templates/workflowTaskDelegated.ftl"/>
+  </extension>
+  <extension target="org.nuxeo.ecm.platform.content.template.service.ContentTemplateService" point="factoryBinding">
+    <factoryBinding name="DomainFactory" factoryName="SimpleTemplateFactory" targetType="Domain">
+      <template>
+        <templateItem typeName="WorkspaceRoot" id="workspaces" title="Workspaces" description="Use Nuxeo Studio to adapt the domain automated structure (Content Model &gt; Structure Templates &gt; DomainFactory)"/>
+        <templateItem typeName="SectionRoot" id="sections" title="Sections" description="You can modify this automatically built structure from Studio: Content Model &gt; Structure Templates &gt; DomainFactory"/>
+        <templateItem typeName="TemplateRoot" id="templates" title="Templates" description="Workspace Templates Root"/>
+      </template>
+    </factoryBinding>
+  </extension>
+  <extension target="org.nuxeo.ecm.directory.GenericDirectory" point="directories">
+    <directory name="DataType" extends="template-vocabulary">
+      <autoincrementIdField>false</autoincrementIdField>
+      <createTablePolicy>on_missing_columns</createTablePolicy>
+      <table>studio_vocabulary_DataType</table>
+      <dataFile>data/vocabularies/DataType.csv</dataFile>
+      <cacheEntryName>vocab-DataType-cache</cacheEntryName>
+      <cacheEntryWithoutReferencesName>vocab-DataType-cache-without-references</cacheEntryWithoutReferencesName>
+    </directory>
+    <directory name="DateIntervalsType" extends="template-vocabulary">
+      <autoincrementIdField>false</autoincrementIdField>
+      <createTablePolicy>on_missing_columns</createTablePolicy>
+      <table>studio_vocabulary_DateIntervalsType</table>
+      <dataFile>data/vocabularies/DateIntervalsType.csv</dataFile>
+      <cacheEntryName>vocab-DateIntervalsType-cache</cacheEntryName>
+      <cacheEntryWithoutReferencesName>vocab-DateIntervalsType-cache-without-references</cacheEntryWithoutReferencesName>
+    </directory>
+    <directory name="ValueType" extends="template-vocabulary">
+      <autoincrementIdField>false</autoincrementIdField>
+      <createTablePolicy>on_missing_columns</createTablePolicy>
+      <table>studio_vocabulary_ValueType</table>
+      <dataFile>data/vocabularies/ValueType.csv</dataFile>
+      <cacheEntryName>vocab-ValueType-cache</cacheEntryName>
+      <cacheEntryWithoutReferencesName>vocab-ValueType-cache-without-references</cacheEntryWithoutReferencesName>
+    </directory>
+  </extension>
+  <extension target="org.nuxeo.ecm.core.cache.CacheService" point="caches">
+    <cache name="vocab-DataType-cache">
+      <option name="maxSize">1000</option>
+      <option name="concurrencyLevel">500</option>
+      <ttl>60</ttl>
+    </cache>
+    <cache name="vocab-DataType-cache-without-references">
+      <option name="maxSize">1000</option>
+      <option name="concurrencyLevel">500</option>
+      <ttl>60</ttl>
+    </cache>
+    <cache name="vocab-DateIntervalsType-cache">
+      <option name="maxSize">1000</option>
+      <option name="concurrencyLevel">500</option>
+      <ttl>60</ttl>
+    </cache>
+    <cache name="vocab-DateIntervalsType-cache-without-references">
+      <option name="maxSize">1000</option>
+      <option name="concurrencyLevel">500</option>
+      <ttl>60</ttl>
+    </cache>
+    <cache name="vocab-ValueType-cache">
+      <option name="maxSize">1000</option>
+      <option name="concurrencyLevel">500</option>
+      <ttl>60</ttl>
+    </cache>
+    <cache name="vocab-ValueType-cache-without-references">
+      <option name="maxSize">1000</option>
+      <option name="concurrencyLevel">500</option>
+      <ttl>60</ttl>
+    </cache>
+  </extension>
+  <extension target="org.nuxeo.ecm.platform.WebResources" point="resources">
+    <resource name="nuxeo-adhoc-reporting-bundle.html" type="import" shrinkable="false">
+      <uri>/ui/nuxeo-adhoc-reporting-bundle.html</uri>
+    </resource>
+  </extension>
+  <extension target="org.nuxeo.ecm.platform.WebResources" point="bundles">
+    <bundle name="web-ui">
+      <resources append="true">
+        <resource>nuxeo-adhoc-reporting-bundle.html</resource>
+      </resources>
+    </bundle>
+  </extension>
+  <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="filters">
+    <filter id="create" append="true">
+      <rule grant="false">
+        <type>ChartBar</type>
+        <type>ChartLine</type>
+        <type>ChartPie</type>
+        <type>Count</type>
+        <type>Table</type>
+      </rule>
+    </filter>
+  </extension>
 </component>

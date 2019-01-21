@@ -1,0 +1,64 @@
+<!--
+`nuxeo-count-create-layout`
+@group Nuxeo UI
+@element nuxeo-count-create-layout
+-->
+<dom-module id="nuxeo-count-create-layout">
+  <template>
+    <style>
+      *[role=widget] {
+        padding: 5px;
+      }
+    </style>
+
+    <nuxeo-input role="widget" value="{{document.properties.dc:title}}" label="Title" type="text"></nuxeo-input>
+
+    <h3 role="widget">
+      DATA
+    </h3>
+
+    <nuxeo-directory-suggestion role="widget" value="{{document.properties.report:datatype}}" label="Data Type" directory-name="DataType" min-chars="0"></nuxeo-directory-suggestion>
+
+    <nuxeo-input role="widget" value="{{document.properties.report:primarytype}}" label="Document Type" type="text"></nuxeo-input>
+
+    <nuxeo-input role="widget" value="{{document.properties.report:lifeCycleState}}" label="Life Cycle State" type="text"></nuxeo-input>
+
+<nuxeo-input value="{{document.properties.report:mixintype}}" label="Facet" type="text" role="widget"></nuxeo-input>
+
+    <nuxeo-input role="widget" value="{{document.properties.report:metrics}}" label="Metrics" type="text"></nuxeo-input>
+
+    <nuxeo-input role="widget" value="{{document.properties.report:dateField}}" label="Date Field" type="text"></nuxeo-input>
+
+    <h3 role="widget">
+      DISPLAY
+    </h3>
+
+    <nuxeo-directory-suggestion role="widget" value="{{document.properties.count:valuetype}}" label="Number Type" directory-name="ValueType" min-chars="0"></nuxeo-directory-suggestion>
+
+    <nuxeo-input role="widget" value="{{document.properties.count:prefix}}" label="Prefix" type="text"></nuxeo-input>
+
+    <nuxeo-input role="widget" value="{{document.properties.count:suffix}}" label="Suffix" type="text"></nuxeo-input>
+
+    <nuxeo-input value="{{document.properties.report:icon}}" label="Icon" type="text" role="widget"></nuxeo-input>
+
+    <nuxeo-input role="widget" value="{{document.properties.count:style}}" label="Style" type="text"></nuxeo-input>
+
+  </template>
+
+  <script>
+  Polymer({
+    is: 'nuxeo-count-create-layout',
+    behaviors: [Nuxeo.LayoutBehavior],
+    properties: {
+
+      /**
+         * @doctype Count
+         */
+      document: {
+        type: Object,
+      },
+
+    }
+  });
+  </script>
+</dom-module>

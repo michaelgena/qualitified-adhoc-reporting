@@ -1,0 +1,83 @@
+<!--
+`nuxeo-count-metadata-layout`
+@group Nuxeo UI
+@element nuxeo-count-metadata-layout
+-->
+<dom-module id="nuxeo-count-metadata-layout">
+  <template>
+    <style>
+      *[role=widget] {
+        padding: 5px;
+      }
+    </style>
+    <div role="widget">
+      <label>Title</label>
+      <div>[[document.properties.dc:title]]</div>
+    </div>
+
+    <nuxeo-directory-suggestion role="widget" value="[[document.properties.report:datatype]]" label="Datatype" readonly="true" directory-name="DataType"></nuxeo-directory-suggestion>
+
+    <div role="widget">
+      <label>Primarytype</label>
+      <div>[[document.properties.report:primarytype]]</div>
+    </div>
+
+    <div role="widget">
+      <label>Life Cycle State</label>
+      <div>[[document.properties.report:lifeCycleState]]</div>
+    </div>
+
+    <div role="widget">
+      <label>Facet</label>
+      <div>[[document.properties.report:mixintype]]</div>
+    </div>
+
+    <div role="widget">
+      <label>Metrics</label>
+      <div>[[document.properties.report:metrics]]</div>
+    </div>
+
+    <div role="widget">
+      <label>Date Field</label>
+      <div>[[document.properties.report:dateField]]</div>
+    </div>
+
+    <nuxeo-directory-suggestion role="widget" value="[[document.properties.count:valuetype]]" label="Valuetype" readonly="true" directory-name="ValueType"></nuxeo-directory-suggestion>
+
+    <div role="widget">
+      <label>Prefix</label>
+      <div>[[document.properties.count:prefix]]</div>
+    </div>
+
+    <div role="widget">
+      <label>Suffix</label>
+      <div>[[document.properties.count:suffix]]</div>
+    </div>
+
+    <div role="widget"><label>Icon</label><div>[[document.properties.report:icon]]</div>
+    </div>
+
+    <div role="widget">
+      <label>Style</label>
+      <div>[[document.properties.count:style]]</div>
+    </div>
+
+  </template>
+
+  <script>
+  Polymer({
+    is: 'nuxeo-count-metadata-layout',
+    behaviors: [Nuxeo.LayoutBehavior],
+    properties: {
+
+      /**
+         * @doctype Count
+         */
+      document: {
+        type: Object,
+      },
+
+    }
+  });
+  </script>
+</dom-module>

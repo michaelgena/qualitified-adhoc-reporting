@@ -1,0 +1,105 @@
+<!--
+`nuxeo-table-metadata-layout`
+@group Nuxeo UI
+@element nuxeo-table-metadata-layout
+-->
+<dom-module id="nuxeo-table-metadata-layout">
+  <template>
+    <style>
+      *[role=widget] {
+        padding: 5px;
+      }
+    </style>
+    <div role="widget">
+      <label>Title</label>
+      <div>[[document.properties.dc:title]]</div>
+    </div>
+
+    <nuxeo-directory-suggestion role="widget" value="[[document.properties.report:datatype]]" label="Data Type" readonly="true" directory-name="DataType"></nuxeo-directory-suggestion>
+
+    <div role="widget">
+      <label>Document Type</label>
+      <div>[[document.properties.report:primarytype]]</div>
+    </div>
+
+    <div role="widget">
+      <label>Life Cycle State</label>
+      <div>[[document.properties.report:lifeCycleState]]</div>
+    </div>
+
+    <div role="widget"><label>Facet</label><div>[[document.properties.report:mixintype]]</div>
+    </div>
+
+    <div role="widget">
+      <label>Metrics</label>
+      <div>[[document.properties.report:metrics]]</div>
+    </div>
+
+    <!--div role="widget">
+      <label>Where</label>
+      <div>[[document.properties.report:where]]</div>
+    </div-->
+
+    <div role="widget">
+      <label>Grouped By</label>
+      <div>[[document.properties.report:groupedBy]]</div>
+    </div>
+
+    <div role="widget">
+      <label>Group Limit</label>
+      <div>[[document.properties.report:groupLimit]]</div>
+    </div>
+
+    <div role="widget">
+      <label>Date Field</label>
+      <div>[[document.properties.report:dateField]]</div>
+    </div>
+
+    <div role="widget"><label>Column 1 Name</label><div>[[document.properties.table:columnName1]]</div>
+    </div>
+
+    <div role="widget"><label>Column 2 Name</label><div>[[document.properties.table:columnName2]]</div>
+    </div>
+
+    <div role="widget"><label>Column 1 Style</label><div>[[document.properties.table:columnStyle1]]</div>
+    </div>
+
+    <div role="widget"><label>Column 2 Style</label><div>[[document.properties.table:columnStyle2]]</div>
+    </div>
+
+    <div role="widget">
+      <label>Date Format</label>
+      <div>[[document.properties.report:dateFormat]]</div>
+    </div>
+
+    <nuxeo-directory-suggestion role="widget" value="[[document.properties.table:valuetype]]" label="Number Types" readonly="true" directory-name="ValueType"></nuxeo-directory-suggestion>
+
+    <div role="widget">
+      <label>Prefix</label>
+      <div>[[document.properties.table:prefix]]</div>
+    </div>
+
+    <div role="widget">
+      <label>Suffix</label>
+      <div>[[document.properties.table:suffix]]</div>
+    </div>
+
+  </template>
+
+  <script>
+  Polymer({
+    is: 'nuxeo-table-metadata-layout',
+    behaviors: [Nuxeo.LayoutBehavior],
+    properties: {
+
+      /**
+         * @doctype Table
+         */
+      document: {
+        type: Object,
+      },
+
+    }
+  });
+  </script>
+</dom-module>

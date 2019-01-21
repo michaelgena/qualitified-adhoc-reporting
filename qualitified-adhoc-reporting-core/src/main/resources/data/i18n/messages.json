@@ -1,8 +1,7 @@
 {
-  "label.document.type.countreport":"Number",
-  "label.document.type.chartpiereport":"Chart Pie",
-  "label.document.type.chartbarreport":"Chart Bar",
-  "label.document.type.chartlinereport":"Chart Line",
-  "label.document.type.tablereport":"Table",
-  "label.delete.report.document":"Delete Report"
+  "label.document.type.chartpie": "Chart Pie",
+  "label.document.type.table": "Table",
+  "label.document.type.count": "Number",
+  "label.document.type.chartbar": "Chart Bar",
+  "label.document.type.chartline": "Chart Line"
 }

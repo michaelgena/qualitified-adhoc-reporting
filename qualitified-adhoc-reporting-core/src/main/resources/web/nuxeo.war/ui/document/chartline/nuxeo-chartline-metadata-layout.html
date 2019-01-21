@@ -1,0 +1,83 @@
+<!--
+`nuxeo-chartline-metadata-layout`
+@group Nuxeo UI
+@element nuxeo-chartline-metadata-layout
+-->
+<dom-module id="nuxeo-chartline-metadata-layout">
+  <template>
+    <style>
+      *[role=widget] {
+        padding: 5px;
+      }
+    </style>
+    <div role="widget">
+      <label>Title</label>
+      <div>[[document.properties.dc:title]]</div>
+    </div>
+
+<nuxeo-directory-suggestion role="widget" value="[[document.properties.report:datatype]]" label="Data Type" readonly="true" directory-name="DataType"></nuxeo-directory-suggestion>
+
+<div role="widget">
+      <label>Document Type</label>
+      <div>[[document.properties.report:primarytype]]</div>
+    </div>
+
+<div role="widget">
+      <label>Life Cycle State</label>
+      <div>[[document.properties.report:lifeCycleState]]</div>
+    </div>
+
+    <div role="widget"><label>Facet</label><div>[[document.properties.report:mixintype]]</div>
+    </div>
+
+<div role="widget">
+      <label>Metrics</label>
+      <div>[[document.properties.report:metrics]]</div>
+    </div>
+
+<div role="widget">
+      <label>Grouped By</label>
+      <div>[[document.properties.report:groupedBy]]</div>
+    </div>
+
+<div role="widget">
+      <label>Group Limit</label>
+      <div>[[document.properties.report:groupLimit]]</div>
+    </div>
+
+    <div role="widget">
+      <label>Date Field</label>
+      <div>[[document.properties.report:dateField]]</div>
+    </div>
+
+<nuxeo-directory-suggestion role="widget" value="[[document.properties.report:withDateIntervals]]" label="Dates Interval" readonly="true" directory-name="DateIntervalsType"></nuxeo-directory-suggestion>
+
+    <div role="widget">
+      <label>Date Format</label>
+      <div>[[document.properties.report:dateFormat]]</div>
+    </div>
+
+<div role="widget">
+      <label>Options</label>
+      <div>[[document.properties.report:options]]</div>
+    </div>
+
+    </template>
+
+  <script>
+  Polymer({
+    is: 'nuxeo-chartline-metadata-layout',
+    behaviors: [Nuxeo.LayoutBehavior],
+    properties: {
+
+      /**
+         * @doctype ChartLine
+         */
+      document: {
+        type: Object,
+      },
+
+    }
+  });
+  </script>
+</dom-module>
