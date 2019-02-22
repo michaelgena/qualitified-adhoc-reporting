@@ -22,14 +22,15 @@ limitations under the License.
 @group Nuxeo UI
 @element nuxeo-home
 -->
+<link rel="import" href="dist/the-grid.html">
+<link rel="import" href="dist/grid-styles.html">
+<link rel="import" href="dist/debug-grid.html">
+
 <link rel="import" href="document/chartbar/nuxeo-chartbar-view-layout.html">
 <link rel="import" href="document/chartline/nuxeo-chartline-view-layout.html">
 <link rel="import" href="document/chartpie/nuxeo-chartpie-view-layout.html">
 <link rel="import" href="document/count/nuxeo-count-view-layout.html">
 <link rel="import" href="document/table/nuxeo-table-view-layout.html">
-<link rel="import" href="dist/the-grid.html">
-<link rel="import" href="dist/grid-styles.html">
-<link rel="import" href="dist/debug-grid.html">
 
 <dom-module id="nuxeo-home">
   <template>
@@ -52,8 +53,9 @@ limitations under the License.
       }
 
       nuxeo-date-picker {
-        padding: 0 8px;
-        display: inline-flex;
+        padding: 0 10px;
+        margin-top: 5px;
+        /*display: inline-flex;*/
       }
 
       .toggleBtn {
@@ -62,6 +64,8 @@ limitations under the License.
 
       .report > span {
         visibility: hidden;
+        /*visibility: visible;*/
+
       }
 
       .report:hover > span {
@@ -77,7 +81,7 @@ limitations under the License.
       <div slot="header">
 
         <!--Dashboard Title-->
-        <div class="title"> [[i18n('home.dashboard')]] </div>
+        <div class="title"> [[i18n('home.dashboard')]]</div>
 
         <!--Dates-->
         <div class="dates">
@@ -93,23 +97,24 @@ limitations under the License.
 
       </div>
 
-
       <section name="dashboard" class="dashboard">
 
-        <nuxeo-page-provider role="widget" id="reportProvider" auto query="SELECT * FROM Document
+        <nuxeo-page-provider  role="widget"
+                              auto
+                              query="SELECT * FROM Document
                                     WHERE ecm:primaryType in ('ChartBar', 'ChartLine', 'ChartPie', 'Count', 'Table')
                                     AND ecm:isTrashed = 0
                                     AND ecm:currentLifeCycleState != 'deleted'
                                     ORDER BY dc:created ASC"
-          current-page="{{reportsProvider}}">
+                              current-page="{{reportsProvider}}">
         </nuxeo-page-provider>
 
         <nuxeo-operation id="updateOp" op="Document.Update" input="[[input]]" params="[[params]]"></nuxeo-operation>
 
         <!--debug-grid cell-height="50" cell-width="50" cell-margin="10" col-count="25" row-count="25"></debug-grid-->
-        <the-grid id="grid1" draggable resizable row-autogrow col-autogrow cell-height="50" cell-width="50" cell-margin="10">
+        <the-grid id="grid1" draggable resizable row-autogrow col-autogrow cell-height="50" cell-width="50" cell-margin="10" col-count="25" row-count="25">
 
-          <template is="dom-repeat" items="[[reportsProvider]]" as="report">
+          <template is="dom-repeat" items="{{reportsProvider}}" as="report">
             <div style="display: none;"> [[_getSavedCoor(report,index)]]</div>
 
             <template is="dom-if" if="[[isReport(report.type, 'ChartBar',report)]]">
@@ -123,8 +128,8 @@ limitations under the License.
                                           min-height="3"
                                           document="[[report]]"
                                           start-date=[[startDate]]
-                                          end-date=[[endDate]] e
-                                          dit-mode=[[editMode]]>
+                                          end-date=[[endDate]]
+                                          edit-mode=[[editMode]]>
                 <span resize="left">│</span>
                 <span resize="right">│</span>
                 <span resize="top">─</span>
@@ -244,7 +249,7 @@ limitations under the License.
   <script>
     Polymer({
       is: 'nuxeo-home',
-      behaviors: [Nuxeo.RoutingBehavior, Nuxeo.FormatBehavior],
+      behaviors: [Nuxeo.RoutingBehavior, Nuxeo.FormatBehavior, Nuxeo.ChartDataBehavior],
       properties: {
 
         startDate: {
@@ -270,7 +275,8 @@ limitations under the License.
         reports: {
           type: Array,
           notify: true,
-          value: []
+          value: [],
+          observer:'_reportsChanged'
         },
 
         params: {
@@ -285,8 +291,35 @@ limitations under the License.
       },
 
       ready: function() {
-        this.startDate = moment().subtract(1, 'month').format('YYYY-MM-DD');
-        this.endDate = moment().format('YYYY-MM-DD');
+
+        if(moment().format('M') > 6){
+          this.startDate = moment().format('YYYY')+'-07-01';
+          this.endDate = moment().format('YYYY')+'-12-31';
+        }else{
+          this.startDate = moment().format('YYYY')+'-01-01';
+          this.endDate = moment().format('YYYY')+'-06-30';
+        }
+
+        /*setTimeout(function() {
+          console.log("ready");
+          var reportTypes = ['ChartBar', 'ChartLine', 'ChartPie', 'Count', 'Table']
+          var nxDocCreate = document.querySelector('nuxeo-app').root.querySelector('nuxeo-document-create-popup').root.querySelector('paper-dialog').querySelector('nuxeo-document-create');
+          var createButton = document.querySelector('nuxeo-app').root.querySelector('nuxeo-document-create-popup').root.querySelector('paper-dialog').querySelector('nuxeo-document-create').root.getElementById('create');
+          createButton.onclick = function() {
+            if(reportTypes.includes(nxDocCreate.selectedDocType.type)){
+              //nxDocCreate.navigateTo('home','/');
+              //console.log(nxDocCreate.navigateTo('home','/'));
+              setTimeout(function() {
+                window.location.href = "http://localhost:8080/nuxeo/ui/#!/home";
+                console.log(window.location.href);
+                console.log("done");
+            }, 100);
+
+            }
+
+          };
+
+        }, 3000);*/
 
         this.$$('#grid1').addEventListener('move', e => {
           this._tileMoved(e);
@@ -319,8 +352,6 @@ limitations under the License.
         var btn = this.$.toggleBtn;
         if (btn.checked) {
           this.editMode = false;
-          this._setCoor();
-
         } else {
           this.editMode = true;
         }
@@ -333,7 +364,6 @@ limitations under the License.
         savedReport.report = report;
         this.reports.push(savedReport);
         //console.log(this.reports);
-        //this._setCoor();
       },
 
       /*Find an empty player position [The last row on the left] */
@@ -377,11 +407,13 @@ limitations under the License.
             this.$$("#grid1").ensureSpace(tile); //Increase the grid size if the given tile is out of grid bounds.
           } else {
             /* Set saved coordinates. */
-            tile.setAttribute('col', this.reports[i].report.properties['report:col']);
-            tile.setAttribute('row', this.reports[i].report.properties['report:row']);
-            tile.setAttribute('width', this.reports[i].report.properties['report:width']);
-            tile.setAttribute('height', this.reports[i].report.properties['report:height']);
-            this.$$("#grid1").ensureSpace(tile); //Increase the grid size if the given tile is out of grid bounds.
+            if(tile){
+              tile.setAttribute('col', this.reports[i].report.properties['report:col']);
+              tile.setAttribute('row', this.reports[i].report.properties['report:row']);
+              tile.setAttribute('width', this.reports[i].report.properties['report:width']);
+              tile.setAttribute('height', this.reports[i].report.properties['report:height']);
+              this.$$("#grid1").ensureSpace(tile); //Increase the grid size if the given tile is out of grid bounds.
+            }
           }
         }
       },
@@ -418,5 +450,4 @@ limitations under the License.
       }
     });
   </script>
-
 </dom-module>

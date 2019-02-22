@@ -42,13 +42,13 @@ Created by mmakni on 18-12-2018
         <nuxeo-tooltip>[[i18n('deleteButton.tooltip')]]</nuxeo-tooltip>
       </div>
 
-      <template is="dom-if" if="[[_isAvailable(document)]]">
+      <!-- <template is="dom-if" if="[[_isAvailable(document)]]"> -->
         <div  on-tap="_openDialog">
           <paper-icon-button noink id="[[layout]]-button" icon="[[icon]]"></paper-icon-button>
           <span class="label" hidden$="[[!showLabel]]">[[i18n(label)]]</span>
         </div>
         <nuxeo-tooltip for="[[layout]]-button">[[i18n(label)]]</nuxeo-tooltip>
-      </template>
+      <!-- </template> -->
     </div>
 
     <!-- Edit Report -->
@@ -67,7 +67,7 @@ Created by mmakni on 18-12-2018
   <script>
   Polymer({
     is: 'report-edit-delete',
-    behaviors: [Nuxeo.LayoutBehavior,Nuxeo.ChartDataBehavior],
+    behaviors: [Nuxeo.LayoutBehavior],
     properties: {
 
       document: {
@@ -99,7 +99,6 @@ Created by mmakni on 18-12-2018
         value: 'nuxeo:settings'
       },
 
-
       /* Permanently delete the document.*/
       hard: {
         type: Boolean,
@@ -126,7 +125,7 @@ Created by mmakni on 18-12-2018
     },
     _closeDialog: function() {
       this.dialog.close();
-      this.navigateTo('home','/');
+      //this.navigateTo('home','/');
       //location.reload();
     },
 

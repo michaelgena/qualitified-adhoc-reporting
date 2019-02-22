@@ -1,0 +1,103 @@
+<script>
+
+  window.addEventListener("load", function() {
+    /*-----------------------Set grid------------------------------------------*/
+
+    function setGrid(){
+      var nxHome = document.querySelector('body > nuxeo-app').shadowRoot.querySelector('#pages > nuxeo-home');
+      if (nxHome.root) {
+        nxHome._setCoor();
+      }
+    }
+
+    var time = setInterval(function() {
+      setGrid();
+    }, 1);
+
+    setTimeout(function() {
+      clearInterval(time);
+    }, 1000);
+
+    window.onhashchange = function() {
+      if(location.hash === "#!/home"){
+        setTimeout(function() {
+          setGrid();
+        }, 1000);
+      }
+    }
+
+
+    /**********************************************************************/
+    /*function modifyCrDialg(targetPath) {
+      var tps = document.querySelector('body > nuxeo-app').shadowRoot.querySelector('#importPopup').shadowRoot.querySelector('#simpleCreation').shadowRoot.querySelector('iron-pages > div.vertical.iron-selected > div.container > paper-dialog-scrollable > div');
+      var butTypes = tps.getElementsByClassName('docTypeButton');
+      var reportTypes = ['ChartBar', 'ChartLine', 'ChartPie', 'Count', 'Table'];
+      console.log(targetPath.value);
+      console.log(location.hash);
+
+      if (targetPath.value === "/" && location.hash === "#!/home") { console.log("1");
+        for (var i = 0; i < butTypes.length; i++) {
+          if (!reportTypes.includes(butTypes[i].getAttribute('name'))) {
+            butTypes[i].hidden = true;
+          }else{
+            butTypes[i].hidden = false;
+          }
+        }
+      }
+
+      if (targetPath.value !== "/" && location.hash === "#!/home") { console.log("2");
+        for (var i = 0; i < butTypes.length; i++) {
+          if (reportTypes.includes(butTypes[i].getAttribute('name'))) {
+            butTypes[i].hidden = true;
+          }else{
+            butTypes[i].hidden = false;
+          }
+        }
+      }
+
+      if (targetPath.value !== "/" && location.hash !== "#!/home") { console.log("3");
+        for (var i = 0; i < butTypes.length; i++) {
+          if (reportTypes.includes(butTypes[i].getAttribute('name'))) {
+            butTypes[i].hidden = true;
+          }else{
+            butTypes[i].hidden = false;
+          }
+        }
+      }
+
+      if (targetPath.value === "/"  && location.hash !== "#!/home") { console.log("4");
+        for (var i = 0; i < butTypes.length; i++) {console.log(butTypes[i].getAttribute('name'));
+          if (reportTypes.includes(butTypes[i].getAttribute('name'))) {console.log("41");console.log(butTypes[i].getAttribute('name'));
+            butTypes[i].hidden = true;
+          }else{
+            butTypes[i].hidden = false; console.log("42"); console.log(butTypes[i].getAttribute('name'));
+          }
+        }
+      }
+    }*/
+    /**********************************************************************/
+
+
+    /*setInterval(function() { 
+
+      var targetPath = document.querySelector('body > nuxeo-app').shadowRoot.querySelector('#importPopup').shadowRoot.querySelector('#simpleCreation').shadowRoot.querySelector('#pathSuggesterChoose');
+      var createButton = document.querySelector('body > nuxeo-app').shadowRoot.querySelector('nuxeo-document-create-button').shadowRoot.querySelector('#createBtn');
+      createButton.onclick = function() {
+         setTimeout(function() {
+           modifyCrDialg(targetPath);
+         }, 400);
+      };
+      targetPath.addEventListener('value-changed', function() { console.log("modified");
+        modifyCrDialg(targetPath);
+      });
+
+    /*-----------------------Hide path suggester------------------------------------------
+    var pathSugCr = document.querySelector('body > nuxeo-app').shadowRoot.querySelector('#importPopup').shadowRoot.querySelector('#simpleCreation').shadowRoot.querySelector('iron-pages > div.vertical.iron-selected > div.container > div');
+    var pathSugImp = document.querySelector('body > nuxeo-app').shadowRoot.querySelector('#importPopup').shadowRoot.querySelector('#bulkCreation').shadowRoot.querySelector('iron-pages > div.upload.vertical.layout.flex.iron-selected > div.suggester');
+    pathSugCr.hidden = "true";
+    pathSugImp.hidden = "true";
+
+    }, 200);*/
+
+  });
+</script>

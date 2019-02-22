@@ -54,7 +54,9 @@
   <xs:element name="mixintype" type="xs:string"/>
   <xs:element name="options" type="xs:string"/>
   <xs:element name="primarytype" type="xs:string"/>
-  <xs:element name="where" type="xs:string"/>
+  <!-- <xs:element name="where" type="xs:string"/> -->
+  <xs:element name="keyMetadata" type="xs:string"/>
+  <xs:element name="valueMetadata" type="xs:string"/>
 
   <xs:element name="withDateIntervals">
     <xs:simpleType>

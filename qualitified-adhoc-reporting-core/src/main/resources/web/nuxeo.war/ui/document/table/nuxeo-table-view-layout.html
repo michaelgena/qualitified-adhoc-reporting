@@ -1,3 +1,4 @@
+
 <!--
 `nuxeo-table-view-layout`
 @group Nuxeo UI
@@ -15,12 +16,23 @@
       nuxeo-card {
         position: relative;
         margin-bottom: 0;
-        width: 100%;
         height: 100%;
+        width: 100%;
       }
 
       nuxeo-data-table {
-        height: 450px;
+        height: 85%;
+        width: 100%;
+        /*min-width: 30em;*/
+        min-height: 0;
+      }
+
+      nuxeo-data-table ::content #container{
+        width:100%;
+      }
+
+      iron-icon{
+        margin-right: 8px;
       }
 
       #edit{
@@ -40,11 +52,11 @@
                            metrics="[[document.properties.report:metrics]]">
     </nuxeo-repository-data>
 
-    <!--nuxeo-page-provider auto page-size="10"
+    <!-- <nuxeo-page-provider auto page-size="10"
                          query="[[_query(data)]]"
                          schemas="*"
                          current-page="{{documents}}">
-    </nuxeo-page-provider-->
+    </nuxeo-page-provider> -->
 
     <nuxeo-card heading="[[document.properties.dc:title]]">
 
@@ -52,103 +64,137 @@
         <report-edit-delete document="{{document}}"></report-edit-delete>
       </div>
 
-      <nuxeo-data-table items="[[data]]">
+      <nuxeo-data-table id="table" items="{{data}}"><content></content>
 
-        <nuxeo-data-table-column name="[[document.properties.table:columnName1]]">
+        <nuxeo-data-table-column name="{{document.properties.table:columnName1}}">
           <template>
-            <span style$="[[document.properties.table:columnStyle1]]">
-              <!--span>
-								<iron-icon src="[[_getTypeIcon(item.key)]]"></iron-icon>
-							</span-->
-              <span>
-                [[_labels(item.key)]]
-              </span>
-            </span>
+            <iron-icon id="icon" hidden$="{{iconHidden}}" src="{{_getDocIcon(item.key)}}"></iron-icon>
+            {{_labels(item.key)}}
           </template>
         </nuxeo-data-table-column>
 
-        <nuxeo-data-table-column name="[[document.properties.table:columnName2]]">
+        <nuxeo-data-table-column name="{{document.properties.table:columnName2}}">
           <template>
-            <span style$="[[document.properties.table:columnStyle2]]">
-              <span>[[document.properties.table:prefix]]</span>
-              <span>[[_getValue(item.value)]]</span>
-              <span>[[document.properties.table:suffix]]</span>
-            </span>
+              {{_values(item.value)}}
           </template>
         </nuxeo-data-table-column>
 
       </nuxeo-data-table>
+
+
 
     </nuxeo-card>
     <slot></slot>
   </template>
 
   <script>
-  Polymer({
-    is: 'nuxeo-table-view-layout',
-    behaviors: [Nuxeo.LayoutBehavior],
-    properties: {
+    Polymer({
+      is: 'nuxeo-table-view-layout',
+      behaviors: [Nuxeo.ChartDataBehavior, Nuxeo.LayoutBehavior],
+      properties: {
 
-      /**
-         * @doctype Table
-         */
-      document: {
-        type: Object,
+        document: {
+          type: Object,
+          observer: 'refresh'
+        }
+      },
+
+      ready:function () {
+        setTimeout(function() {
+          //console.log(this.$.table.shadowRoot.getElementById("container").style.width);
+          this.$.table.shadowRoot.getElementById("container").style.width = '100%';
+        }.bind(this),1000);
+      },
+
+
+      // _query: function(entries) {
+      //   if (entries.length > 0) {
+      //     var keys = entries.map(function(entry) {
+      //       return '\'' + entry.key + '\'';
+      //     }).join(',');
+      //     console.log('query SELECT * FROM '+this.document.properties['report:primarytype']+' WHERE ecm:uuid IN (' + keys + ') ORDER BY '+this.document.properties['report:dateField']+' DESC');
+      //     return 'SELECT * FROM '+this.document.properties['report:primarytype']+' WHERE ecm:uuid IN (' + keys + ') ORDER BY '+this.document.properties['report:dateField']+' DESC';
+      //   }
+      // },
+
+
+      /* _labels Modified*/
+      _labels: function(key) {
+        var dateFormat = this.document.properties['report:dateFormat'];
+        if (dateFormat == "" || dateFormat == null) {
+          dateFormat = "DD/MM/YYYY";
+        }
+        if (moment(key).isValid()) {
+          return moment(key).format(dateFormat);
+        } else {
+          return key;
+        }
+      },
+
+      _extendEndDate: function(date) {
+        if (date && moment) {
+          return this._formatDate(moment(date).add(1, 'days').subtract(1, 'ms').toJSON());
+        }
+        return date;
+      },
+
+      /*Adding prefix and suffix to the value*/
+      _values: function(value) {
+        var value = this._getValue(value);
+        var prefix = '';
+        var suffix = '';
+        if (this.document.properties['table:prefix']) {
+          prefix = this.document.properties['table:prefix'];
+        }
+        if (this.document.properties['table:suffix']) {
+          suffix = this.document.properties['table:suffix'];
+        }
+        return prefix + ' ' + value + ' ' + suffix;
+      },
+
+      /* Value Type: Number - Currency */
+      _getValue: function(value) {
+        if (this._isCurrency(this.document)) {
+          return this._formatCurrency(value);
+        } else {
+          return value;
+        }
+      },
+
+      _isCurrency: function(doc) {
+        return doc ? doc.properties['count:valuetype'] == 'Currency' : false;
+      },
+
+      _formatCurrency: function(value) {
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      },
+
+      /* Get document icon. */
+      _getDocIcon: function(docName) {
+        if(docName && this.document.properties['table:icon'] == 'Yes'){
+          var xhr = new XMLHttpRequest();
+          xhr.open('HEAD', 'images/doctypes/' + docName.toLowerCase() + '.svg', false);
+          xhr.send();
+          if (xhr.status == "404") {
+            this.iconHidden = true;
+            return false;
+          } else {
+            this.iconHidden = false;
+            return 'images/doctypes/' + docName.toLowerCase() + '.svg';
+          }
+        }else{
+          this.iconHidden = true;
+        }
+      },
+
+      refresh: function () {
+        if(this.document.properties['table:icon'] == 'Yes'){
+          this.iconHidden = false;
+          this.$.table.fetch();
+        }
       }
-    },
 
-    /*_query: function(entries) {
-      if (entries.length > 0) {
-        var keys = entries.map(function(entry) {
-          return '\'' + entry.key + '\'';
-        }).join(','); console.log("keys "+ keys);
-        console.log('query SELECT * FROM '+this.document.properties['report:primarytype']+' WHERE ecm:uuid IN (' + keys + ') ORDER BY '+this.document.properties['report:dateField']+' DESC');
-        return 'SELECT * FROM '+this.document.properties['report:primarytype']+' WHERE ecm:uuid IN (' + keys + ') ORDER BY '+this.document.properties['report:dateField']+' DESC';
-      }
-    },*/
-
-    /* _labels Modified*/
-    _labels: function(key) {
-      var dateFormat = this.document.properties['report:dateFormat'];
-      if(dateFormat == "" || dateFormat == null){
-        dateFormat = "DD/MM/YYYY";
-      }
-      if (moment(key).isValid()) {
-        return moment(key).format(dateFormat);
-      } else {
-        return key;
-      }
-    },
-
-    _extendEndDate: function(date) {
-      if (date && moment) {
-        return this._formatDate(moment(date).add(1, 'days').subtract(1, 'ms').toJSON());
-      }
-      return date;
-    },
-
-    /* Value Type: Number - Currency */
-    _getValue: function(value){
-      if(this._isCurrency(this.document)){
-        return this._formatCurrency(value);
-      }else{
-        return value;
-      }
-    },
-
-    _isCurrency: function(doc){
-      return doc? doc.properties['count:valuetype'] == 'Currency' : false;
-    },
-
-    _formatCurrency: function(value) {
-      return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    },
-
-    /* Get Icons */
-    _getTypeIcon: function(type) {
-      return type? ('images/doctypes/' + type.toLowerCase() + '.svg')  : "";
-    }
-
-  });
+    });
   </script>
+
 </dom-module>

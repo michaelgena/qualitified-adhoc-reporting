@@ -3,5 +3,36 @@
   "label.document.type.table": "Table",
   "label.document.type.count": "Number",
   "label.document.type.chartbar": "Chart Bar",
-  "label.document.type.chartline": "Chart Line"
+  "label.document.type.chartline": "Chart Line",
+
+  "label.report.datatype": "Data Type",
+  "label.report.documenttype": "Document Type",
+  "label.report.lifecyclestate": "Life Cycle State",
+  "label.report.facet": "Facet",
+  "label.report.metrics": "Metrics",
+  "label.report.groupedby": "Grouped By",
+  "label.report.grouplimit": "Group Limit",
+  "label.report.datefield": "Date Field",
+  "label.report.datesinterval": "Dates Interval",
+  "label.report.dateformat": "Date Format",
+  "label.report.keymetadata": "Key Metadata",
+  "label.report.valuemetadata": "Value Metadata",
+
+
+  "label.count.numbertypes":"Number Types",
+  "label.count.prefix":"Prefix",
+  "label.count.suffix":"Suffix",
+  "label.count.icon":"Icon",
+  "label.count.style":"Style",
+
+  "label.table.c1name":"Column 1 Name",
+  "label.table.c2name":"Column 2 Name",
+  "label.table.c1style":"Column 1 Style",
+  "label.table.c2style":"Column 2 Style",
+  "label.table.dateformat":"Date Format",
+  "label.table.numbertypes":"Number Types",
+  "label.table.prefix":"Prefix",
+  "label.table.suffix":"Suffix",
+  "label.table.icon":"Icon"
+
 }

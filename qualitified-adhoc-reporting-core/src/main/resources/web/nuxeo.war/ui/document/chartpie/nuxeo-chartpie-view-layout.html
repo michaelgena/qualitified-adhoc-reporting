@@ -6,7 +6,6 @@
 <link rel="import" href="../../nuxeo-admin/nuxeo-chart-data-behavior.html">
 <link rel="import" href="../report-edit-delete.html">
 
-
 <dom-module id="nuxeo-chartpie-view-layout">
   <template>
     <style>
@@ -22,12 +21,14 @@
       }
 
       chart-pie {
+        /* height: 100% !important; */
         width: 100% !important;
         min-width: 30em;
         display: block;
         font-size: .8rem;
+        margin-top: 35px;
       }
-      
+
       #edit{
         height: 0px;
       }
@@ -80,6 +81,8 @@
         value: ''
       }
     },
+
+    
 
     /*Check Nuxeo.ChartDataBehavior - Not Working*/
     _labels: function(data) {
