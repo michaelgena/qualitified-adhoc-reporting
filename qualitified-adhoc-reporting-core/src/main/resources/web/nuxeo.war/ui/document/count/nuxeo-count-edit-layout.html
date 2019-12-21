@@ -1,0 +1,90 @@
+<!--
+`nuxeo-count-edit-layout`
+@group Nuxeo UI
+@element nuxeo-count-edit-layout
+-->
+<dom-module id="nuxeo-count-edit-layout">
+  <template>
+    <style>
+      *[role=widget] {
+      padding: 5px 15px 5px 15px;
+    }
+
+    paper-tabs {
+      text-transform: uppercase;
+      margin: 0 0 28px 0;
+    }
+    </style>
+
+    <paper-tabs selected="{{selected}}">
+      <paper-tab>Simple</paper-tab>
+      <paper-tab>Advanced</paper-tab>
+    </paper-tabs>
+
+    <iron-pages selected="{{selected}}">
+
+      <!-- TAB - Simple -->
+      <div>
+        <nuxeo-input role="widget" value="{{document.properties.dc:title}}" label="Title" type="text"></nuxeo-input>
+
+        <h3>Data Settings</h3>
+
+        <!--nuxeo-directory-suggestion role="widget" value="{{document.properties.report:datatype}}" label="[[i18n('label.report.datatype')]]" directory-name="DataType" min-chars="0"></nuxeo-directory-suggestion-->
+        <nuxeo-input role="widget" value="{{document.properties.report:primarytype}}" label="[[i18n('label.report.documenttype')]]" type="text"></nuxeo-input>
+        <nuxeo-input role="widget" value="{{document.properties.report:lifeCycleState}}" label="[[i18n('label.report.lifecyclestate')]]" type="text"></nuxeo-input>
+        <!--nuxeo-input value="{{document.properties.report:mixintype}}" label="[[i18n('label.report.facet')]]" type="text" role="widget"></nuxeo-input-->
+        <!--nuxeo-input role="widget" value="{{document.properties.report:metrics}}" label="[[i18n('label.report.metrics')]]" type="text"></nuxeo-input-->
+        <!--nuxeo-input role="widget" value="{{document.properties.report:dateField}}" label="[[i18n('label.report.datefield')]]" type="text"></nuxeo-input-->
+
+        <h3>Display</h3>
+
+        <nuxeo-directory-suggestion role="widget" value="{{document.properties.count:valuetype}}" label="[[i18n('label.count.numbertypes')]]" directory-name="ValueType" min-chars="0" dbl10n="true"></nuxeo-directory-suggestion>
+        <nuxeo-input role="widget" value="{{document.properties.count:prefix}}" label="[[i18n('label.count.prefix')]]" type="text"></nuxeo-input>
+        <nuxeo-input role="widget" value="{{document.properties.count:suffix}}" label="[[i18n('label.count.suffix')]]" type="text"></nuxeo-input>
+        <nuxeo-input value="{{document.properties.report:icon}}" label="[[i18n('label.count.icon')]]" type="text" role="widget"></nuxeo-input>
+        <!--nuxeo-input role="widget" value="{{document.properties.count:style}}" label="Style" type="text"></nuxeo-input-->
+      </div>
+
+      <!-- TAB - Advanced -->
+      <div>
+        <nuxeo-input role="widget" value="{{document.properties.dc:title}}" label="Title" type="text"></nuxeo-input>
+
+        <h3>Data Settings</h3>
+
+        <!-- <nuxeo-directory-suggestion role="widget" value="{{document.properties.report:datatype}}" label="[[i18n('label.report.datatype')]]" directory-name="DataType" min-chars="0" dbl10n="true"></nuxeo-directory-suggestion> -->
+        <nuxeo-input role="widget" value="{{document.properties.report:primarytype}}" label="[[i18n('label.report.documenttype')]]" type="text"></nuxeo-input>
+        <nuxeo-input role="widget" value="{{document.properties.report:lifeCycleState}}" label="[[i18n('label.report.lifecyclestate')]]" type="text"></nuxeo-input>
+        <nuxeo-input value="{{document.properties.report:mixintype}}" label="[[i18n('label.report.facet')]]" type="text" role="widget"></nuxeo-input>
+        <nuxeo-input role="widget" value="{{document.properties.report:metrics}}" label="[[i18n('label.report.metrics')]]" type="text"></nuxeo-input>
+        <nuxeo-input role="widget" value="{{document.properties.report:dateField}}" label="[[i18n('label.report.datefield')]]" type="text"></nuxeo-input>
+
+        <h3>Display</h3>
+
+        <nuxeo-directory-suggestion role="widget" value="{{document.properties.count:valuetype}}" label="[[i18n('label.count.numbertypes')]]" directory-name="ValueType" min-chars="0" dbl10n="true"></nuxeo-directory-suggestion>
+        <nuxeo-input role="widget" value="{{document.properties.count:prefix}}" label="[[i18n('label.count.prefix')]]" type="text"></nuxeo-input>
+        <nuxeo-input role="widget" value="{{document.properties.count:suffix}}" label="[[i18n('label.count.suffix')]]" type="text"></nuxeo-input>
+        <nuxeo-input value="{{document.properties.report:icon}}" label="[[i18n('label.count.icon')]]" type="text" role="widget"></nuxeo-input>
+        <nuxeo-input role="widget" value="{{document.properties.count:style}}" label="[[i18n('label.count.style')]]" type="text"></nuxeo-input>
+      </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-count-edit-layout',
+      behaviors: [Nuxeo.LayoutBehavior],
+      properties: {
+
+        /**
+         * @doctype Count
+         */
+        document: {
+          type: Object,
+        },
+
+      },
+      ready: function(){
+        this.selected = 0;
+      }
+    });
+  </script>
+</dom-module>

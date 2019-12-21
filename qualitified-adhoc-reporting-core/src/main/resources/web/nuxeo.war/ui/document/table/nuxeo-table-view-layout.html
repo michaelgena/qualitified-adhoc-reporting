@@ -1,0 +1,200 @@
+
+<!--
+`nuxeo-table-view-layout`
+@group Nuxeo UI
+@element nuxeo-table-view-layout
+-->
+<link rel="import" href="../../nuxeo-admin/nuxeo-chart-data-behavior.html">
+<link rel="import" href="../report-edit-delete.html">
+
+<dom-module id="nuxeo-table-view-layout">
+  <template>
+    <style>
+      *[role=widget] {
+        padding: 5px;
+      }
+      nuxeo-card {
+        position: relative;
+        margin-bottom: 0;
+        height: 100%;
+        width: 100%;
+      }
+
+      nuxeo-data-table {
+        height: 85%;
+        width: 100%;
+        /*min-width: 30em;*/
+        min-height: 0;
+      }
+
+      nuxeo-data-table ::content #container{
+        width:100%;
+      }
+
+      iron-icon{
+        margin-right: 8px;
+      }
+
+      #edit{
+        height: 0px;
+      }
+    </style>
+    <nuxeo-repository-data start-date="[[startDate]]"
+                           end-date="[[_extendEndDate(endDate)]]"
+                           data="{{data}}"
+                           index="[[index]]"
+                           date-field="[[document.properties.report:dateField]]"
+                           ecm-primary-type="[[document.properties.report:primarytype]]"
+                           ecm-mixin-type="[[document.properties.report:mixintype]]"
+                           ecm-lifecycle-state="[[document.properties.report:lifeCycleState]]"
+                           grouped-by="[[document.properties.report:groupedBy]]"
+                           group-limit="[[document.properties.report:groupLimit]]"
+                           metrics="[[document.properties.report:metrics]]">
+    </nuxeo-repository-data>
+
+    <!-- <nuxeo-page-provider auto page-size="10"
+                         query="[[_query(data)]]"
+                         schemas="*"
+                         current-page="{{documents}}">
+    </nuxeo-page-provider> -->
+
+    <nuxeo-card heading="[[document.properties.dc:title]]">
+
+      <div id="edit" hidden$="[[editMode]]">
+        <report-edit-delete document="{{document}}"></report-edit-delete>
+      </div>
+
+      <nuxeo-data-table id="table" items="{{data}}"><content></content>
+
+        <nuxeo-data-table-column name="{{document.properties.table:columnName1}}">
+          <template>
+            <iron-icon id="icon" hidden$="{{iconHidden}}" src="{{_getDocIcon(item.key)}}"></iron-icon>
+            {{_labels(item.key)}}
+          </template>
+        </nuxeo-data-table-column>
+
+        <nuxeo-data-table-column name="{{document.properties.table:columnName2}}">
+          <template>
+              {{_values(item.value)}}
+          </template>
+        </nuxeo-data-table-column>
+
+      </nuxeo-data-table>
+
+
+
+    </nuxeo-card>
+    <slot></slot>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-table-view-layout',
+      behaviors: [Nuxeo.ChartDataBehavior, Nuxeo.LayoutBehavior],
+      properties: {
+
+        document: {
+          type: Object,
+          observer: 'refresh'
+        }
+      },
+
+      ready:function () {
+        setTimeout(function() {
+          //console.log(this.$.table.shadowRoot.getElementById("container").style.width);
+          this.$.table.shadowRoot.getElementById("container").style.width = '100%';
+        }.bind(this),1000);
+      },
+
+
+      // _query: function(entries) {
+      //   if (entries.length > 0) {
+      //     var keys = entries.map(function(entry) {
+      //       return '\'' + entry.key + '\'';
+      //     }).join(',');
+      //     console.log('query SELECT * FROM '+this.document.properties['report:primarytype']+' WHERE ecm:uuid IN (' + keys + ') ORDER BY '+this.document.properties['report:dateField']+' DESC');
+      //     return 'SELECT * FROM '+this.document.properties['report:primarytype']+' WHERE ecm:uuid IN (' + keys + ') ORDER BY '+this.document.properties['report:dateField']+' DESC';
+      //   }
+      // },
+
+
+      /* _labels Modified*/
+      _labels: function(key) {
+        var dateFormat = this.document.properties['report:dateFormat'];
+        if (dateFormat == "" || dateFormat == null) {
+          dateFormat = "DD/MM/YYYY";
+        }
+        if (moment(key).isValid()) {
+          return moment(key).format(dateFormat);
+        } else {
+          return key;
+        }
+      },
+
+      _extendEndDate: function(date) {
+        if (date && moment) {
+          return this._formatDate(moment(date).add(1, 'days').subtract(1, 'ms').toJSON());
+        }
+        return date;
+      },
+
+      /*Adding prefix and suffix to the value*/
+      _values: function(value) {
+        var value = this._getValue(value);
+        var prefix = '';
+        var suffix = '';
+        if (this.document.properties['table:prefix']) {
+          prefix = this.document.properties['table:prefix'];
+        }
+        if (this.document.properties['table:suffix']) {
+          suffix = this.document.properties['table:suffix'];
+        }
+        return prefix + ' ' + value + ' ' + suffix;
+      },
+
+      /* Value Type: Number - Currency */
+      _getValue: function(value) {
+        if (this._isCurrency(this.document)) {
+          return this._formatCurrency(value);
+        } else {
+          return value;
+        }
+      },
+
+      _isCurrency: function(doc) {
+        return doc ? doc.properties['count:valuetype'] == 'Currency' : false;
+      },
+
+      _formatCurrency: function(value) {
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      },
+
+      /* Get document icon. */
+      _getDocIcon: function(docName) {
+        if(docName && this.document.properties['table:icon'] == 'Yes'){
+          var xhr = new XMLHttpRequest();
+          xhr.open('HEAD', 'images/doctypes/' + docName.toLowerCase() + '.svg', false);
+          xhr.send();
+          if (xhr.status == "404") {
+            this.iconHidden = true;
+            return false;
+          } else {
+            this.iconHidden = false;
+            return 'images/doctypes/' + docName.toLowerCase() + '.svg';
+          }
+        }else{
+          this.iconHidden = true;
+        }
+      },
+
+      refresh: function () {
+        if(this.document.properties['table:icon'] == 'Yes'){
+          this.iconHidden = false;
+          this.$.table.fetch();
+        }
+      }
+
+    });
+  </script>
+
+</dom-module>

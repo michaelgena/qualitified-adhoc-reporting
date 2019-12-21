@@ -1,0 +1,49 @@
+<!--
+`nuxeo-chartpie-create-layout`
+@group Nuxeo UI
+@element nuxeo-chartpie-create-layout
+-->
+<dom-module id="nuxeo-chartpie-create-layout">
+  <template>
+    <style>
+      *[role=widget] {
+        padding: 5px 15px 15px 15px;
+      }
+    </style>
+
+    <nuxeo-input role="widget" value="{{document.properties.dc:title}}" label="Title" type="text"></nuxeo-input>
+
+    <h3>Data Settings</h3>
+
+    <!-- <nuxeo-directory-suggestion role="widget" value="{{document.properties.report:datatype}}" label="[[i18n('label.report.datatype')]]" directory-name="Data Type"></nuxeo-directory-suggestion> -->
+    <nuxeo-input role="widget" value="{{document.properties.report:primarytype}}" label="[[i18n('label.report.documenttype')]]" type="text"></nuxeo-input>
+    <nuxeo-input role="widget" value="{{document.properties.report:lifeCycleState}}" label="[[i18n('label.report.lifecyclestate')]]" type="text"></nuxeo-input>
+    <nuxeo-input value="{{document.properties.report:mixintype}}" label="[[i18n('label.report.facet')]]" type="text" role="widget"></nuxeo-input>
+    <nuxeo-input role="widget" value="{{document.properties.report:metrics}}" label="[[i18n('label.report.metrics')]]" type="text"></nuxeo-input>
+    <nuxeo-input role="widget" value="{{document.properties.report:groupedBy}}" label="[[i18n('label.report.groupedby')]]" type="text"></nuxeo-input>
+    <nuxeo-input role="widget" value="{{document.properties.report:groupLimit}}" label="[[i18n('label.report.grouplimit')]]" type="number"></nuxeo-input>
+    <nuxeo-input role="widget" value="{{document.properties.report:dateField}}" label="[[i18n('label.report.datefield')]]" type="text"></nuxeo-input>
+
+    <!-- <h3>Display</h3>
+
+    <nuxeo-input role="widget" value="{{document.properties.report:options}}" label="Options" type="text"></nuxeo-input> -->
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-chartpie-create-layout',
+      behaviors: [Nuxeo.LayoutBehavior],
+      properties: {
+
+        /**
+         * @doctype ChartPie
+         */
+        document: {
+          type: Object,
+        },
+
+      }
+    });
+  </script>
+</dom-module>

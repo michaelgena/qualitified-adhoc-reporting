@@ -1,0 +1,121 @@
+<!--
+`nuxeo-table-metadata-layout`
+@group Nuxeo UI
+@element nuxeo-table-metadata-layout
+-->
+<dom-module id="nuxeo-table-metadata-layout">
+  <template>
+    <style>
+      *[role=widget] {
+        padding: 5px;
+      }
+    </style>
+
+    <div role="widget">
+      <label>Title</label>
+      <div>[[document.properties.dc:title]]</div>
+    </div>
+
+    <h3>Data Settings</h3>
+
+
+    <!-- <nuxeo-directory-suggestion role="widget" value="[[document.properties.report:datatype]]" label="[[i18n('label.report.datatype')]]" readonly="true" directory-name="DataType"></nuxeo-directory-suggestion> -->
+
+    <div role="widget">
+      <label>[[i18n('label.report.documenttype')]]</label>
+      <div>[[document.properties.report:primarytype]]</div>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('label.report.lifecyclestate')]]</label>
+      <div>[[document.properties.report:lifeCycleState]]</div>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('label.report.facet')]]</label>
+      <div>[[document.properties.report:mixintype]]</div>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('label.report.metrics')]]</label>
+      <div>[[document.properties.report:metrics]]</div>
+    </div>
+
+    <!--div role="widget">
+      <label>Where</label>
+      <div>[[document.properties.report:where]]</div>
+    </div-->
+
+    <div role="widget">
+      <label>[[i18n('label.report.groupedby')]]</label>
+      <div>[[document.properties.report:groupedBy]]</div>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('label.report.grouplimit')]]</label>
+      <div>[[document.properties.report:groupLimit]]</div>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('label.report.datefield')]]</label>
+      <div>[[document.properties.report:dateField]]</div>
+    </div>
+
+    <h3>Display</h3>
+
+    <div role="widget">
+      <label>[[i18n('label.table.c1name')]]</label>
+      <div>[[document.properties.table:columnName1]]</div>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('label.table.c2name')]]</label>
+      <div>[[document.properties.table:columnName2]]</div>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('label.table.c1style')]]</label>
+      <div>[[document.properties.table:columnStyle1]]</div>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('label.table.c2style')]]</label>
+      <div>[[document.properties.table:columnStyle2]]</div>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('label.table.dateformat')]]</label>
+      <div>[[document.properties.report:dateFormat]]</div>
+    </div>
+
+    <nuxeo-directory-suggestion role="widget" value="[[document.properties.table:valuetype]]" label="[[i18n('label.table.numbertypes')]]" readonly="true" directory-name="ValueType"></nuxeo-directory-suggestion>
+
+    <div role="widget">
+      <label>[[i18n('label.table.prefix')]]</label>
+      <div>[[document.properties.table:prefix]]</div>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('label.table.suffix')]]</label>
+      <div>[[document.properties.table:suffix]]</div>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-table-metadata-layout',
+      behaviors: [Nuxeo.LayoutBehavior],
+      properties: {
+
+        /**
+         * @doctype Table
+         */
+        document: {
+          type: Object,
+        },
+
+      }
+    });
+  </script>
+</dom-module>

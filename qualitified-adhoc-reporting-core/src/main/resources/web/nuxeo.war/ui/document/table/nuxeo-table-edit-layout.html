@@ -1,0 +1,105 @@
+<!--
+`nuxeo-table-edit-layout`
+@group Nuxeo UI
+@element nuxeo-table-edit-layout
+-->
+<dom-module id="nuxeo-table-edit-layout">
+  <template>
+    <style>
+      *[role=widget] {
+    padding: 5px 15px 5px 15px;
+  }
+
+  paper-tabs {
+    text-transform: uppercase;
+    margin: 0 0 28px 0;
+  }
+    </style>
+
+    <paper-tabs selected="{{selected}}">
+      <paper-tab>Simple</paper-tab>
+      <paper-tab>Advanced</paper-tab>
+    </paper-tabs>
+    <iron-pages selected="{{selected}}">
+
+      <!-- TAB - Simple -->
+      <div>
+        <nuxeo-input role="widget" value="{{document.properties.dc:title}}" label="Title" type="text"></nuxeo-input>
+
+        <h3>Data Settings</h3>
+
+        <!--nuxeo-directory-suggestion role="widget" value="{{document.properties.report:datatype}}" label="[[i18n('label.report.datatype')]]" directory-name="DataType" min-chars="0"></nuxeo-directory-suggestion-->
+        <nuxeo-input role="widget" value="{{document.properties.report:primarytype}}" label="[[i18n('label.report.documenttype')]]" type="text"></nuxeo-input>
+        <nuxeo-input role="widget" value="{{document.properties.report:lifeCycleState}}" label="[[i18n('label.report.lifecyclestate')]]" type="text"></nuxeo-input>
+        <!--nuxeo-input value="{{document.properties.report:mixintype}}" label="[[i18n('label.report.facet')]]" type="text" role="widget"></nuxeo-input-->
+        <!--nuxeo-input role="widget" value="{{document.properties.report:metrics}}" label="[[i18n('label.report.metrics')]]" type="text"></nuxeo-input-->
+        <!--nuxeo-input value="{{document.properties.report:where}}" label="Where" type="text" role="widget"></nuxeo-input-->
+        <!--nuxeo-input role="widget" value="{{document.properties.report:groupedBy}}" label="[[i18n('label.report.groupedby')]]" type="text"></nuxeo-input-->
+        <nuxeo-input role="widget" value="{{document.properties.report:groupLimit}}" label="[[i18n('label.report.grouplimit')]]" type="number"></nuxeo-input>
+        <!--nuxeo-input role="widget" value="{{document.properties.report:dateField}}" label="[[i18n('label.report.datefield')]]" type="text"></nuxeo-input-->
+
+        <h3>Display</h3>
+
+        <nuxeo-input value="{{document.properties.table:columnName1}}" label="[[i18n('label.table.c1name')]]" type="text" role="widget"></nuxeo-input>
+        <nuxeo-input value="{{document.properties.table:columnName2}}" label="[[i18n('label.table.c2name')]]" type="text" role="widget"></nuxeo-input>
+        <!--nuxeo-input value="{{document.properties.table:columnStyle1}}" label="[[i18n('label.table.c1style')]]" type="text" role="widget"></nuxeo-input-->
+        <!--nuxeo-input value="{{document.properties.table:columnStyle2}}" label="[[i18n('label.table.c2style')]]" type="text" role="widget"></nuxeo-input-->
+        <nuxeo-input role="widget" value="{{document.properties.report:dateFormat}}" label="[[i18n('label.table.dateformat')]]" type="text"></nuxeo-input>
+        <!--nuxeo-directory-suggestion role="widget" value="{{document.properties.table:valuetype}}" label="[[i18n('label.table.numbertypes')]]" directory-name="ValueType" min-chars="0"></nuxeo-directory-suggestion-->
+        <nuxeo-input role="widget" value="{{document.properties.table:prefix}}" label="[[i18n('label.table.prefix')]]" type="text"></nuxeo-input>
+        <nuxeo-input role="widget" value="{{document.properties.table:suffix}}" label="[[i18n('label.table.suffix')]]" type="text"></nuxeo-input>
+      </div>
+
+      <!-- TAB - Advanced -->
+      <div>
+        <nuxeo-input role="widget" value="{{document.properties.dc:title}}" label="Title" type="text"></nuxeo-input>
+
+        <h3>Data Settings</h3>
+
+        <!-- <nuxeo-directory-suggestion role="widget" value="{{document.properties.report:datatype}}" label="[[i18n('label.report.datatype')]]" directory-name="DataType" min-chars="0" dbl10n="true"></nuxeo-directory-suggestion> -->
+        <nuxeo-input role="widget" value="{{document.properties.report:primarytype}}" label="[[i18n('label.report.documenttype')]]" type="text"></nuxeo-input>
+        <nuxeo-input role="widget" value="{{document.properties.report:lifeCycleState}}" label="[[i18n('label.report.lifecyclestate')]]" type="text"></nuxeo-input>
+        <nuxeo-input value="{{document.properties.report:mixintype}}" label="[[i18n('label.report.facet')]]" type="text" role="widget"></nuxeo-input>
+        <nuxeo-input role="widget" value="{{document.properties.report:metrics}}" label="[[i18n('label.report.metrics')]]" type="text"></nuxeo-input>
+        <!--nuxeo-input value="{{document.properties.report:where}}" label="Where" type="text" role="widget"></nuxeo-input-->
+        <nuxeo-input role="widget" value="{{document.properties.report:groupedBy}}" label="[[i18n('label.report.groupedby')]]" type="text"></nuxeo-input>
+        <nuxeo-input role="widget" value="{{document.properties.report:groupLimit}}" label="[[i18n('label.report.grouplimit')]]" type="number"></nuxeo-input>
+        <!-- <nuxeo-input role="widget" value="{{document.properties.report:keyMetadata}}" label="[[i18n('label.report.keymetadata')]]" type="text"></nuxeo-input>
+        <nuxeo-input role="widget" value="{{document.properties.report:valueMetadata}}" label="[[i18n('label.report.valuemetadata')]]" type="text"></nuxeo-input> -->
+        <nuxeo-input role="widget" value="{{document.properties.report:dateField}}" label="[[i18n('label.report.datefield')]]" type="text"></nuxeo-input>
+
+        <h3>Display</h3>
+
+        <nuxeo-input value="{{document.properties.table:columnName1}}" label="[[i18n('label.table.c1name')]]" type="text" role="widget"></nuxeo-input>
+        <nuxeo-input value="{{document.properties.table:columnName2}}" label="[[i18n('label.table.c2name')]]" type="text" role="widget"></nuxeo-input>
+        <nuxeo-input value="{{document.properties.table:columnStyle1}}" label="[[i18n('label.table.c1style')]]" type="text" role="widget"></nuxeo-input>
+        <nuxeo-input value="{{document.properties.table:columnStyle2}}" label="[[i18n('label.table.c2style')]]" type="text" role="widget"></nuxeo-input>
+        <nuxeo-input role="widget" value="{{document.properties.report:dateFormat}}" label="[[i18n('label.table.dateformat')]]" type="text"></nuxeo-input>
+        <nuxeo-directory-suggestion role="widget" value="{{document.properties.table:valuetype}}" label="[[i18n('label.table.numbertypes')]]" directory-name="ValueType" min-chars="0" dbl10n="true"></nuxeo-directory-suggestion>
+        <nuxeo-input role="widget" value="{{document.properties.table:prefix}}" label="[[i18n('label.table.prefix')]]" type="text"></nuxeo-input>
+        <nuxeo-input role="widget" value="{{document.properties.table:suffix}}" label="[[i18n('label.table.suffix')]]" type="text"></nuxeo-input>
+        <nuxeo-directory-suggestion role="widget" value="{{document.properties.table:icon}}" label="[[i18n('label.table.icon')]]" directory-name="IconYesNo" min-chars="0" dbl10n="true"></nuxeo-directory-suggestion>
+      </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-table-edit-layout',
+      behaviors: [Nuxeo.LayoutBehavior],
+      properties: {
+
+        /**
+         * @doctype Table
+         */
+        document: {
+          type: Object,
+        },
+
+      },
+      ready: function() {
+        this.selected = 0;
+      }
+    });
+  </script>
+</dom-module>

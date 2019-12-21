@@ -1,0 +1,125 @@
+<!--
+`nuxeo-count-view-layout`
+@group Nuxeo UI
+@element nuxeo-count-view-layout
+-->
+<link rel="import" href="../../nuxeo-admin/nuxeo-chart-data-behavior.html">
+<link rel="import" href="../report-edit-delete.html">
+
+<dom-module id="nuxeo-count-view-layout">
+  <template>
+    <style>
+      *[role=widget] {
+        padding: 5px;
+      }
+
+      nuxeo-card {
+        position: relative;
+        margin-bottom: 0;
+        bottom: 20px;
+        width: 100%;
+        height: 100%;
+      }
+
+      #edit{
+        height: 0px;
+      }
+
+      #icon{
+        text-align: center;
+      }
+
+      h2{
+        text-align: center;
+      }
+
+      iron-icon {
+        --iron-icon-width: 110px;
+        --iron-icon-height: 110px;
+        margin-top: 10px;
+        text-align: center;
+      }
+    </style>
+
+    <nuxeo-repository-data role="widget"
+                           start-date="[[startDate]]"
+                           end-date="[[_extendEndDate(endDate)]]"
+                           metrics="[[document.properties.report:metrics]]"
+                           data="{{data}}"
+                           ecm-primary-type="[[document.properties.report:primarytype]]"
+                           ecm-lifecycle-state="[[document.properties.report:lifeCycleState]]"
+                           ecm-mixin-type="[[document.properties.report:mixintype]]"
+                           date-field="[[document.properties.report:dateField]]">
+    </nuxeo-repository-data>
+
+    <nuxeo-card heading="[[document.properties.dc:title]]">
+
+      <div id="edit" hidden$="[[editMode]]">
+        <report-edit-delete document="{{document}}"></report-edit-delete>
+      </div>
+
+      <div id="icon">
+        <iron-icon hidden$="[[!_iconExists(document.properties.report:icon)]]" src$="[[document.properties.report:icon]]"></iron-icon>
+      </div>
+
+      <h2 style$="[[document.properties.count:style]]">
+        [[document.properties.count:prefix]]
+        [[_getValue(data)]]
+        [[document.properties.count:suffix]]
+      </h2>
+
+    </nuxeo-card>
+
+    <slot></slot>
+  </template>
+
+  <script>
+  Polymer({
+    is: 'nuxeo-count-view-layout',
+    behaviors: [Nuxeo.LayoutBehavior, Nuxeo.ChartDataBehavior],
+    properties: {
+
+      /**
+         * @doctype Count
+         */
+      document: {
+        type: Object,
+      },
+    },
+
+    /* Value Type: Number - Currency */
+    _getValue: function(value){
+      if(this._isCurrency(this.document)){
+        return this._formatCurrency(value);
+      }else{
+        return value;
+      }
+    },
+    _isCurrency: function(doc){
+      return doc? doc.properties['count:valuetype'] == 'Currency' : false;
+    },
+
+    _formatCurrency: function(value) {
+      return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    },
+
+    _extendEndDate: function(date) {
+      if (date && moment) {
+        return this._formatDate(moment(date).add(1, 'days').subtract(1, 'ms').toJSON());
+      }
+      return date;
+    },
+
+    /* Check the existence of the icon */
+    _iconExists: function (icon) {
+      if(icon){
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
+
+  });
+  </script>
+</dom-module>

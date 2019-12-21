@@ -1,0 +1,123 @@
+<!--
+`nuxeo-chartpie-view-layout`
+@group Nuxeo UI
+@element nuxeo-chartpie-view-layout
+-->
+<link rel="import" href="../../nuxeo-admin/nuxeo-chart-data-behavior.html">
+<link rel="import" href="../report-edit-delete.html">
+
+<dom-module id="nuxeo-chartpie-view-layout">
+  <template>
+    <style>
+      *[role=widget] {
+        padding: 5px;
+      }
+
+      nuxeo-card {
+        position: relative;
+        margin-bottom: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      chart-pie {
+        /* height: 100% !important; */
+        width: 100% !important;
+        min-width: 30em;
+        display: block;
+        font-size: .8rem;
+        margin-top: 35px;
+      }
+
+      #edit{
+        height: 0px;
+      }
+    </style>
+
+
+    <nuxeo-repository-data start-date="[[startDate]]"
+                           end-date="[[_extendEndDate(endDate)]]"
+                           data="{{data}}"
+                           index="[[index]]"
+                           ecm-primary-type="[[document.properties.report:primarytype]]"
+                           ecm-lifecycle-state="[[document.properties.report:lifeCycleState]]"
+                           ecm-mixin-type="[[document.properties.report:mixintype]]"
+                           date-field="[[document.properties.report:dateField]]"
+                           grouped-by="[[document.properties.report:groupedBy]]"
+                           group-limit="[[document.properties.report:groupLimit]]"
+                           metrics="[[document.properties.report:metrics]]">
+    </nuxeo-repository-data>
+
+    <nuxeo-card heading="[[document.properties.dc:title]]">
+      <div id="edit" hidden$="[[editMode]]">
+        <report-edit-delete document="{{document}}"></report-edit-delete>
+      </div>
+      <chart-pie values="[[_values(data)]]"
+                 labels="[[_labels(data)]]"
+                 options='{ "legend": { "display": true, "position": "bottom", "labels": { "boxWidth": 12 } }, "animation": false }'>
+      </chart-pie>
+    </nuxeo-card>
+    <slot></slot>
+  </template>
+
+  <script>
+  Polymer({
+    is: 'nuxeo-chartpie-view-layout',
+    behaviors: [Nuxeo.ChartDataBehavior, Nuxeo.LayoutBehavior],
+    properties: {
+
+      /**
+         * @doctype ChartPie
+         */
+      document: {
+        type: Object,
+      },
+      startDate: {
+        type: String,
+        value: ''
+      },
+      endDate: {
+        type: String,
+        value: ''
+      }
+    },
+
+    
+
+    /*Check Nuxeo.ChartDataBehavior - Not Working*/
+    _labels: function(data) {
+      return data.map(function(entry) {
+        if (Array.isArray(entry.value)) {
+          return entry.value.map(this._labels.bind(this));
+        } else {
+          return entry.key;
+        }
+      });
+    },
+    _series: function(data) {
+      return data.map(function(obj) {
+        return obj.key;
+      });
+    },
+    _values: function(data) {
+      return [data.map(function(entry) {
+        if (Array.isArray(entry.value)) {
+          return entry.value.map(this._values.bind(this));
+        } else {
+          return entry.value;
+        }
+      })];
+    },
+    _extendEndDate: function(date) {
+      if (date && moment) {
+        return this._formatDate(moment(date).add(1, 'days').subtract(1, 'ms').toJSON());
+      }
+      return date;
+    },
+
+    _formatDate: function(date) {
+      return moment(date).format('YYYY-MM-DD');
+    }
+  });
+  </script>
+</dom-module>

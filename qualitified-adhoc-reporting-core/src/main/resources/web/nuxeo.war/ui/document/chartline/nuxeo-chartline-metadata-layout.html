@@ -1,0 +1,100 @@
+<!--
+`nuxeo-chartline-metadata-layout`
+@group Nuxeo UI
+@element nuxeo-chartline-metadata-layout
+-->
+<dom-module id="nuxeo-chartline-metadata-layout">
+  <template>
+    <style>
+      *[role=widget] {
+        padding: 5px;
+      }
+    </style>
+
+    <div role="widget">
+      <label>Title</label>
+      <div>[[document.properties.dc:title]]</div>
+    </div>
+
+    <h3>Data Settings</h3>
+
+    <!-- <nuxeo-directory-suggestion role="widget" value="[[document.properties.report:datatype]]" label="[[i18n('label.report.datatype')]]" readonly="true" directory-name="DataType"></nuxeo-directory-suggestion> -->
+
+    <div role="widget">
+      <label>[[i18n('label.report.documenttype')]]</label>
+      <div>[[document.properties.report:primarytype]]</div>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('label.report.lifecyclestate')]]</label>
+      <div>[[document.properties.report:lifeCycleState]]</div>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('label.report.facet')]]</label>
+      <div>[[document.properties.report:mixintype]]</div>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('label.report.metrics')]]</label>
+      <div>[[document.properties.report:metrics]]</div>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('label.report.groupedby')]]</label>
+      <div>[[document.properties.report:groupedBy]]</div>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('label.report.grouplimit')]]</label>
+      <div>[[document.properties.report:groupLimit]]</div>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('label.report.datefield')]]</label>
+      <div>[[document.properties.report:dateField]]</div>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('label.report.keymetadata')]]</label>
+      <div>[[document.properties.report:keyMetadata]]</div>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('label.report.valuemetadata')]]</label>
+      <div>[[document.properties.report:valueMetadata]]</div>
+    </div>
+
+    <nuxeo-directory-suggestion role="widget" value="[[document.properties.report:withDateIntervals]]" label="[[i18n('label.report.datesinterval')]]" readonly="true" directory-name="DateIntervalsType"></nuxeo-directory-suggestion>
+
+    <h3>Display</h3>
+
+    <div role="widget">
+      <label>[[i18n('label.report.dateformat')]]</label>
+      <div>[[document.properties.report:dateFormat]]</div>
+    </div>
+
+    <!-- <div role="widget">
+      <label>Options</label>
+      <div>[[document.properties.report:options]]</div>
+    </div> -->
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-chartline-metadata-layout',
+      behaviors: [Nuxeo.LayoutBehavior],
+      properties: {
+
+        /**
+         * @doctype ChartLine
+         */
+        document: {
+          type: Object,
+        },
+
+      }
+    });
+  </script>
+</dom-module>

@@ -1,4 +1,4 @@
-id,label,obsolete,ordering
-audit,Audit,0,0
-repository,Repository,0,10
-search,Search,0,20
+"id","label","obsolete","ordering"
+"audit","Audit","0","0"
+"repository","Repository","0","10"
+"search","Search","0","20"

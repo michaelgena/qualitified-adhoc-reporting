@@ -1,0 +1,96 @@
+<!--
+`nuxeo-chartbar-edit-layout`
+@group Nuxeo UI
+@element nuxeo-chartbar-edit-layout
+-->
+<dom-module id="nuxeo-chartbar-edit-layout">
+  <template>
+    <style>
+      *[role=widget] {
+        padding: 5px 15px 5px 15px;
+      }
+
+      paper-tabs {
+        text-transform: uppercase;
+        margin: 0 0 28px 0;
+      }
+
+    </style>
+
+    <paper-tabs selected="{{selected}}">
+      <paper-tab>Simple</paper-tab>
+      <paper-tab>Advanced</paper-tab>
+    </paper-tabs>
+
+    <iron-pages selected="{{selected}}">
+
+      <!-- TAB - Simple -->
+      <div>
+        <nuxeo-input role="widget" value="{{document.properties.dc:title}}" label="Title" type="text"></nuxeo-input>
+
+        <h3>Data Settings</h3>
+
+        <!--nuxeo-directory-suggestion role="widget" value="{{document.properties.report:datatype}}" [[i18n('label.report.datatype')]] directory-name="DataType" min-chars="0"></nuxeo-directory-suggestion-->
+        <nuxeo-input role="widget" value="{{document.properties.report:primarytype}}" label="[[i18n('label.report.documenttype')]]" type="text"></nuxeo-input>
+        <nuxeo-input role="widget" value="{{document.properties.report:lifeCycleState}}" label="[[i18n('label.report.lifecyclestate')]]" type="text"></nuxeo-input>
+        <!--nuxeo-input value="{{document.properties.report:mixintype}}" label="[[i18n('label.report.facet')]]" type="text" role="widget"></nuxeo-input-->
+        <!--nuxeo-input role="widget" value="{{document.properties.report:metrics}}" label="[[i18n('label.report.metrics')]]" type="text"></nuxeo-input-->
+        <!--nuxeo-input role="widget" value="{{document.properties.report:groupedBy}}" label="[[i18n('label.report.groupedby')]]" type="text"></nuxeo-input-->
+        <nuxeo-input role="widget" value="{{document.properties.report:groupLimit}}" label="[[i18n('label.report.grouplimit')]]" type="number"></nuxeo-input>
+        <!--nuxeo-input role="widget" value="{{document.properties.report:dateField}}" label="[[i18n('label.report.datefield')]]" type="text"></nuxeo-input-->
+        <nuxeo-directory-suggestion role="widget" value="{{document.properties.report:withDateIntervals}}" label="[[i18n('label.report.datesinterval')]]" directory-name="DateIntervalsType" min-chars="0" dbl10n="true"></nuxeo-directory-suggestion>
+
+        <h3>Display</h3>
+
+        <nuxeo-input role="widget" value="{{document.properties.report:dateFormat}}" label="[[i18n('label.report.dateformat')]]" type="text"></nuxeo-input>
+        <!--nuxeo-input role="widget" value="{{document.properties.report:options}}" label="Options" type="text"></nuxeo-input-->
+      </div>
+
+    <!-- TAB - Advanced -->
+    <div>
+      <nuxeo-input role="widget" value="{{document.properties.dc:title}}" label="Title" type="text"></nuxeo-input>
+
+      <h3>Data Settings</h3>
+
+      <!-- <nuxeo-directory-suggestion role="widget" value="{{document.properties.report:datatype}}" [[i18n('label.report.datatype')]] directory-name="DataType" min-chars="0" dbl10n="true"></nuxeo-directory-suggestion> -->
+      <nuxeo-input role="widget" value="{{document.properties.report:primarytype}}" label="[[i18n('label.report.documenttype')]]" type="text"></nuxeo-input>
+      <nuxeo-input role="widget" value="{{document.properties.report:lifeCycleState}}" label="[[i18n('label.report.lifecyclestate')]]" type="text"></nuxeo-input>
+      <nuxeo-input value="{{document.properties.report:mixintype}}" label="[[i18n('label.report.facet')]]" type="text" role="widget"></nuxeo-input>
+      <nuxeo-input role="widget" value="{{document.properties.report:metrics}}" label="[[i18n('label.report.metrics')]]" type="text"></nuxeo-input>
+      <nuxeo-input role="widget" value="{{document.properties.report:groupedBy}}" label="[[i18n('label.report.groupedby')]]" type="text"></nuxeo-input>
+      <nuxeo-input role="widget" value="{{document.properties.report:groupLimit}}" label="[[i18n('label.report.grouplimit')]]" type="number"></nuxeo-input>
+      <nuxeo-input role="widget" value="{{document.properties.report:dateField}}" label="[[i18n('label.report.datefield')]]" type="text"></nuxeo-input>
+      <nuxeo-input role="widget" value="{{document.properties.report:keyMetadata}}" label="[[i18n('label.report.keymetadata')]]" type="text"></nuxeo-input>
+      <nuxeo-input role="widget" value="{{document.properties.report:valueMetadata}}" label="[[i18n('label.report.valuemetadata')]]" type="text"></nuxeo-input>
+      <nuxeo-directory-suggestion role="widget" value="{{document.properties.report:withDateIntervals}}" label="[[i18n('label.report.datesinterval')]]" directory-name="DateIntervalsType" min-chars="0" dbl10n="true"></nuxeo-directory-suggestion>
+
+      <h3>Display</h3>
+
+      <nuxeo-input role="widget" value="{{document.properties.report:dateFormat}}" label="[[i18n('label.report.dateformat')]]" type="text"></nuxeo-input>
+      <!--nuxeo-input role="widget" value="{{document.properties.report:options}}" label="Options" type="text"></nuxeo-input-->
+    </div>
+
+
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-chartbar-edit-layout',
+      behaviors: [Nuxeo.LayoutBehavior],
+      properties: {
+
+        /**
+         * @doctype ChartBar
+         */
+        document: {
+          type: Object,
+        },
+
+      },
+      ready: function(){
+        this.selected = 0;
+      }
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,195 @@
+<!--
+`nuxeo-chartbar-view-layout`
+@group Nuxeo UI
+@element nuxeo-chartbar-view-layout
+-->
+<link rel="import" href="../../nuxeo-admin/nuxeo-chart-data-behavior.html">
+<link rel="import" href="../report-edit-delete.html">
+
+<dom-module id="nuxeo-chartbar-view-layout">
+  <template>
+    <style>
+      *[role=widget] {
+        padding: 5px;
+      }
+
+      nuxeo-card {
+        position: relative;
+        margin-bottom: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      chart-bar {
+        /* height: 100% !important; */
+        width: 100% !important;
+        min-width: 30em;
+        display: block;
+        font-size: .8rem;
+        margin-top: 35px;
+      }
+
+      #edit{
+        height: 0px;
+      }
+    </style>
+
+    <nuxeo-repository-data  start-date="[[startDate]]"
+                            end-date="[[_extendEndDate(endDate)]]"
+                            data="{{data}}"
+                            index="[[index]]"
+                            ecm-primary-type="[[document.properties.report:primarytype]]"
+                            ecm-lifecycle-state="[[document.properties.report:lifeCycleState]]"
+                            ecm-mixin-type="[[document.properties.report:mixintype]]"
+                            date-field="[[document.properties.report:dateField]]"
+                            grouped-by="[[document.properties.report:groupedBy]]"
+                            group-limit="[[document.properties.report:groupLimit]]"
+                            with-date-intervals="[[document.properties.report:withDateIntervals]]"
+                            metrics="[[document.properties.report:metrics]]">
+    </nuxeo-repository-data>
+
+    <nuxeo-page-provider auto page-size="10"
+      query="[[_query(data)]]"
+      schemas="*"
+      current-page="{{documents}}">
+    </nuxeo-page-provider>
+
+    <nuxeo-card heading="[[document.properties.dc:title]]">
+      <div id="edit" hidden$="[[editMode]]">
+        <report-edit-delete document="{{document}}"></report-edit-delete>
+      </div>
+      <chart-bar  labels="[[_getLabels(documents)]]"
+                  values="[[_getValues(documents)]]"
+                  options='{ "legend": { "display": false }, "animation": false }'>
+      </chart-bar>
+    </nuxeo-card>
+    <slot></slot>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-chartbar-view-layout',
+      behaviors: [Nuxeo.ChartDataBehavior, Nuxeo.LayoutBehavior],
+      properties: {
+
+        /**
+         * @doctype ChartBar
+         */
+        document: {
+          type: Object,
+        },
+        startDate: {
+          type: String,
+          value: ''
+        },
+        endDate: {
+          type: String,
+          value: ''
+        }
+      },
+
+      /*Check Nuxeo.ChartDataBehavior - Not Working*/
+
+      /*_labels Modified */
+      _labels: function(data) {
+        let dateFormat = this.document.properties['report:dateFormat'];
+        if (dateFormat == "" || dateFormat == null) {
+          dateFormat = "DD/MM/YYYY";
+        }
+        if(data){
+          return data.map(function(entry) {
+            if (Array.isArray(entry.value)) {
+              return entry.value.map(this._labels.bind(this));
+            } else {
+              /* Checks if the label is a date metadata otherwise returns the key*/
+              if (moment(entry.key).isValid()) {
+                return moment(entry.key).format(dateFormat);
+              } else {
+                return entry.key;
+              }
+            }
+          });
+        }
+      },
+
+      _series: function(data) {
+        return data.map(function(obj) {
+          return obj.key;
+        });
+      },
+
+      _values: function(data) {
+        if(data){
+          return [data.map(function(entry) {
+            if (Array.isArray(entry.value)) {
+              return entry.value.map(this._values.bind(this));
+            } else {
+              return entry.value;
+            }
+          })];
+        }
+      },
+
+      _extendEndDate: function(date) {
+        if (date && moment) {
+          return this._formatDate(moment(date).add(1, 'days').subtract(1, 'ms').toJSON());
+        }
+        return date;
+      },
+
+      _formatDate: function(date) {
+        return moment(date).format('YYYY-MM-DD');
+      },
+
+      _query: function(entries) {
+        if (this.document && entries.length > 0) {
+          var values = entries.map(function(entry) {
+            return '\'' + entry.key + '\'';
+          }).join(',');
+          //console.log('query SELECT * FROM '+this.document.properties['report:primarytype']+' WHERE ecm:uuid IN (' + values + ')' + 'ORDER BY ' +this.document.properties['report:dateField']+' ASC' );
+          return 'SELECT * FROM '+this.document.properties['report:primarytype']+' WHERE ecm:uuid IN (' + values + ') ORDER BY '+this.document.properties['report:dateField']+' ASC';
+        }
+      },
+
+      _getLabels: function(entries){
+            //Labels should be based on a date metadata
+            let labels = [];
+            //console.log("keyMetadata " + this.document.properties['report:keyMetadata']);
+            if(entries && entries.length>0 && this.document.properties['report:keyMetadata']){
+              //let labelsPart = [];
+              let keyMetadata = this.document.properties['report:keyMetadata'];
+              let dateFormat = this.document.properties['report:dateFormat'];
+              for(let i = 0; i < entries.length; i++){
+                labels.push(moment(entries[i].properties[keyMetadata]).format(dateFormat));
+              }
+            }else{
+              labels = this._labels(this.data);
+            }
+            //console.log("labels "+ labels);
+            return labels;
+          },
+
+      _getValues: function(entries){
+        let values = [];
+        if(entries && entries.length>0 && this.document && this.document.properties['report:valueMetadata']){
+          //console.log("valueMetadata " + this.document.properties['report:valueMetadata']);
+          let valuesPart = [];
+          let valueMetadata = this.document.properties['report:valueMetadata'];
+          let value = 0;
+          for(let i = 0; i < entries.length; i++){
+            if(i>0 && this.document.properties['report:metrics']){
+              value += entries[i-1].properties[valueMetadata];
+            }
+            valuesPart.push(value + entries[i].properties[valueMetadata]);
+          }
+          values.push(valuesPart);
+        }else{
+          values = this._values(this.data);
+        }
+        //console.log("values "+ values);
+        return values;
+      }
+
+    });
+  </script>
+</dom-module>
