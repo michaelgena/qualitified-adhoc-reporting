@@ -114,10 +114,10 @@ limitations under the License.
         <!--debug-grid cell-height="50" cell-width="50" cell-margin="10" col-count="25" row-count="25"></debug-grid-->
         <the-grid id="grid1" draggable resizable row-autogrow col-autogrow cell-height="50" cell-width="50" cell-margin="10" col-count="25" row-count="25">
 
-          <template is="dom-repeat" items="{{reportsProvider}}" as="report">
+          <template id="domRepeat" is="dom-repeat" items="{{reportsProvider}}" as="report">
             <div style="display: none;"> [[_getSavedCoor(report,index)]]</div>
 
-            <template is="dom-if" if="[[isReport(report.type, 'ChartBar',report)]]">
+            <template is="dom-if" if="[[isReport(report.type, 'ChartBar')]]">
               <nuxeo-chartbar-view-layout class="report"
                                           id$="tile{{index}}"
                                           col$="{{coordinates.col}}"
@@ -327,6 +327,13 @@ limitations under the License.
         this.$$('#grid1').addEventListener('resize', e => {
           this._tileResized(e);
         });
+
+        this.$$('#domRepeat').addEventListener('dom-change', e => {
+          this.async(function(){
+            this._setCoor();
+          },0)
+        });
+
       },
 
       /* move event when tile is dropped. */

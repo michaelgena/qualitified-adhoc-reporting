@@ -14,3 +14,4 @@ target
 *.iws
 pojo-bin
 seam-bin
+.yo-rc.json
