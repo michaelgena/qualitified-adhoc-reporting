@@ -17,7 +17,7 @@
   "label.report.dateformat": "Date Format",
   "label.report.keymetadata": "Key Metadata",
   "label.report.valuemetadata": "Value Metadata",
-
+  "label.report.lastYear": "Display last year's value and percentage change",
 
   "label.count.numbertypes":"Number Types",
   "label.count.prefix":"Prefix",

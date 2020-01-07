@@ -39,6 +39,15 @@
         margin-top: 10px;
         text-align: center;
       }
+
+      .last-year {
+        text-align: center;
+        display: block;
+      }
+
+      .last-year-value {
+        color: #0000008a;
+      }
     </style>
 
     <nuxeo-repository-data role="widget"
@@ -46,6 +55,17 @@
                            end-date="[[_extendEndDate(endDate)]]"
                            metrics="[[document.properties.report:metrics]]"
                            data="{{data}}"
+                           ecm-primary-type="[[document.properties.report:primarytype]]"
+                           ecm-lifecycle-state="[[document.properties.report:lifeCycleState]]"
+                           ecm-mixin-type="[[document.properties.report:mixintype]]"
+                           date-field="[[document.properties.report:dateField]]">
+    </nuxeo-repository-data>
+
+    <nuxeo-repository-data role="widget"
+                           start-date="[[_lastYear(startDate)]]"
+                           end-date="[[_lastYear(endDate)]]"
+                           metrics="[[document.properties.report:metrics]]"
+                           data="{{lastYearData}}"
                            ecm-primary-type="[[document.properties.report:primarytype]]"
                            ecm-lifecycle-state="[[document.properties.report:lifeCycleState]]"
                            ecm-mixin-type="[[document.properties.report:mixintype]]"
@@ -68,6 +88,20 @@
         [[document.properties.count:suffix]]
       </h2>
 
+      <!-- last year's value and percentage change -->
+      <template is="dom-if" if="{{document.properties.report:lastYear}}">
+        <span class="last-year">
+          <span class="last-year-value">
+            [[document.properties.count:prefix]]
+            [[_getValue(lastYearData)]]
+            [[document.properties.count:suffix]]
+          </span>
+          <span id="lastYearPercentage">
+            [[[_getPercentage(data,lastYearData)]]%]
+          </span>
+        </span>
+      </template>
+
     </nuxeo-card>
 
     <slot></slot>
@@ -76,7 +110,7 @@
   <script>
   Polymer({
     is: 'nuxeo-count-view-layout',
-    behaviors: [Nuxeo.LayoutBehavior, Nuxeo.ChartDataBehavior],
+    behaviors: [Nuxeo.LayoutBehavior, Nuxeo.ChartDataBehavior, Report.DataBehavior],
     properties: {
 
       /**
@@ -95,6 +129,29 @@
         return value;
       }
     },
+
+    _getPercentage: function (data, lastYearData) {
+      if (data !== null && lastYearData !== null) {
+        let percentageValue = this._calculatePercentage(data, lastYearData);
+        switch (Math.sign(percentageValue)) {
+          case 0:
+            if (this.$$("#lastYearPercentage")) {
+              this.$$("#lastYearPercentage").style.color = "#0000008a";
+            }
+            break;
+
+          case 1:
+            this.$$("#lastYearPercentage").style.color = "#68c321e6";
+            break;
+
+          case -1:
+            this.$$("#lastYearPercentage").style.color = "#ff0000c7";
+            break;
+        }
+        return percentageValue;
+      }
+    },
+
     _isCurrency: function(doc){
       return doc? doc.properties['count:valuetype'] == 'Currency' : false;
     },

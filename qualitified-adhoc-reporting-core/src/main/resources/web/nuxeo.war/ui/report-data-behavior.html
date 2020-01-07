@@ -1,0 +1,26 @@
+<script>
+  var Report = Report || {};
+  /**
+   * @polymerBehavior Report.DataBehavior
+   */
+  Report.DataBehavior = {
+
+    _lastYear: function (date) {
+      if (date && moment) {
+        return this._formatDate(moment(date).subtract(1, 'years').toJSON());
+      }
+    },
+
+    _calculatePercentage: function (data, lastYearData) {
+      if (data !== null && lastYearData !== null && lastYearData !== 0) {
+        let percentage = Math.trunc(((data - lastYearData) / Math.abs(lastYearData)) * 100);
+        return Math.sign(percentage) == 1 ? "+" + percentage : percentage;
+      }
+
+      if (data !== null && lastYearData !== null && lastYearData == 0) {
+        return 0;
+      }
+    }
+
+  };
+</script>

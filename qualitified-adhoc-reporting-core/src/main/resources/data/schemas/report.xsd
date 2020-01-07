@@ -69,4 +69,6 @@
   <xs:element name="width" type="xs:integer"/>
   <xs:element name="height" type="xs:integer"/>
 
+  <xs:element name="lastYear" type="xs:boolean"/>
+
 </xs:schema>
