@@ -130,28 +130,6 @@
       }
     },
 
-    _getPercentage: function (data, lastYearData) {
-      if (data !== null && lastYearData !== null) {
-        let percentageValue = this._calculatePercentage(data, lastYearData);
-        switch (Math.sign(percentageValue)) {
-          case 0:
-            if (this.$$("#lastYearPercentage")) {
-              this.$$("#lastYearPercentage").style.color = "#0000008a";
-            }
-            break;
-
-          case 1:
-            this.$$("#lastYearPercentage").style.color = "#68c321e6";
-            break;
-
-          case -1:
-            this.$$("#lastYearPercentage").style.color = "#ff0000c7";
-            break;
-        }
-        return percentageValue;
-      }
-    },
-
     _isCurrency: function(doc){
       return doc? doc.properties['count:valuetype'] == 'Currency' : false;
     },

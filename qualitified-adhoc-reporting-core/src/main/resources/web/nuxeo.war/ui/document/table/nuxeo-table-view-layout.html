@@ -38,10 +38,27 @@
       #edit{
         height: 0px;
       }
+
+      .last-year-value {
+        color: #0000008a;
+      }
     </style>
     <nuxeo-repository-data start-date="[[startDate]]"
                            end-date="[[_extendEndDate(endDate)]]"
                            data="{{data}}"
+                           index="[[index]]"
+                           date-field="[[document.properties.report:dateField]]"
+                           ecm-primary-type="[[document.properties.report:primarytype]]"
+                           ecm-mixin-type="[[document.properties.report:mixintype]]"
+                           ecm-lifecycle-state="[[document.properties.report:lifeCycleState]]"
+                           grouped-by="[[document.properties.report:groupedBy]]"
+                           group-limit="[[document.properties.report:groupLimit]]"
+                           metrics="[[document.properties.report:metrics]]">
+    </nuxeo-repository-data>
+
+    <nuxeo-repository-data start-date="[[_lastYear(startDate)]]"
+                           end-date="[[_lastYear(endDate)]]"
+                           data="{{lastYearData}}"
                            index="[[index]]"
                            date-field="[[document.properties.report:dateField]]"
                            ecm-primary-type="[[document.properties.report:primarytype]]"
@@ -64,7 +81,7 @@
         <report-edit-delete document="{{document}}"></report-edit-delete>
       </div>
 
-      <nuxeo-data-table id="table" items="{{data}}"><content></content>
+      <nuxeo-data-table id="table" items="{{_getData(data, lastYearData)}}">
 
         <nuxeo-data-table-column name="{{document.properties.table:columnName1}}">
           <template>
@@ -79,6 +96,18 @@
           </template>
         </nuxeo-data-table-column>
 
+        <nuxeo-data-table-column name="[[i18n('label.report.lastYearValue')]]" hidden="{{!document.properties.report:lastYear}}">
+          <template>
+              <span class="last-year-value">{{_values(item.lastYearValue)}}</span>
+          </template>
+        </nuxeo-data-table-column>
+
+        <nuxeo-data-table-column name="[[i18n('label.report.percentageChange')]]" hidden="{{!document.properties.report:lastYear}}">
+          <template>
+            <span id$="lastYearPercentage{{index}}">[[_getTablePercentage(item.value,item.lastYearValue, index)]]%</span>
+          </template>
+        </nuxeo-data-table-column>
+
       </nuxeo-data-table>
 
 
@@ -90,7 +119,7 @@
   <script>
     Polymer({
       is: 'nuxeo-table-view-layout',
-      behaviors: [Nuxeo.ChartDataBehavior, Nuxeo.LayoutBehavior],
+      behaviors: [Nuxeo.ChartDataBehavior, Nuxeo.LayoutBehavior, Report.DataBehavior],
       properties: {
 
         document: {
@@ -104,6 +133,21 @@
           //console.log(this.$.table.shadowRoot.getElementById("container").style.width);
           this.$.table.shadowRoot.getElementById("container").style.width = '100%';
         }.bind(this),1000);
+      },
+
+      _getData: function (data, lastYearData) {
+        var mergedData = [];
+        if (data !== null && lastYearData !== null) {
+          data.map(item => {
+            for (let i = 0; i < lastYearData.length; i++) {
+              if (item.key === lastYearData[i].key) {
+                return mergedData.push(Object.assign({}, item, { "lastYearValue": lastYearData[i].value }));
+              }
+            }
+
+          })
+          return mergedData;
+        }
       },
 
 

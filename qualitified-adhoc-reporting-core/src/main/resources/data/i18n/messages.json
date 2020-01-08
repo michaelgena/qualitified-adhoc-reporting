@@ -18,6 +18,8 @@
   "label.report.keymetadata": "Key Metadata",
   "label.report.valuemetadata": "Value Metadata",
   "label.report.lastYear": "Display last year's value and percentage change",
+  "label.report.lastYearValue": "Last year's value",
+  "label.report.percentageChange": "Percentage change",
 
   "label.count.numbertypes":"Number Types",
   "label.count.prefix":"Prefix",

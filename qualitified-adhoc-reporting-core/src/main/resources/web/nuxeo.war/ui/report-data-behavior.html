@@ -20,7 +20,62 @@
       if (data !== null && lastYearData !== null && lastYearData == 0) {
         return 0;
       }
-    }
+    },
+
+    _getPercentage: function (data, lastYearData) {
+      if (data !== null && lastYearData !== null) {
+        let percentageValue = this._calculatePercentage(data, lastYearData);
+        switch (Math.sign(percentageValue)) {
+          case 0:
+            if (this.$$("#lastYearPercentage")) {
+              this.$$("#lastYearPercentage").style.color = "#0000008a";
+            }
+            break;
+
+          case 1:
+            this.$$("#lastYearPercentage").style.color = "#68c321e6";
+            break;
+
+          case -1:
+            this.$$("#lastYearPercentage").style.color = "#ff0000c7";
+            break;
+        }
+        return percentageValue;
+      }
+    },
+
+    _getTablePercentage: function (data, lastYearData, index) {
+      if (data !== null && lastYearData !== null) {
+        let percentageValue = this._calculatePercentage(data, lastYearData);
+        if (index !== undefined) {
+          console.log(index);
+          console.log(this.$$("#lastYearPercentage" + index));
+
+          //console.log(this.shadowRoot.querySelector("#lastYearPercentage".concat(index)));
+
+          switch (Math.sign(percentageValue)) {
+            case -0:
+              if (this.$$("#lastYearPercentage" + index)) {
+                this.$$("#lastYearPercentage" + index).style.color = "#0000008a";
+              }
+              break;
+
+            case 1:
+              if (this.$$("#lastYearPercentage" + index)) {
+                this.$$("#lastYearPercentage" + index).style.color = "#68c321e6";
+              }
+              break;
+
+            case -1:
+              if (this.$$("#lastYearPercentage" + index)) {
+                this.$$("#lastYearPercentage" + index).style.color = "#ff0000c7";
+              }
+              break;
+          }
+        }
+        return percentageValue;
+      }
+    },
 
   };
 </script>
