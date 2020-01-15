@@ -39,6 +39,10 @@
     <nuxeo-input role="widget" value="{{document.properties.table:suffix}}" label="[[i18n('label.table.suffix')]]" type="text"></nuxeo-input>
     <nuxeo-directory-suggestion role="widget" value="{{document.properties.table:icon}}" label="[[i18n('label.table.icon')]]" directory-name="IconYesNo" min-chars="0" dbl10n="true"></nuxeo-directory-suggestion>
 
+    <h3>Options</h3>
+    
+    <paper-checkbox role="widget" checked="{{document.properties.report:lastYear}}">[[i18n('label.report.lastYear')]]</paper-checkbox>
+
   </template>
 
   <script>

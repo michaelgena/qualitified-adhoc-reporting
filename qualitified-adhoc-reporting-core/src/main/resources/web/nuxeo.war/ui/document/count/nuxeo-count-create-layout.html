@@ -30,6 +30,10 @@
     <nuxeo-input value="{{document.properties.report:icon}}" label="[[i18n('label.count.icon')]]" type="text" role="widget"></nuxeo-input>
     <nuxeo-input role="widget" value="{{document.properties.count:style}}" label="[[i18n('label.count.style')]]" type="text"></nuxeo-input>
 
+    <h3>Options</h3>
+    
+    <paper-checkbox role="widget" checked="{{document.properties.report:lastYear}}">[[i18n('label.report.lastYear')]]</paper-checkbox>
+
   </template>
 
   <script>
