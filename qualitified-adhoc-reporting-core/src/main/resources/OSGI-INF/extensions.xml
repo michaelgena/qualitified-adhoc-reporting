@@ -9,6 +9,7 @@
     <schema name="count" prefix="count" override="true" src="data/schemas/count.xsd"/>
     <schema name="table" prefix="table" override="true" src="data/schemas/table.xsd"/>
     <schema name="report" prefix="report" override="true" src="data/schemas/report.xsd"/>
+    <schema name="rvtmf" prefix="rvtmf" override="true" src="data/schemas/rvtmf.xsd"/>
   </extension>
   <extension target="org.nuxeo.ecm.core.schema.TypeService" point="doctype">
     <doctype name="ChartBar" extends="Document">
@@ -18,6 +19,7 @@
       <schema name="uid"/>
       <schema name="report"/>
       <facet name="HiddenInNavigation"/>
+      <facet name="NXTag"/>
     </doctype>
     <doctype name="Root" append="true">
       <subtypes>
@@ -31,6 +33,7 @@
       <schema name="uid"/>
       <schema name="report"/>
       <facet name="HiddenInNavigation"/>
+      <facet name="NXTag"/>
     </doctype>
     <doctype name="Root" append="true">
       <subtypes>
@@ -44,6 +47,7 @@
       <schema name="uid"/>
       <schema name="report"/>
       <facet name="HiddenInNavigation"/>
+      <facet name="NXTag"/>
     </doctype>
     <doctype name="Root" append="true">
       <subtypes>
@@ -57,6 +61,7 @@
       <schema name="uid"/>
       <schema name="report"/>
       <facet name="HiddenInNavigation"/>
+      <facet name="NXTag"/>
     </doctype>
     <doctype name="Root" append="true">
       <subtypes>
@@ -70,10 +75,25 @@
       <schema name="uid"/>
       <schema name="report"/>
       <facet name="HiddenInNavigation"/>
+      <facet name="NXTag"/>
     </doctype>
     <doctype name="Root" append="true">
       <subtypes>
         <type>Table</type>
+      </subtypes>
+    </doctype>
+    <doctype name="RvTMF" extends="Document">
+      <schema name="rvtmf"/>
+      <schema name="dublincore"/>
+      <schema name="common"/>
+      <schema name="uid"/>
+      <schema name="report"/>
+      <facet name="HiddenInNavigation"/>
+      <facet name="NXTag"/>
+    </doctype>
+    <doctype name="Root" append="true">
+      <subtypes>
+        <type>RvTMF</type>
       </subtypes>
     </doctype>
   </extension>
@@ -92,6 +112,9 @@
     </types>
     <types>
       <type name="Table">default</type>
+    </types>
+    <types>
+      <type name="RvTMF">default</type>
     </types>
   </extension>
   <extension target="org.nuxeo.ecm.platform.types.TypeService" point="types">
@@ -121,9 +144,15 @@
     </type>
     <type id="Table">
       <label>Table</label>
+      <icon>/img/baseline_table_chart_black_48dp.png</icon>
+      <bigIcon>/img/baseline_table_chart_black_48dp.png</bigIcon>
+      <description></description>
+    </type>
+    <type id="RvTMF">
+      <label>Document Reports</label>
       <icon>/img/baseline_format_list_numbered_black_48dp.png</icon>
       <bigIcon>/img/baseline_format_list_numbered_black_48dp.png</bigIcon>
-      <description></description>
+      <description>Recently viewed, Tasks, Modified and Favorites</description>
     </type>
   </extension>
   <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="lifecycle">
@@ -294,6 +323,7 @@
         <type>ChartPie</type>
         <type>Count</type>
         <type>Table</type>
+        <type>RvTMF</type>
       </rule>
     </filter>
   </extension>

@@ -31,6 +31,7 @@ limitations under the License.
 <link rel="import" href="document/chartpie/nuxeo-chartpie-view-layout.html">
 <link rel="import" href="document/count/nuxeo-count-view-layout.html">
 <link rel="import" href="document/table/nuxeo-table-view-layout.html">
+<link rel="import" href="document/rvtmf/nuxeo-rvtmf-view-layout.html">
 
 <dom-module id="nuxeo-home">
   <template>
@@ -92,8 +93,9 @@ limitations under the License.
 
         <nuxeo-page-provider  role="widget"
                               auto
+                              id="reportsProvider"
                               query="SELECT * FROM Document
-                                    WHERE ecm:primaryType in ('ChartBar', 'ChartLine', 'ChartPie', 'Count', 'Table')
+                                    WHERE ecm:primaryType in ('ChartBar', 'ChartLine', 'ChartPie', 'Count', 'Table', 'RvTMF')
                                     AND ecm:isTrashed = 0
                                     AND ecm:currentLifeCycleState != 'deleted'
                                     ORDER BY dc:created ASC"
@@ -228,6 +230,29 @@ limitations under the License.
                 <span resize="bottom-left">└</span>
               </nuxeo-table-view-layout>
             </template>
+
+            <template is="dom-if" if="[[isReport(report.type, 'RvTMF')]]">
+              <nuxeo-rvtmf-view-layout  class="report"
+                                        id$="tile{{index}}"
+                                        col$="{{coordinates.col}}"
+                                        row$="{{coordinates.row}}"
+                                        height$="{{coordinates.height}}"
+                                        width$="{{coordinates.width}}"
+                                        min-width="3"
+                                        min-height="3"
+                                        document="[[report]]"
+                                        edit-mode="[[editMode]]"
+                                        visible="[[visible]]">
+                <span resize="left">│</span>
+                <span resize="right">│</span>
+                <span resize="top">─</span>
+                <span resize="bottom">─</span>
+                <span resize="top-right">┐</span>
+                <span resize="top-left">┌</span>
+                <span resize="bottom-right">┘</span>
+                <span resize="bottom-left">└</span>
+              </nuxeo-rvtmf-view-layout>
+            </template>
           </template>
 
           <div placeholder></div>
@@ -278,7 +303,12 @@ limitations under the License.
         input: {
           type: Object,
           value: {}
-        }
+        },
+
+        visible: {
+          type: Boolean,
+          observer: '_visibleChanged'
+        },
       },
 
       ready: function() {
@@ -325,6 +355,12 @@ limitations under the License.
           },0)
         });
 
+      },
+
+      _visibleChanged: function () {
+        this.$.reportsProvider.fetch().then(function(results) {
+          this.reportsProvider = results.entries;
+        }.bind(this));
       },
 
       /* move event when tile is dropped. */
