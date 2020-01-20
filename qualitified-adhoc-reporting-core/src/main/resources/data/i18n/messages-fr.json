@@ -3,5 +3,6 @@
   "label.document.type.table": "Tableau",
   "label.document.type.count": "Comptage",
   "label.document.type.chartbar": "Histogramme",
-  "label.document.type.chartline": "Courbe"
+  "label.document.type.chartline": "Courbe",
+  "label.document.type.rvtmf": "Rapports des documents"
 }

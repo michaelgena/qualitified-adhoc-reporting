@@ -1,0 +1,68 @@
+<!--
+`nuxeo-rvtmf-edit-layout`
+@group Nuxeo UI
+@element nuxeo-rvtmf-edit-layout
+-->
+<dom-module id="nuxeo-rvtmf-edit-layout">
+  <template>
+    <style>
+      *[role=widget] {
+        padding: 5px 15px 15px 15px;
+      }
+    </style>
+
+    <h3 id="options">Display</h3>
+
+    <paper-radio-group role="widget" aria-labelledby="options" selected="{{selectedOption}}">
+      <paper-radio-button name="recentlyViewed">[[i18n('app.recentlyViewed')]]</paper-radio-button>
+      <paper-radio-button name="modified">[[i18n('home.latestDocumentsEdited')]]</paper-radio-button>
+      <paper-radio-button name="tasks">[[i18n('home.tasks')]]</paper-radio-button>
+      <paper-radio-button name="favorites">[[i18n('home.favorites')]]</paper-radio-button>
+    </paper-radio-group>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-rvtmf-edit-layout',
+      behaviors: [Nuxeo.LayoutBehavior],
+      properties: {
+
+        /**
+         * @doctype rvtmf
+         */
+        document: {
+          type: Object,
+          observer: '_docObserver'
+        },
+      },
+
+      _docObserver: function () {
+        if (this.document !== null) {
+            this.selectedOption = this.document.properties["rvtmf:rvtmfSelected"];
+        }
+      },
+
+      validate: function () {
+        switch (this.selectedOption) {
+          case "recentlyViewed":
+            this.set('document.properties.rvtmf:rvtmfSelected', "recentlyViewed");
+            break;
+
+          case "modified":
+            this.set('document.properties.rvtmf:rvtmfSelected', "modified");
+            break;
+
+          case "tasks":
+            this.set('document.properties.rvtmf:rvtmfSelected', "tasks");
+            break;
+
+          case "favorites":
+            this.set('document.properties.rvtmf:rvtmfSelected', "favorites");
+            break;
+        }
+        return true;
+      }
+    });
+  </script>
+</dom-module>

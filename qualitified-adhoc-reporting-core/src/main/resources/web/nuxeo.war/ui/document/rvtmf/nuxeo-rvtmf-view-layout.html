@@ -1,0 +1,272 @@
+<link rel="import" href="../report-edit-delete.html">
+
+<dom-module id="nuxeo-rvtmf-view-layout">
+  <template>
+    <style include="nuxeo-styles">
+      nuxeo-card {
+        position: relative;
+        margin-bottom: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      nuxeo-data-table {
+        height: 85%;
+        width: 100%;
+        min-height: 0;
+      }
+
+      nuxeo-data-table ::content #container {
+        width: 100%;
+      }
+
+      .ellipsis {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        display: block;
+        width: calc(100% - 38px);
+      }
+
+      #edit {
+        height: 0px;
+      }
+
+    </style>
+
+    <!-- recently edited -->
+    <nuxeo-page-provider id="latestQuery" page-size="20" provider="domain_documents" schemas="dublincore,common,uid"
+      enrichers="thumbnail" params="{&quot;queryParams&quot;: &quot;/&quot;}"
+      headers="{&quot;X-NXfetch.document&quot;: &quot;properties&quot;}">
+    </nuxeo-page-provider>
+
+    <template id="domIfModified" is="dom-if" if="{{_checkOption(document, 'modified')}}">
+      <nuxeo-card icon="nuxeo:edit" heading="[[i18n('home.latestDocumentsEdited')]]">
+        <div id="edit" hidden$="[[editMode]]">
+          <report-edit-delete document="{{document}}"></report-edit-delete>
+        </div>
+        <nuxeo-data-table id="latestEditedDocs" max-items="15" empty-label="[[i18n('queryWidget.noDocuments')]]"
+          on-row-clicked="_navigate">
+          <nuxeo-data-table-column name="[[i18n('documentContentView.datatable.header.title')]]" flex="100">
+            <template>
+              <nuxeo-document-thumbnail document="[[item]]"></nuxeo-document-thumbnail>
+              <a class="ellipsis" href$="[[urlFor('browse', item.path)]]">[[item.title]]</a>
+            </template>
+          </nuxeo-data-table-column>
+          <nuxeo-data-table-column name="[[i18n('documentContentView.datatable.header.modified')]]" flex="50">
+            <template>
+              <nuxeo-date datetime="[[item.properties.dc:modified]]" format="relative"></nuxeo-date>
+            </template>
+          </nuxeo-data-table-column>
+          <nuxeo-data-table-column name="[[i18n('documentContentView.datatable.header.lastContributor')]]" flex="50">
+            <template>
+              <nuxeo-user-tag user="[[item.properties.dc:lastContributor]]"></nuxeo-user-tag>
+            </template>
+          </nuxeo-data-table-column>
+        </nuxeo-data-table>
+      </nuxeo-card>
+    </template>
+
+    <!-- tasks -->
+    <template is="dom-if" if="{{_checkOption(document, 'tasks')}}">
+      <nuxeo-card icon="nuxeo:tasks" heading="[[i18n('home.tasks')]]">
+        <div id="edit" hidden$="[[editMode]]">
+          <report-edit-delete document="{{document}}"></report-edit-delete>
+        </div>
+        <nuxeo-tasks-list id="taskLists" tasks="[[tasks]]"></nuxeo-tasks-list>
+      </nuxeo-card>
+    </template>
+
+    <!-- recently viewed -->
+    <template is="dom-if" if="{{_checkOption(document, 'recentlyViewed')}}">
+      <nuxeo-card icon="nuxeo:recent" heading="[[i18n('app.recentlyViewed')]]">
+        <div id="edit" hidden$="[[editMode]]">
+          <report-edit-delete document="{{document}}"></report-edit-delete>
+        </div>
+        <nuxeo-document-storage id="recentStorage" name="nuxeo-recent-documents" documents="{{_recentDocuments}}">
+        </nuxeo-document-storage>
+        <nuxeo-page-provider id="recentProvider" page-size="15" schemas="uid"></nuxeo-page-provider>
+        <nuxeo-data-table id="latestViewedDocs" max-items="15" empty-label="[[i18n('recentDocuments.empty')]]"
+          empty-label-when-filtered="[[i18n('recentDocuments.empty')]]" on-row-clicked="_navigate">
+          <nuxeo-data-table-column name="[[i18n('documentContentView.datatable.header.title')]]" flex="100">
+            <template>
+              <nuxeo-document-thumbnail document="[[item]]"></nuxeo-document-thumbnail>
+              <a class="ellipsis" href$="[[urlFor('browse', item.path)]]">[[item.title]]</a>
+            </template>
+          </nuxeo-data-table-column>
+          <nuxeo-data-table-column name="[[i18n('recentDocumentsTable.type')]]" flex="50">
+            <template>
+              <nuxeo-tag>[[formatDocType(item.type)]]</nuxeo-tag>
+            </template>
+          </nuxeo-data-table-column>
+          <nuxeo-data-table-column name="[[i18n('recentDocumentsTable.lastViewed')]]" flex="50">
+            <template>
+              <nuxeo-date datetime="[[item.lastViewed]]" format="relative"></nuxeo-date>
+            </template>
+          </nuxeo-data-table-column>
+        </nuxeo-data-table>
+      </nuxeo-card>
+    </template>
+
+    <!-- favorites -->
+    <nuxeo-operation id="fetchFavOp" op="Favorite.Fetch" response="favorite"></nuxeo-operation>
+    <nuxeo-page-provider id="favoritesProvider" provider="default_content_collection" page-size="20"
+      schemas="dublincore,common,uid" headers="{&quot;X-NXfetch.document&quot;: &quot;properties&quot;}"
+      enrichers="thumbnail">
+    </nuxeo-page-provider>
+
+    <template id="domIfFavorites" is="dom-if" if="{{_checkOption(document, 'favorites')}}">
+      <nuxeo-card icon="nuxeo:favorites" heading="[[i18n('home.favorites')]]">
+        <div id="edit" hidden$="[[editMode]]">
+          <report-edit-delete document="{{document}}"></report-edit-delete>
+        </div>
+        <nuxeo-data-table id="favoriteDocs" max-items="15" empty-label="[[i18n('favorites.empty')]]"
+          on-row-clicked="_navigate">
+          <nuxeo-data-table-column name="[[i18n('documentContentView.datatable.header.title')]]" flex="100">
+            <template>
+              <nuxeo-document-thumbnail document="[[item]]"></nuxeo-document-thumbnail>
+              <a class="ellipsis" href$="[[urlFor('browse', item.path)]]">[[item.title]]</a>
+            </template>
+          </nuxeo-data-table-column>
+          <nuxeo-data-table-column name="[[i18n('documentContentView.datatable.header.modified')]]" flex="50">
+            <template>
+              <nuxeo-date datetime="[[item.properties.dc:modified]]" format="relative"></nuxeo-date>
+            </template>
+          </nuxeo-data-table-column>
+          <nuxeo-data-table-column name="[[i18n('documentContentView.datatable.header.lastContributor')]]" flex="50">
+            <template>
+              <nuxeo-user-tag user="[[item.properties.dc:lastContributor]]"></nuxeo-user-tag>
+            </template>
+          </nuxeo-data-table-column>
+        </nuxeo-data-table>
+      </nuxeo-card>
+    </template>
+
+    <slot></slot>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-rvtmf-view-layout',
+      behaviors: [Nuxeo.RoutingBehavior, Nuxeo.FormatBehavior],
+      properties: {
+
+        document: {
+          type: Object,
+        },
+
+        visible: {
+          type: Boolean,
+          observer: '_visibleChanged'
+        },
+
+        _recentDocuments: {
+          type: Array,
+          value: [],
+          observer: '_recentDocumentsChanged'
+        }
+      },
+
+      ready: function () {
+
+        this.$$('#domIfFavorites').addEventListener('dom-change', function () {
+          var favoriteDocs = this.$$("#favoriteDocs");
+          var favoritesProvider = this.$.favoritesProvider;
+          favoriteDocs.nxProvider = favoritesProvider;
+
+          this._fetchFavorite().then(function (favorite) {
+            favoritesProvider.params = [favorite.uid];
+            favoritesProvider.page = 1;
+            favoriteDocs.fetch();
+          }.bind(this));
+        }.bind(this));
+
+        this.$$('#domIfModified').addEventListener('dom-change', function () {
+          var latestEditedDocs = this.$$("#latestEditedDocs");
+          latestEditedDocs.nxProvider = this.$.latestQuery;
+          latestEditedDocs.fetch();
+        }.bind(this));
+
+      },
+
+      _checkOption: function (doc, option) {
+        if (this.document.properties["rvtmf:rvtmfSelected"] == option) {
+          return true;
+        }
+        return false;
+      },
+
+      _visibleChanged: function (visible) {
+        if (visible) {
+          this._refresh();
+        }
+      },
+
+      _refresh: function () {
+        if (this.$$("#latestEditedDocs")) {
+          this.$$("#latestEditedDocs").fetch();
+        }
+
+        if (this.$$("#recentStorage")) {
+          this.$$("#recentStorage").reload();
+        }
+
+        if (this.$.favoritesProvider && this.$$("#favoriteDocs")) {
+          this._fetchFavorite().then(function (favorite) {
+            this.$.favoritesProvider.params = [favorite.uid];
+            this.$.favoritesProvider.page = 1;
+            this.$$("#favoriteDocs").fetch();
+          }.bind(this));
+        }
+      },
+
+      _navigate: function (e) {
+        var detail;
+        if (e.detail.item) {
+          detail = {
+            doc: e.detail.item
+          };
+          this.navigateTo('browse', detail.doc.path);
+        } else {
+          detail = {
+            doc: e.model.item
+          };
+        }
+        this.fire('navigate', detail);
+      },
+
+      _fetchFavorite: function () {
+        if (this.favorite) {
+          return Promise.resolve(this.favorite);
+        } else {
+          return this.$.fetchFavOp.execute()
+            .then(function (resp) {
+              this.favorite = resp;
+              return resp;
+            }.bind(this));
+        }
+      },
+
+      _recentDocumentsChanged: function (docs) {
+        if (docs && docs.length > 0) {
+          var storage = this.$$("#recentStorage");
+          var provider = this.$$("#recentProvider");
+          var ids = docs.map(function (doc) { return "'" + doc.uid + "'" }).join(',');
+          provider.query = 'SELECT * FROM Document WHERE ecm:uuid IN (' + ids + ') AND ecm:isTrashed = 0';
+          provider.fetch().then(function (result) {
+            docs.forEach(function (doc) {
+              if (result.entries.findIndex(function (entry) { return entry.uid === doc.uid; }) === -1) {
+                storage.remove(doc);
+              }
+            });
+            this.$$("#latestViewedDocs").items = docs;
+            this.$$("#latestViewedDocs").notifyResize(); // XXX: force rendering for Edge (NXP-26244)
+          }.bind(this));
+        }
+      }
+
+    });
+  </script>
+  
+</dom-module>
