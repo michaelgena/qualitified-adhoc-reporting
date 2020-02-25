@@ -33,6 +33,6 @@
     </xs:sequence> 
   </xs:complexType>  
 
-  <xs:element name="rvtmfSelected" type="xs:string"/>
+  <xs:element name="listSelected" type="xs:string"/>
 
 </xs:schema>

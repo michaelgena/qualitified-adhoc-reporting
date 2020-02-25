@@ -31,7 +31,7 @@ limitations under the License.
 <link rel="import" href="document/chartpie/nuxeo-chartpie-view-layout.html">
 <link rel="import" href="document/count/nuxeo-count-view-layout.html">
 <link rel="import" href="document/table/nuxeo-table-view-layout.html">
-<link rel="import" href="document/rvtmf/nuxeo-rvtmf-view-layout.html">
+<link rel="import" href="document/list/nuxeo-list-view-layout.html">
 
 <dom-module id="nuxeo-home">
   <template>
@@ -95,7 +95,7 @@ limitations under the License.
                               auto
                               id="reportsProvider"
                               query="SELECT * FROM Document
-                                    WHERE ecm:primaryType in ('ChartBar', 'ChartLine', 'ChartPie', 'Count', 'Table', 'RvTMF')
+                                    WHERE ecm:primaryType in ('ChartBar', 'ChartLine', 'ChartPie', 'Count', 'Table', 'List')
                                     AND ecm:isTrashed = 0
                                     AND ecm:currentLifeCycleState != 'deleted'
                                     ORDER BY dc:created ASC"
@@ -231,8 +231,8 @@ limitations under the License.
               </nuxeo-table-view-layout>
             </template>
 
-            <template is="dom-if" if="[[isReport(report.type, 'RvTMF')]]">
-              <nuxeo-rvtmf-view-layout  class="report"
+            <template is="dom-if" if="[[isReport(report.type, 'List')]]">
+              <nuxeo-list-view-layout  class="report"
                                         id$="tile{{index}}"
                                         col$="{{coordinates.col}}"
                                         row$="{{coordinates.row}}"
@@ -251,7 +251,7 @@ limitations under the License.
                 <span resize="top-left">┌</span>
                 <span resize="bottom-right">┘</span>
                 <span resize="bottom-left">└</span>
-              </nuxeo-rvtmf-view-layout>
+              </nuxeo-list-view-layout>
             </template>
           </template>
 

@@ -1,9 +1,9 @@
 <!--
-`nuxeo-rvtmf-edit-layout`
+`nuxeo-list-create-layout`
 @group Nuxeo UI
-@element nuxeo-rvtmf-edit-layout
+@element nuxeo-list-create-layout
 -->
-<dom-module id="nuxeo-rvtmf-edit-layout">
+<dom-module id="nuxeo-list-create-layout">
   <template>
     <style>
       *[role=widget] {
@@ -24,41 +24,36 @@
 
   <script>
     Polymer({
-      is: 'nuxeo-rvtmf-edit-layout',
+      is: 'nuxeo-list-create-layout',
       behaviors: [Nuxeo.LayoutBehavior],
       properties: {
 
         /**
-         * @doctype rvtmf
+         * @doctype list
          */
         document: {
           type: Object,
-          observer: '_docObserver'
         },
       },
 
-      _docObserver: function () {
-        if (this.document !== null) {
-            this.selectedOption = this.document.properties["rvtmf:rvtmfSelected"];
-        }
-      },
-
       validate: function () {
+        this.set('document.properties.dc:title', this.selectedOption);
+
         switch (this.selectedOption) {
           case "recentlyViewed":
-            this.set('document.properties.rvtmf:rvtmfSelected', "recentlyViewed");
+            this.set('document.properties.list:listSelected', "recentlyViewed");
             break;
 
           case "modified":
-            this.set('document.properties.rvtmf:rvtmfSelected', "modified");
+            this.set('document.properties.list:listSelected', "modified");
             break;
 
           case "tasks":
-            this.set('document.properties.rvtmf:rvtmfSelected', "tasks");
+            this.set('document.properties.list:listSelected', "tasks");
             break;
 
           case "favorites":
-            this.set('document.properties.rvtmf:rvtmfSelected', "favorites");
+            this.set('document.properties.list:listSelected', "favorites");
             break;
         }
         return true;

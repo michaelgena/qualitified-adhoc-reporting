@@ -1,6 +1,6 @@
 <link rel="import" href="../report-edit-delete.html">
 
-<dom-module id="nuxeo-rvtmf-view-layout">
+<dom-module id="nuxeo-list-view-layout">
   <template>
     <style include="nuxeo-styles">
       nuxeo-card {
@@ -148,7 +148,7 @@
 
   <script>
     Polymer({
-      is: 'nuxeo-rvtmf-view-layout',
+      is: 'nuxeo-list-view-layout',
       behaviors: [Nuxeo.RoutingBehavior, Nuxeo.FormatBehavior],
       properties: {
 
@@ -191,7 +191,7 @@
       },
 
       _checkOption: function (doc, option) {
-        if (this.document.properties["rvtmf:rvtmfSelected"] == option) {
+        if (this.document.properties["list:listSelected"] == option) {
           return true;
         }
         return false;
