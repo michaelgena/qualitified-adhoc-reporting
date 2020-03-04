@@ -1,47 +1,20 @@
-
-<!--
-`nuxeo-table-view-layout`
-@group Nuxeo UI
-@element nuxeo-table-view-layout
--->
-<link rel="import" href="../../nuxeo-admin/nuxeo-chart-data-behavior.html">
-<link rel="import" href="../report-edit-delete.html">
-
 <dom-module id="nuxeo-table-view-layout">
   <template>
-    <style>
-      *[role=widget] {
-        padding: 5px;
-      }
-      nuxeo-card {
-        position: relative;
-        margin-bottom: 0;
-        height: 100%;
-        width: 100%;
-      }
-
+    <style include="reporting-styles">
       nuxeo-data-table {
         height: 85%;
         width: 100%;
-        /*min-width: 30em;*/
         min-height: 0;
       }
 
-      nuxeo-data-table ::content #container{
-        width:100%;
+      nuxeo-data-table ::content #container {
+        width: 100%;
       }
 
-      iron-icon{
+      iron-icon {
         margin-right: 8px;
       }
 
-      #edit{
-        height: 0px;
-      }
-
-      .last-year-value {
-        color: #0000008a;
-      }
     </style>
     <nuxeo-repository-data start-date="[[startDate]]"
                            end-date="[[_extendEndDate(endDate)]]"
@@ -77,7 +50,7 @@
 
     <nuxeo-card heading="[[document.properties.dc:title]]">
 
-      <div id="edit" hidden$="[[editMode]]">
+      <div id="edit" hidden$="[[!editMode]]">
         <report-edit-delete document="{{document}}"></report-edit-delete>
       </div>
 
@@ -85,41 +58,43 @@
 
         <nuxeo-data-table-column name="{{document.properties.table:columnName1}}">
           <template>
-            <iron-icon id="icon" hidden$="{{iconHidden}}" src="{{_getDocIcon(item.key)}}"></iron-icon>
+            <!-- <iron-icon id="icon" hidden$="{{iconHidden}}" src="{{_getDocIcon(item.key)}}"></iron-icon> -->
             {{_labels(item.key)}}
           </template>
         </nuxeo-data-table-column>
 
         <nuxeo-data-table-column name="{{document.properties.table:columnName2}}">
           <template>
-              {{_values(item.value)}}
+            {{_values(item.value)}}
           </template>
         </nuxeo-data-table-column>
 
-        <nuxeo-data-table-column name="[[i18n('label.report.lastYearValue')]]" hidden="{{!document.properties.report:lastYear}}">
+        <nuxeo-data-table-column name="[[i18n('label.report.lastYearValue')]]"
+                                 hidden="{{!document.properties.report:lastYear}}">
           <template>
-              <span class="last-year-value">{{_values(item.lastYearValue)}}</span>
+            <span class="last-year-value">{{_values(item.lastYearValue)}}</span>
           </template>
         </nuxeo-data-table-column>
 
-        <nuxeo-data-table-column name="[[i18n('label.report.percentageChange')]]" hidden="{{!document.properties.report:lastYear}}">
+        <nuxeo-data-table-column name="[[i18n('label.report.percentageChange')]]"
+                                 hidden="{{!document.properties.report:lastYear}}">
           <template>
-            <span id$="lastYearPercentage{{index}}">[[_getTablePercentage(item.value,item.lastYearValue, index)]]%</span>
+            <span id$="lastYearPercentage{{index}}">[[_getTablePercentage(item.value,item.lastYearValue,
+              index)]]%</span>
           </template>
         </nuxeo-data-table-column>
 
       </nuxeo-data-table>
-
-
-
     </nuxeo-card>
+
     <slot></slot>
+
   </template>
 
   <script>
     Polymer({
       is: 'nuxeo-table-view-layout',
-      behaviors: [Nuxeo.ChartDataBehavior, Nuxeo.LayoutBehavior, Report.DataBehavior],
+      behaviors: [Nuxeo.LayoutBehavior, Report.DataBehavior],
       properties: {
 
         document: {
@@ -128,11 +103,10 @@
         }
       },
 
-      ready:function () {
-        setTimeout(function() {
-          //console.log(this.$.table.shadowRoot.getElementById("container").style.width);
+      ready: function () {
+        setTimeout(function () {
           this.$.table.shadowRoot.getElementById("container").style.width = '100%';
-        }.bind(this),1000);
+        }.bind(this), 1000);
       },
 
       _getData: function (data, lastYearData) {
@@ -150,7 +124,6 @@
         }
       },
 
-
       // _query: function(entries) {
       //   if (entries.length > 0) {
       //     var keys = entries.map(function(entry) {
@@ -163,7 +136,7 @@
 
 
       /* _labels Modified*/
-      _labels: function(key) {
+      _labels: function (key) {
         var dateFormat = this.document.properties['report:dateFormat'];
         if (dateFormat == "" || dateFormat == null) {
           dateFormat = "DD/MM/YYYY";
@@ -175,15 +148,8 @@
         }
       },
 
-      _extendEndDate: function(date) {
-        if (date && moment) {
-          return this._formatDate(moment(date).add(1, 'days').subtract(1, 'ms').toJSON());
-        }
-        return date;
-      },
-
       /*Adding prefix and suffix to the value*/
-      _values: function(value) {
+      _values: function (value) {
         var value = this._getValue(value);
         var prefix = '';
         var suffix = '';
@@ -197,7 +163,7 @@
       },
 
       /* Value Type: Number - Currency */
-      _getValue: function(value) {
+      _getValue: function (value) {
         if (this._isCurrency(this.document)) {
           return this._formatCurrency(value);
         } else {
@@ -205,17 +171,9 @@
         }
       },
 
-      _isCurrency: function(doc) {
-        return doc ? doc.properties['count:valuetype'] == 'Currency' : false;
-      },
-
-      _formatCurrency: function(value) {
-        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-      },
-
       /* Get document icon. */
-      _getDocIcon: function(docName) {
-        if(docName && this.document.properties['table:icon'] == 'Yes'){
+      _getDocIcon: function (docName) {
+        if (docName && this.document.properties['table:icon'] == 'Yes') {
           var xhr = new XMLHttpRequest();
           xhr.open('HEAD', 'images/doctypes/' + docName.toLowerCase() + '.svg', false);
           xhr.send();
@@ -226,16 +184,16 @@
             this.iconHidden = false;
             return 'images/doctypes/' + docName.toLowerCase() + '.svg';
           }
-        }else{
+        } else {
           this.iconHidden = true;
         }
       },
 
       refresh: function () {
-        if(this.document.properties['table:icon'] == 'Yes'){
-          this.iconHidden = false;
-          this.$.table.fetch();
-        }
+        // if (this.document.properties['table:icon'] == 'Yes') {
+        //   this.iconHidden = false;
+        //   this.$.table.fetch();
+        // }
       }
 
     });

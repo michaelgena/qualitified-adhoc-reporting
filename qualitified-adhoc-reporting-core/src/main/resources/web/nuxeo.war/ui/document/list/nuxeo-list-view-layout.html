@@ -1,15 +1,6 @@
-<link rel="import" href="../report-edit-delete.html">
-
 <dom-module id="nuxeo-list-view-layout">
   <template>
-    <style include="nuxeo-styles">
-      nuxeo-card {
-        position: relative;
-        margin-bottom: 0;
-        width: 100%;
-        height: 100%;
-      }
-
+    <style include="nuxeo-styles reporting-styles">
       nuxeo-data-table {
         height: 85%;
         width: 100%;
@@ -28,41 +19,46 @@
         width: calc(100% - 38px);
       }
 
-      #edit {
-        height: 0px;
-      }
-
     </style>
 
     <!-- recently edited -->
-    <nuxeo-page-provider id="latestQuery" page-size="20" provider="domain_documents" schemas="dublincore,common,uid"
-      enrichers="thumbnail" params="{&quot;queryParams&quot;: &quot;/&quot;}"
-      headers="{&quot;X-NXfetch.document&quot;: &quot;properties&quot;}">
+    <nuxeo-page-provider id="latestQuery"
+                         page-size="40"
+                         provider="domain_documents"
+                         schemas="dublincore,common,uid"
+                         enrichers="thumbnail"
+                         params="{&quot;queryParams&quot;: &quot;/&quot;}"
+                         headers="{&quot;X-NXfetch.document&quot;: &quot;properties&quot;}">
     </nuxeo-page-provider>
 
     <template id="domIfModified" is="dom-if" if="{{_checkOption(document, 'modified')}}">
       <nuxeo-card icon="nuxeo:edit" heading="[[i18n('home.latestDocumentsEdited')]]">
-        <div id="edit" hidden$="[[editMode]]">
+        <div id="edit" hidden$="[[!editMode]]">
           <report-edit-delete document="{{document}}"></report-edit-delete>
         </div>
-        <nuxeo-data-table id="latestEditedDocs" max-items="15" empty-label="[[i18n('queryWidget.noDocuments')]]"
-          on-row-clicked="_navigate">
+
+        <nuxeo-data-table id="latestEditedDocs" max-items="40" empty-label="[[i18n('queryWidget.noDocuments')]]"
+                          on-row-clicked="_navigate">
+
           <nuxeo-data-table-column name="[[i18n('documentContentView.datatable.header.title')]]" flex="100">
             <template>
               <nuxeo-document-thumbnail document="[[item]]"></nuxeo-document-thumbnail>
               <a class="ellipsis" href$="[[urlFor('browse', item.path)]]">[[item.title]]</a>
             </template>
           </nuxeo-data-table-column>
+
           <nuxeo-data-table-column name="[[i18n('documentContentView.datatable.header.modified')]]" flex="50">
             <template>
               <nuxeo-date datetime="[[item.properties.dc:modified]]" format="relative"></nuxeo-date>
             </template>
           </nuxeo-data-table-column>
+
           <nuxeo-data-table-column name="[[i18n('documentContentView.datatable.header.lastContributor')]]" flex="50">
             <template>
               <nuxeo-user-tag user="[[item.properties.dc:lastContributor]]"></nuxeo-user-tag>
             </template>
           </nuxeo-data-table-column>
+
         </nuxeo-data-table>
       </nuxeo-card>
     </template>
@@ -70,7 +66,7 @@
     <!-- tasks -->
     <template is="dom-if" if="{{_checkOption(document, 'tasks')}}">
       <nuxeo-card icon="nuxeo:tasks" heading="[[i18n('home.tasks')]]">
-        <div id="edit" hidden$="[[editMode]]">
+        <div id="edit" hidden$="[[!editMode]]">
           <report-edit-delete document="{{document}}"></report-edit-delete>
         </div>
         <nuxeo-tasks-list id="taskLists" tasks="[[tasks]]"></nuxeo-tasks-list>
@@ -80,64 +76,80 @@
     <!-- recently viewed -->
     <template is="dom-if" if="{{_checkOption(document, 'recentlyViewed')}}">
       <nuxeo-card icon="nuxeo:recent" heading="[[i18n('app.recentlyViewed')]]">
-        <div id="edit" hidden$="[[editMode]]">
+
+        <div id="edit" hidden$="[[!editMode]]">
           <report-edit-delete document="{{document}}"></report-edit-delete>
         </div>
+
         <nuxeo-document-storage id="recentStorage" name="nuxeo-recent-documents" documents="{{_recentDocuments}}">
         </nuxeo-document-storage>
-        <nuxeo-page-provider id="recentProvider" page-size="15" schemas="uid"></nuxeo-page-provider>
-        <nuxeo-data-table id="latestViewedDocs" max-items="15" empty-label="[[i18n('recentDocuments.empty')]]"
-          empty-label-when-filtered="[[i18n('recentDocuments.empty')]]" on-row-clicked="_navigate">
+
+        <nuxeo-page-provider id="recentProvider" page-size="40" schemas="uid"></nuxeo-page-provider>
+
+        <nuxeo-data-table id="latestViewedDocs" max-items="40" empty-label="[[i18n('recentDocuments.empty')]]"
+                          empty-label-when-filtered="[[i18n('recentDocuments.empty')]]" on-row-clicked="_navigate">
+
           <nuxeo-data-table-column name="[[i18n('documentContentView.datatable.header.title')]]" flex="100">
             <template>
               <nuxeo-document-thumbnail document="[[item]]"></nuxeo-document-thumbnail>
               <a class="ellipsis" href$="[[urlFor('browse', item.path)]]">[[item.title]]</a>
             </template>
           </nuxeo-data-table-column>
+
           <nuxeo-data-table-column name="[[i18n('recentDocumentsTable.type')]]" flex="50">
             <template>
               <nuxeo-tag>[[formatDocType(item.type)]]</nuxeo-tag>
             </template>
           </nuxeo-data-table-column>
+
           <nuxeo-data-table-column name="[[i18n('recentDocumentsTable.lastViewed')]]" flex="50">
             <template>
               <nuxeo-date datetime="[[item.lastViewed]]" format="relative"></nuxeo-date>
             </template>
           </nuxeo-data-table-column>
+
         </nuxeo-data-table>
       </nuxeo-card>
     </template>
 
     <!-- favorites -->
     <nuxeo-operation id="fetchFavOp" op="Favorite.Fetch" response="favorite"></nuxeo-operation>
-    <nuxeo-page-provider id="favoritesProvider" provider="default_content_collection" page-size="20"
-      schemas="dublincore,common,uid" headers="{&quot;X-NXfetch.document&quot;: &quot;properties&quot;}"
-      enrichers="thumbnail">
+    <nuxeo-page-provider id="favoritesProvider"
+                         provider="default_content_collection" page-size="20"
+                         schemas="dublincore,common,uid"
+                         headers="{&quot;X-NXfetch.document&quot;: &quot;properties&quot;}"
+                         enrichers="thumbnail">
     </nuxeo-page-provider>
 
     <template id="domIfFavorites" is="dom-if" if="{{_checkOption(document, 'favorites')}}">
       <nuxeo-card icon="nuxeo:favorites" heading="[[i18n('home.favorites')]]">
-        <div id="edit" hidden$="[[editMode]]">
+
+        <div id="edit" hidden$="[[!editMode]]">
           <report-edit-delete document="{{document}}"></report-edit-delete>
         </div>
+
         <nuxeo-data-table id="favoriteDocs" max-items="15" empty-label="[[i18n('favorites.empty')]]"
-          on-row-clicked="_navigate">
+                          on-row-clicked="_navigate">
+
           <nuxeo-data-table-column name="[[i18n('documentContentView.datatable.header.title')]]" flex="100">
             <template>
               <nuxeo-document-thumbnail document="[[item]]"></nuxeo-document-thumbnail>
               <a class="ellipsis" href$="[[urlFor('browse', item.path)]]">[[item.title]]</a>
             </template>
           </nuxeo-data-table-column>
+
           <nuxeo-data-table-column name="[[i18n('documentContentView.datatable.header.modified')]]" flex="50">
             <template>
               <nuxeo-date datetime="[[item.properties.dc:modified]]" format="relative"></nuxeo-date>
             </template>
           </nuxeo-data-table-column>
+
           <nuxeo-data-table-column name="[[i18n('documentContentView.datatable.header.lastContributor')]]" flex="50">
             <template>
               <nuxeo-user-tag user="[[item.properties.dc:lastContributor]]"></nuxeo-user-tag>
             </template>
           </nuxeo-data-table-column>
+
         </nuxeo-data-table>
       </nuxeo-card>
     </template>
@@ -268,5 +280,4 @@
 
     });
   </script>
-  
 </dom-module>

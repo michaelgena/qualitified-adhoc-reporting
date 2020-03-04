@@ -1,19 +1,11 @@
-<!--
-`nuxeo-list-create-layout`
-@group Nuxeo UI
-@element nuxeo-list-create-layout
--->
 <dom-module id="nuxeo-list-create-layout">
   <template>
-    <style>
-      *[role=widget] {
-        padding: 5px 15px 15px 15px;
-      }
+    <style include="reporting-styles">
     </style>
 
-    <h3 id="options">Display</h3>
+    <h3 id="options">[[i18n('label.report.layout.display')]]</h3>
 
-    <paper-radio-group role="widget" aria-labelledby="options" selected="{{selectedOption}}">
+    <paper-radio-group role="reportWidget" aria-labelledby="options" selected="{{selectedOption}}">
       <paper-radio-button name="recentlyViewed">[[i18n('app.recentlyViewed')]]</paper-radio-button>
       <paper-radio-button name="modified">[[i18n('home.latestDocumentsEdited')]]</paper-radio-button>
       <paper-radio-button name="tasks">[[i18n('home.tasks')]]</paper-radio-button>

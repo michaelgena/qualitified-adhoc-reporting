@@ -1,32 +1,22 @@
-<!--
-`nuxeo-count-metadata-layout`
-@group Nuxeo UI
-@element nuxeo-count-metadata-layout
--->
 <dom-module id="nuxeo-count-metadata-layout">
   <template>
-    <style>
-      *[role=widget] {
-        padding: 5px;
-      }
+    <style include="reporting-styles">
     </style>
 
     <div role="widget">
-      <label>Title</label>
+      <label>[[i18n('title')]]</label>
       <div>[[document.properties.dc:title]]</div>
     </div>
 
-    <h3>Data Settings</h3>
-
-    <!-- <nuxeo-directory-suggestion role="widget" value="[[document.properties.report:datatype]]" label="[[i18n('label.report.datatype')]]" readonly="true" directory-name="DataType"></nuxeo-directory-suggestion> -->
+    <h3>[[i18n('label.report.layout.dataSettings')]]</h3>
 
     <div role="widget">
-      <label>[[i18n('label.report.documenttype')]]</label>
+      <label>[[i18n('label.report.documentType')]]</label>
       <div>[[document.properties.report:primarytype]]</div>
     </div>
 
     <div role="widget">
-      <label>[[i18n('label.report.lifecyclestate')]]</label>
+      <label>[[i18n('label.report.lifecycleState')]]</label>
       <div>[[document.properties.report:lifeCycleState]]</div>
     </div>
 
@@ -41,13 +31,18 @@
     </div>
 
     <div role="widget">
-      <label>[[i18n('label.report.datefield')]]</label>
+      <label>[[i18n('label.report.dateField')]]</label>
       <div>[[document.properties.report:dateField]]</div>
     </div>
 
-    <h3>Display</h3>
+    <h3>[[i18n('label.report.layout.display')]]</h3>
 
-    <nuxeo-directory-suggestion role="widget" value="[[document.properties.count:valuetype]]" label="[[i18n('label.count.numbertypes')]]" readonly="true" directory-name="ValueType"></nuxeo-directory-suggestion>
+    <nuxeo-directory-suggestion role="widget"
+                                value="[[document.properties.count:valuetype]]"
+                                label="[[i18n('label.count.numberTypes')]]"
+                                readonly="true"
+                                directory-name="ValueType">
+    </nuxeo-directory-suggestion>
 
     <div role="widget">
       <label>[[i18n('label.count.prefix')]]</label>
@@ -69,13 +64,13 @@
       <div>[[document.properties.count:style]]</div>
     </div>
 
-    <h3>Options</h3>
+    <h3>[[i18n('label.report.layout.options')]]</h3>
 
     <div role="widget">
       <label>[[i18n('label.report.lastYear')]]</label>
       <div>[[document.properties.report:lastYear]]</div>
     </div>
-    
+
   </template>
 
   <script>
