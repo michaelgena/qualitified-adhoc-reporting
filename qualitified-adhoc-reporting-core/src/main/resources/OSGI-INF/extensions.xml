@@ -11,6 +11,7 @@
     <schema name="report" prefix="report" override="true" src="data/schemas/report.xsd"/>
     <schema name="list" prefix="list" override="true" src="data/schemas/list.xsd"/>
   </extension>
+
   <extension target="org.nuxeo.ecm.core.schema.TypeService" point="doctype">
     <doctype name="ChartBar" extends="Document">
       <schema name="chartbar"/>
@@ -97,6 +98,7 @@
       </subtypes>
     </doctype>
   </extension>
+
   <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="types">
     <types>
       <type name="ChartBar">default</type>
@@ -117,6 +119,7 @@
       <type name="List">default</type>
     </types>
   </extension>
+
   <extension target="org.nuxeo.ecm.platform.types.TypeService" point="types">
     <type id="ChartBar">
       <label>ChartBar</label>
@@ -155,6 +158,7 @@
       <description>Recently viewed, Tasks, Modified and Favorites</description>
     </type>
   </extension>
+
   <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="lifecycle">
     <lifecycle name="default" defaultInitial="project">
       <transitions>
@@ -207,26 +211,7 @@
       </states>
     </lifecycle>
   </extension>
-  <!--extension target="org.nuxeo.ecm.platform.ec.notification.service.NotificationService" point="templates">
-    <template name="appReviewStarted" src="data/templates/appReviewStarted.ftl"/>
-    <template name="defaultNotifTemplate" src="data/templates/defaultNotifTemplate.ftl"/>
-    <template name="emailDocument" src="data/templates/emailDocument.ftl"/>
-    <template name="modif" src="data/templates/modif.ftl"/>
-    <template name="publish" src="data/templates/publish.ftl"/>
-    <template name="subscriptionsUpdated" src="data/templates/subscriptionsUpdated.ftl"/>
-    <template name="workflow" src="data/templates/workflow.ftl"/>
-    <template name="workflowTaskAssigned" src="data/templates/workflowTaskAssigned.ftl"/>
-    <template name="workflowTaskDelegated" src="data/templates/workflowTaskDelegated.ftl"/>
-  </extension>
-  <extension target="org.nuxeo.ecm.platform.content.template.service.ContentTemplateService" point="factoryBinding">
-    <factoryBinding name="DomainFactory" factoryName="SimpleTemplateFactory" targetType="Domain">
-      <template>
-        <templateItem typeName="WorkspaceRoot" id="workspaces" title="Workspaces" description="Use Nuxeo Studio to adapt the domain automated structure (Content Model &gt; Structure Templates &gt; DomainFactory)"/>
-        <templateItem typeName="SectionRoot" id="sections" title="Sections" description="You can modify this automatically built structure from Studio: Content Model &gt; Structure Templates &gt; DomainFactory"/>
-        <templateItem typeName="TemplateRoot" id="templates" title="Templates" description="Workspace Templates Root"/>
-      </template>
-    </factoryBinding>
-  </extension-->
+
   <extension target="org.nuxeo.ecm.directory.GenericDirectory" point="directories">
     <directory name="DataType" extends="template-vocabulary">
       <autoincrementIdField>false</autoincrementIdField>
@@ -261,6 +246,7 @@
       <cacheEntryWithoutReferencesName>vocab-IconYesNo-cache-without-references</cacheEntryWithoutReferencesName>
     </directory>
   </extension>
+
   <extension target="org.nuxeo.ecm.core.cache.CacheService" point="caches">
     <cache name="vocab-DataType-cache">
       <option name="maxSize">1000</option>
@@ -303,11 +289,13 @@
       <ttl>60</ttl>
     </cache>
   </extension>
+
   <extension target="org.nuxeo.ecm.platform.WebResources" point="resources">
     <resource name="nuxeo-adhoc-reporting-bundle.html" type="import" shrinkable="false">
       <uri>/ui/nuxeo-adhoc-reporting-bundle.html</uri>
     </resource>
   </extension>
+
   <extension target="org.nuxeo.ecm.platform.WebResources" point="bundles">
     <bundle name="web-ui">
       <resources append="true">
@@ -315,6 +303,7 @@
       </resources>
     </bundle>
   </extension>
+
   <extension target="org.nuxeo.ecm.platform.actions.ActionService" point="filters">
     <filter id="create" append="true">
       <rule grant="false">
@@ -327,4 +316,5 @@
       </rule>
     </filter>
   </extension>
+
 </component>
