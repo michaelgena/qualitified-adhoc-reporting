@@ -148,5 +148,12 @@
       return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
 
+    isReportType: function (doc) {
+      if (doc && doc.type){
+        var reportTypes = ["ChartBar", "ChartLine", "ChartPie", "Count", "Table", "List"];
+        return reportTypes.includes(doc.type);
+      }
+    }
+
   };
 </script>

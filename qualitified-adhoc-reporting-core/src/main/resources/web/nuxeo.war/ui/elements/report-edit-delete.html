@@ -117,10 +117,12 @@
       },
 
       ready: function () {
-        document.querySelector("nuxeo-app").addEventListener('document-created', function () {
-          this.async(function () {
-            this.navigateTo("home");
-          }, 200)
+        document.querySelector("nuxeo-app").addEventListener('document-created', function (e) {
+          if (this.isReportType(e.detail.response)) {
+            this.async(function () {
+              this.navigateTo("home");
+            }, 250);
+          }
         }.bind(this));
         // this.domHost.style.touchAction = "auto";
         // this.async(function () {
