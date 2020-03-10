@@ -160,6 +160,7 @@
         this.dialog.close();
         this.refreshDisplay();
         this._changeGridDraggability(true);
+        this.domHost.domHost._checkToShowWarning();
         this.async(function () {
           this.navigateTo("home");
         }, 200);

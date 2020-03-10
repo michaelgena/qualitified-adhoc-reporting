@@ -6,6 +6,9 @@
   "label.document.type.chartline": "Courbe",
   "label.document.type.list": "Rapports des documents",
 
+  "analytics.responsibleUser": "Utilisateur responsable",
+  "analytics.responsibleUser.warning": "Les métadonnées d'utilisateur responsable ne sont pas définies pour les rapports suivants",
+
   "label.report.layout.dataSettings": "Paramètres de données",
   "label.report.layout.display": "Affichage",
   "label.report.layout.options": "Options",
@@ -25,6 +28,7 @@
   "label.report.lastYear": "Afficher la valeur de l'année dernière et la variation en pourcentage",
   "label.report.lastYearValue": "Valeur de l'année dernière",
   "label.report.percentageChange": "Variation en pourcentage",
+  "label.report.responsibleUser": "Métadonnée d'utilisateur responsable",
 
   "label.count.numberTypes": "Types de nombres",
   "label.count.prefix": "Prefix",

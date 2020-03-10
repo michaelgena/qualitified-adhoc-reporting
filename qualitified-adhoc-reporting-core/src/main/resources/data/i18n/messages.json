@@ -6,6 +6,9 @@
   "label.document.type.chartline": "Chart Line",
   "label.document.type.list": "Document Reports",
 
+  "analytics.responsibleUser": "Responsible User",
+  "analytics.responsibleUser.warning": "Responsible User Metadata is not set for the following reports",
+
   "label.report.layout.dataSettings": "Data Settings",
   "label.report.layout.display": "Display",
   "label.report.layout.options": "Options",
@@ -25,6 +28,7 @@
   "label.report.lastYear": "Display last year's value and percentage change",
   "label.report.lastYearValue": "Last year's value",
   "label.report.percentageChange": "Percentage change",
+  "label.report.responsibleUser": "Responsible User Metadata",
 
   "label.count.numberTypes":"Number Types",
   "label.count.prefix":"Prefix",

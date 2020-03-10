@@ -26,6 +26,7 @@
                            ecm-lifecycle-state="[[document.properties.report:lifeCycleState]]"
                            grouped-by="[[document.properties.report:groupedBy]]"
                            group-limit="[[document.properties.report:groupLimit]]"
+                           where="[[_setWhereTerm(document.properties.report:responsibleUser, responsibleUser)]]"
                            metrics="[[document.properties.report:metrics]]">
     </nuxeo-repository-data>
 
@@ -39,6 +40,7 @@
                            ecm-lifecycle-state="[[document.properties.report:lifeCycleState]]"
                            grouped-by="[[document.properties.report:groupedBy]]"
                            group-limit="[[document.properties.report:groupLimit]]"
+                           where="[[_setWhereTerm(document.properties.report:responsibleUser, responsibleUser)]]"
                            metrics="[[document.properties.report:metrics]]">
     </nuxeo-repository-data>
 

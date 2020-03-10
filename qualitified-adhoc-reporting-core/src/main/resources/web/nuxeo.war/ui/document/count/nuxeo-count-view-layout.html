@@ -30,6 +30,7 @@
                            ecm-primary-type="[[document.properties.report:primarytype]]"
                            ecm-lifecycle-state="[[document.properties.report:lifeCycleState]]"
                            ecm-mixin-type="[[document.properties.report:mixintype]]"
+                           where="[[_setWhereTerm(document.properties.report:responsibleUser, responsibleUser)]]"
                            date-field="[[document.properties.report:dateField]]">
     </nuxeo-repository-data>
 
@@ -41,6 +42,7 @@
                            ecm-primary-type="[[document.properties.report:primarytype]]"
                            ecm-lifecycle-state="[[document.properties.report:lifeCycleState]]"
                            ecm-mixin-type="[[document.properties.report:mixintype]]"
+                           where="[[_setWhereTerm(document.properties.report:responsibleUser, responsibleUser)]]"
                            date-field="[[document.properties.report:dateField]]">
     </nuxeo-repository-data>
 
