@@ -21,6 +21,7 @@
                            date-field="[[document.properties.report:dateField]]"
                            grouped-by="[[document.properties.report:groupedBy]]"
                            group-limit="[[document.properties.report:groupLimit]]"
+                           where="[[_setWhereTerm(document.properties.report:responsibleUser, responsibleUser)]]"
                            metrics="[[document.properties.report:metrics]]">
     </nuxeo-repository-data>
 

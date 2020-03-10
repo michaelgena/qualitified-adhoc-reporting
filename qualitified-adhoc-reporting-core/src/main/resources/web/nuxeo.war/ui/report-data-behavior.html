@@ -153,6 +153,15 @@
         var reportTypes = ["ChartBar", "ChartLine", "ChartPie", "Count", "Table", "List"];
         return reportTypes.includes(doc.type);
       }
+    },
+
+    _setWhereTerm: function (responsibleUserMetdata, responsibleUserFilterValue) {
+      if (responsibleUserMetdata && responsibleUserFilterValue) {
+        var where = {};
+        where[responsibleUserMetdata] = responsibleUserFilterValue;
+        return where;
+      }
+      return "";
     }
 
   };

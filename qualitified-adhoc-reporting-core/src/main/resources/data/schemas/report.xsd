@@ -71,4 +71,6 @@
 
   <xs:element name="lastYear" type="xs:boolean"/>
 
+  <xs:element name="responsibleUser" type="xs:string"/>
+
 </xs:schema>

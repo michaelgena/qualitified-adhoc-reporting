@@ -19,7 +19,11 @@
       }
 
       .toggleBtn {
-        padding: 0 0 0 25px;
+        padding: 0 0 0 20px;
+      }
+
+      .responsibleUser {
+        display: inline-flex;
       }
 
       .report>span {
@@ -32,11 +36,34 @@
         color: #c9c9c900;
       }
 
+      #responsibleUser {
+        width: 12vw;
+      }
+
+      #userWarning {
+        color: #fec847;
+        margin: auto;
+      }
+
+      .userWarningTooltip {
+        --paper-tooltip_-_background-color: #fff2d5;
+        --paper-tooltip-opacity: 1;
+        --paper-tooltip-text-color: #f7bf3a;
+        margin: 0px 15px;
+      }
+
+      li {
+        padding: 2px 0px;
+        text-transform: uppercase;
+      }
+
+      b {
+        line-height: 1.5;
+      }
+
     </style>
 
-
     <nuxeo-page>
-
 
       <div slot="header">
 
@@ -47,6 +74,30 @@
         <div class="dates">
           <nuxeo-date-picker value="{{startDate}}" label="[[i18n('analytics.after')]]"></nuxeo-date-picker>
           <nuxeo-date-picker value="{{endDate}}" label="[[i18n('analytics.before')]]"></nuxeo-date-picker>
+        </div>
+
+        <!--Responsible User-->
+        <div class="responsibleUser">
+          <nuxeo-user-suggestion id="responsibleUser"
+                                 search-type="USER_TYPE"
+                                 label="[[i18n('analytics.responsibleUser')]]"
+                                 min-chars="0"
+                                 params='{"hideThirdLabel": "true"}'
+                                 on-value-changed="_userChanged">
+          </nuxeo-user-suggestion>
+
+          <paper-icon-button id="userWarning" icon="icons:warning" hidden></paper-icon-button>
+          <paper-tooltip for="userWarning" class="userWarningTooltip" animation-delay="0">
+            <b>[[i18n('analytics.responsibleUser.warning')]]:</b>
+            <ul>
+              <template is="dom-repeat" items="{{responsibleUserNotSetDocs}}">
+                <li>
+                  [[item.title]]
+                </li>
+              </template>
+            </ul>
+          </paper-tooltip>
+
         </div>
 
         <!--Advanced Mode-->
@@ -91,6 +142,7 @@
                                           document="[[report]]"
                                           start-date="[[startDate]]"
                                           end-date="[[endDate]]"
+                                          responsible-user="[[responsibleUser]]"
                                           edit-mode="[[editMode]]">
                 <span resize="left">│</span>
                 <span resize="right">│</span>
@@ -115,6 +167,7 @@
                                            document="[[report]]"
                                            start-date="[[startDate]]"
                                            end-date="[[endDate]]"
+                                           responsible-user="[[responsibleUser]]"
                                            edit-mode="[[editMode]]">
                 <span resize="left">│</span>
                 <span resize="right">│</span>
@@ -140,6 +193,7 @@
                                           document="[[report]]"
                                           start-date="[[startDate]]"
                                           end-date="[[endDate]]"
+                                          responsible-user="[[responsibleUser]]"
                                           edit-mode="[[editMode]]">
                 <span resize="left">│</span>
                 <span resize="right">│</span>
@@ -164,6 +218,7 @@
                                        document="[[report]]"
                                        start-date="[[startDate]]"
                                        end-date="[[endDate]]"
+                                       responsible-user="[[responsibleUser]]"
                                        edit-mode="[[editMode]]">
                 <span resize="left">│</span>
                 <span resize="right">│</span>
@@ -188,6 +243,7 @@
                                        document="[[report]]"
                                        start-date="[[startDate]]"
                                        end-date="[[endDate]]"
+                                       responsible-user="[[responsibleUser]]"
                                        edit-mode="[[editMode]]">
                 <span resize="left">│</span>
                 <span resize="right">│</span>
@@ -250,6 +306,10 @@
         editMode: {
           type: Boolean,
           value: false,
+        },
+
+        where: {
+          type: String,
         },
 
         coordinates: {
@@ -324,6 +384,30 @@
         this.$.reportsProvider.fetch().then(function (results) {
           this.reportsProvider = results.entries;
         }.bind(this));
+      },
+
+      _userChanged: function () {
+        if (this.$.responsibleUser.value) {
+          this.responsibleUser = this.$.responsibleUser.value;
+        } else {
+          this.responsibleUser = null;
+        }
+        this._checkToShowWarning();
+      },
+
+      _checkToShowWarning: function () {
+        this.responsibleUserNotSetDocs = [];
+        this.reportsProvider.forEach(report => {
+          if ((report.properties["report:responsibleUser"] == null || report.properties["report:responsibleUser"] == "") && report.type !== "List") {
+            this.responsibleUserNotSetDocs.push(report);
+          }
+        });
+
+        if (this.responsibleUserNotSetDocs && this.responsibleUserNotSetDocs.length > 0 && this.$.responsibleUser.value) {
+          this.$.userWarning.hidden = false;
+        } else {
+          this.$.userWarning.hidden = true;
+        }
       },
 
       /* move event when tile is dropped. */

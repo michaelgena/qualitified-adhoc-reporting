@@ -23,6 +23,7 @@
                            grouped-by="[[document.properties.report:groupedBy]]"
                            group-limit="[[document.properties.report:groupLimit]]"
                            with-date-intervals="[[document.properties.report:withDateIntervals]]"
+                           where="[[_setWhereTerm(document.properties.report:responsibleUser, responsibleUser)]]"
                            metrics="[[document.properties.report:metrics]]">
     </nuxeo-repository-data>
 
