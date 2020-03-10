@@ -145,11 +145,11 @@
     },
 
     _formatCurrency: function (value) {
-      return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return value ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : value;
     },
 
     isReportType: function (doc) {
-      if (doc && doc.type){
+      if (doc && doc.type) {
         var reportTypes = ["ChartBar", "ChartLine", "ChartPie", "Count", "Table", "List"];
         return reportTypes.includes(doc.type);
       }

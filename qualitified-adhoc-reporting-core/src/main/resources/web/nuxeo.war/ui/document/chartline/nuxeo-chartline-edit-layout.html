@@ -19,9 +19,13 @@
         <nuxeo-input role="widget" value="{{document.properties.report:primarytype}}" label="[[i18n('label.report.documentType')]]" type="text"></nuxeo-input>
         <nuxeo-input role="widget" value="{{document.properties.report:lifeCycleState}}" label="[[i18n('label.report.lifecycleState')]]" type="text"></nuxeo-input>
         <nuxeo-input role="widget" value="{{document.properties.report:groupLimit}}" label="[[i18n('label.report.groupLimit')]]" type="number"></nuxeo-input>
-        <nuxeo-directory-suggestion role="widget" value="{{document.properties.report:withDateIntervals}}"
-                                    label="[[i18n('label.report.datesInterval')]]" directory-name="DateIntervalsType"
-                                    min-chars="0" dbl10n="true"></nuxeo-directory-suggestion>
+        <nuxeo-directory-suggestion role="widget"
+                                    value="{{document.properties.report:withDateIntervals}}"
+                                    label="[[i18n('label.report.datesInterval')]]"
+                                    directory-name="DateIntervalsType"
+                                    min-chars="0"
+                                    dbl10n="true">
+        </nuxeo-directory-suggestion>
 
         <h3>[[i18n('label.report.layout.display')]]</h3>
 

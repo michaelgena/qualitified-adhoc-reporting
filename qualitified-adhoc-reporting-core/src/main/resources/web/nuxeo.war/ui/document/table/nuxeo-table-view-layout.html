@@ -110,16 +110,41 @@
       },
 
       _getData: function (data, lastYearData) {
-        var mergedData = [];
-        if (data !== null && lastYearData !== null) {
-          data.map(item => {
-            for (let i = 0; i < lastYearData.length; i++) {
-              if (item.key === lastYearData[i].key) {
-                return mergedData.push(Object.assign({}, item, { "lastYearValue": lastYearData[i].value }));
+        if (data && lastYearData) {
+
+          var mergedData = [];
+
+          lastYearData.forEach(lastYear => {
+            var found = false;
+            for (let i = 0; i < data.length; i++) {
+              if (lastYear.key === data[i].key) {
+                found = true;
+                break;
               }
             }
+            if (!found) {
+              var obj = {};
+              obj.key = lastYear.key;
+              obj.value = 0;
+              obj.lastYearValue = lastYear.value;
+              mergedData.push(obj);
+            }
+          });
 
-          })
+          data.forEach(item => {
+            var found = false;
+            for (let i = 0; i < lastYearData.length; i++) {
+              if (item.key === lastYearData[i].key) {
+                mergedData.push(Object.assign({}, item, { "lastYearValue": lastYearData[i].value }));
+                found = true;
+                break;
+              }
+            }
+            if (!found) {
+              mergedData.push(Object.assign({}, item, { "lastYearValue": 0 }))
+            }
+          });
+
           return mergedData;
         }
       },
