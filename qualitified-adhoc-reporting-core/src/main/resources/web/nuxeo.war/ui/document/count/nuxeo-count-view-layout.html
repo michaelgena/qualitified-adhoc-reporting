@@ -21,7 +21,7 @@
       }
 
     </style>
-
+    <nuxeo-operation id="getOption" op="Qualitified.GetOptionValue"></nuxeo-operation>
     <nuxeo-repository-data role="widget"
                            start-date="[[startDate]]"
                            end-date="[[_extendEndDate(endDate)]]"
@@ -60,7 +60,7 @@
 
       <h2 style$="[[document.properties.count:style]]">
         [[document.properties.count:prefix]]
-        [[_getValue(data)]]
+        [[value]] <template is="dom-if" if="[[_isCurrency(document)]]"><qualitified-option id="currency" name="Currency" default="$"></qualitified-option></template>
         [[document.properties.count:suffix]]
       </h2>
 
@@ -69,7 +69,7 @@
         <span class="last-year">
           <span class="last-year-value">
             [[document.properties.count:prefix]]
-            [[_getValue(lastYearData)]]
+            [[lastYearValue]] <template is="dom-if" if="[[_isCurrency(document)]]"><qualitified-option id="currency" name="Currency" default="$"></qualitified-option></template>
             [[document.properties.count:suffix]]
           </span>
           <span id="lastYearPercentage">
@@ -95,12 +95,32 @@
         document: {
           type: Object,
         },
+        value: {
+          type: String
+        },
+        lastYearValue: {
+          type: String
+        },
+        data: {
+          type: Number,
+          observer: '_dataChanged'
+        },
+        lastYearData: {
+          type: Number,
+          observer: '_lastYearDataChanged'
+        }
       },
-
+      _dataChanged: async function(data){
+        this.value = await this._getValue(data);
+      },
+      _lastYearDataChanged: async function(data){
+        this.lastYearValue = await this._getValue(data);
+      },
       /* Value Type: Number - Currency */
-      _getValue: function (value) {
+      _getValue: async function (value) {
         if (this._isCurrency(this.document)) {
-          return this._formatCurrency(value);
+          const format = await this._getCurrencyFormat();
+          return this._formatCurrency(value, format);
         } else {
           return value;
         }
@@ -114,6 +134,26 @@
         else {
           return false;
         }
+      },
+
+      _getCurrencyFormat: async function(){
+         let params = {};
+         params.name = "CurrencyFormat";
+         this.$.getOption.params = params;
+         let result = await this.$.getOption.execute().then(function(response){
+             if(response === null){
+                return ",";
+             }else{
+                return response.value;
+             }
+         }.bind(this));
+         return result;
+      },
+      _formatCurrency: function(val, format) {
+        if(val == null){
+          return "";
+        }
+        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, format);
       }
 
     });
