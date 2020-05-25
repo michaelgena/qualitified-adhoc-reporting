@@ -162,7 +162,14 @@
         return where;
       }
       return "";
-    }
+    },
+
+    _formatCurrency: function(val, format) {
+        if(val == null){
+          return "";
+        }
+        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, format);
+      }
 
   };
 </script>
