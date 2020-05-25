@@ -74,7 +74,7 @@
 
     _lastYear: function (date) {
       if (date && moment) {
-        return this._formatDate(moment(date).subtract(7, 'days').toJSON());
+        return this._formatDate(moment(date).subtract(1, 'years').toJSON());
       }
     },
 
@@ -145,7 +145,7 @@
     },
 
     _formatCurrency: function (value) {
-      return value ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") : value;
+      return value ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : value;
     },
 
     isReportType: function (doc) {
@@ -156,11 +156,12 @@
     },
 
     _setWhereTerm: function (responsibleUserMetdata, responsibleUserFilterValue) {
-      var where = {};
       if (responsibleUserMetdata && responsibleUserFilterValue) {
+        var where = {};
         where[responsibleUserMetdata] = responsibleUserFilterValue;
+        return where;
       }
-      return where;
+      return "";
     }
 
   };

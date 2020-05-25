@@ -193,43 +193,24 @@
         <nuxeo-data-table id="customDocs" max-items="15" empty-label="[[i18n('queryWidget.noDocuments')]]"
                           on-row-clicked="_navigate">
 
-          <nuxeo-data-table-column name="Date" flex="100">
+          <nuxeo-data-table-column name="[[i18n('documentContentView.datatable.header.title')]]" flex="100">
             <template>
               <nuxeo-document-thumbnail document="[[item]]"></nuxeo-document-thumbnail>
-              <a class="ellipsis" href$="[[urlFor('browse', item.path)]]">
-                <nuxeo-date datetime="[[item.properties.custom:dateField1]]" format="relative"></nuxeo-date>
-              </a>
+              <a class="ellipsis" href$="[[urlFor('browse', item.path)]]">[[item.title]]</a>
             </template>
           </nuxeo-data-table-column>
 
-          <!--nuxeo-data-table-column name="Date" flex="50">
+          <nuxeo-data-table-column name="[[i18n('documentContentView.datatable.header.modified')]]" flex="50">
             <template>
-              <nuxeo-date datetime="[[item.properties.custom:dateField1]]" format="relative"></nuxeo-date>
-            </template>
-          </nuxeo-data-table-column-->
-
-          <!--nuxeo-data-table-column name="Priorité" flex="50">
-            <template>
-              <span class$="[[item.properties.custom:vocabularyField1]] state">[[item.properties.custom:vocabularyField1]]</span>
+              <nuxeo-date datetime="[[item.properties.dc:modified]]" format="relative"></nuxeo-date>
             </template>
           </nuxeo-data-table-column>
 
-          <nuxeo-data-table-column name="Canal" flex="50">
-            <template>
-              [[item.properties.custom:vocabularyField2]]
-            </template>
-          </nuxeo-data-table-column>
-          <nuxeo-data-table-column name="Nature" flex="50">
-            <template>
-              [[formatDirectory(item.properties.solicitation:category)]]
-            </template>
-          </nuxeo-data-table-column-->
-
-          <!--nuxeo-data-table-column name="[[i18n('documentContentView.datatable.header.lastContributor')]]" flex="50">
+          <nuxeo-data-table-column name="[[i18n('documentContentView.datatable.header.lastContributor')]]" flex="50">
             <template>
               <nuxeo-user-tag user="[[item.properties.dc:lastContributor]]"></nuxeo-user-tag>
             </template>
-          </nuxeo-data-table-column-->
+          </nuxeo-data-table-column>
 
         </nuxeo-data-table>
       </nuxeo-card>

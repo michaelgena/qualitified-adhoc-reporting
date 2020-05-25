@@ -363,15 +363,13 @@
       },
       ready: function () {
 
-        /*if (moment().format('M') > 6) {
+        if (moment().format('M') > 6) {
           this.startDate = moment().format('YYYY') + '-07-01';
           this.endDate = moment().format('YYYY') + '-12-31';
         } else {
           this.startDate = moment().format('YYYY') + '-01-01';
           this.endDate = moment().format('YYYY') + '-06-30';
-        }*/
-         this.startDate = moment().subtract(7, 'days').format('YYYY-MM-DD');
-         this.endDate = moment().format('YYYY-MM-DD');
+        }
 
         this.$$('#grid1').addEventListener('move', e => {
           this._tileMoved(e);
