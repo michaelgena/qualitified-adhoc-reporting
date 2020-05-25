@@ -6,7 +6,7 @@
   "label.document.type.chartline": "Chart Line",
   "label.document.type.list": "Document Reports",
 
-  "analytics.responsibleUser": "Responsible User",
+  "analytics.responsibleUser": "Responsible",
   "analytics.responsibleUser.warning": "Responsible User Metadata is not set for the following reports",
 
   "label.report.layout.dataSettings": "Data Settings",
@@ -46,6 +46,10 @@
   "label.table.suffix":"Suffix",
   "label.table.icon":"Icon",
 
-  "label.list.option":"Selected option"
+  "label.list.option":"Selected option",
 
+  "home.custom": "Custom",
+  "label.metadata.nxql": "Nxql",
+  "label.metadata.schemas": "Schemas",
+  "label.metadata.icon": "Icon"
 }

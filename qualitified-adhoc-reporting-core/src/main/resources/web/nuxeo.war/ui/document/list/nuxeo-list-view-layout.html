@@ -19,6 +19,26 @@
         width: calc(100% - 38px);
       }
 
+      .state {
+        border-radius: 2em;
+        padding: 2px 10px;
+        text-transform: capitalize;
+        min-width: 50px;
+        text-align: center;
+        color: white;
+      }
+
+      .Normal {
+        background-color: #199beb;
+      }
+
+      .Urgent {
+        background-color: #f44336;
+      }
+
+      .Haut {
+        background-color: #ffe500;
+      }
     </style>
 
     <!-- recently edited -->
@@ -154,6 +174,48 @@
       </nuxeo-card>
     </template>
 
+
+    <!-- custom -->
+    <nuxeo-page-provider id="customProvider"
+                         query="[[document.properties.list:nxql]]" page-size="20"
+                         schemas="dublincore,common,uid,[[document.properties.list:schemas]]"
+                         headers="{&quot;X-NXfetch.document&quot;: &quot;properties&quot;}"
+                         enrichers="thumbnail">
+    </nuxeo-page-provider>
+
+    <template id="domIfCustom" is="dom-if" if="{{_checkOption(document, 'custom')}}">
+      <nuxeo-card icon="[[document.properties.list:icon]]" heading="[[document.properties.dc:title]]">
+
+        <div id="edit" hidden$="[[!editMode]]">
+          <report-edit-delete document="{{document}}"></report-edit-delete>
+        </div>
+
+        <nuxeo-data-table id="customDocs" max-items="15" empty-label="[[i18n('queryWidget.noDocuments')]]"
+                          on-row-clicked="_navigate">
+
+          <nuxeo-data-table-column name="[[i18n('documentContentView.datatable.header.title')]]" flex="100">
+            <template>
+              <nuxeo-document-thumbnail document="[[item]]"></nuxeo-document-thumbnail>
+              <a class="ellipsis" href$="[[urlFor('browse', item.path)]]">[[item.title]]</a>
+            </template>
+          </nuxeo-data-table-column>
+
+          <nuxeo-data-table-column name="[[i18n('documentContentView.datatable.header.modified')]]" flex="50">
+            <template>
+              <nuxeo-date datetime="[[item.properties.dc:modified]]" format="relative"></nuxeo-date>
+            </template>
+          </nuxeo-data-table-column>
+
+          <nuxeo-data-table-column name="[[i18n('documentContentView.datatable.header.lastContributor')]]" flex="50">
+            <template>
+              <nuxeo-user-tag user="[[item.properties.dc:lastContributor]]"></nuxeo-user-tag>
+            </template>
+          </nuxeo-data-table-column>
+
+        </nuxeo-data-table>
+      </nuxeo-card>
+    </template>
+
     <slot></slot>
 
   </template>
@@ -200,6 +262,12 @@
           latestEditedDocs.fetch();
         }.bind(this));
 
+        this.$$('#domIfCustom').addEventListener('dom-change', function () {
+          var customDocs = this.$$("#customDocs");
+          customDocs.nxProvider = this.$.customProvider;
+          customDocs.fetch();
+        }.bind(this));
+
       },
 
       _checkOption: function (doc, option) {
@@ -231,6 +299,11 @@
             this.$$("#favoriteDocs").fetch();
           }.bind(this));
         }
+
+        if (this.$$("#customdDocs")) {
+          this.$$("#customDocs").fetch();
+        }
+
       },
 
       _navigate: function (e) {

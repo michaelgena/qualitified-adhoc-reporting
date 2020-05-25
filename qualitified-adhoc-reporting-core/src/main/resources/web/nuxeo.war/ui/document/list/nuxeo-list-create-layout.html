@@ -3,6 +3,8 @@
     <style include="reporting-styles">
     </style>
 
+    <nuxeo-input label="[[i18n('label.metadata.title')]]" value="{{document.properties.dc:title}}"></nuxeo-input>
+    <nuxeo-input label="[[i18n('label.metadata.icon')]]" value="{{document.properties.list:icon}}"></nuxeo-input>
     <h3 id="options">[[i18n('label.report.layout.display')]]</h3>
 
     <paper-radio-group role="reportWidget" aria-labelledby="options" selected="{{selectedOption}}">
@@ -10,7 +12,13 @@
       <paper-radio-button name="modified">[[i18n('home.latestDocumentsEdited')]]</paper-radio-button>
       <paper-radio-button name="tasks">[[i18n('home.tasks')]]</paper-radio-button>
       <paper-radio-button name="favorites">[[i18n('home.favorites')]]</paper-radio-button>
+      <paper-radio-button name="custom">[[i18n('home.custom')]]</paper-radio-button>
     </paper-radio-group>
+
+
+    <nuxeo-textarea role="widget" value="{{document.properties.list:nxql}}"
+                    label="[[i18n('label.metadata.nxql')]]"></nuxeo-textarea>
+    <nuxeo-input label="[[i18n('label.metadata.schemas')]]" value="{{document.properties.list:schemas}}"></nuxeo-input>
 
   </template>
 
@@ -29,7 +37,9 @@
       },
 
       validate: function () {
-        this.set('document.properties.dc:title', this.selectedOption);
+        if(this.document["dc:title"] === null || this.document["dc:title"] === ""){
+          this.set('document.properties.dc:title', this.selectedOption);
+        }
 
         switch (this.selectedOption) {
           case "recentlyViewed":
@@ -47,6 +57,11 @@
           case "favorites":
             this.set('document.properties.list:listSelected', "favorites");
             break;
+
+          case "custom":
+            this.set('document.properties.list:listSelected', "custom");
+            break;
+
         }
         return true;
       }

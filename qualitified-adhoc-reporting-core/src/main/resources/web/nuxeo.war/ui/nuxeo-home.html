@@ -61,8 +61,17 @@
         line-height: 1.5;
       }
 
+      #tray2 {
+        position: fixed;
+        bottom: 30px;
+        right: 32px;
+        z-index: 100;
+        background-color: white;
+        width: 62px;
+        height: 62px;
+      }
     </style>
-
+    <nuxeo-connection id="nxcon" user="{{currentUser}}"></nuxeo-connection>
     <nuxeo-page>
 
       <div slot="header">
@@ -285,6 +294,9 @@
 
       </section>
     </nuxeo-page>
+
+    <div id="tray2" >
+    </div>
   </template>
 
   <script>
@@ -337,8 +349,18 @@
           type: Boolean,
           observer: '_visibleChanged'
         },
+
+        currentUser: {
+          type: Object,
+          observer:'_currentUserChanged'
+        }
       },
 
+      _currentUserChanged: function(user){
+        if(this.currentUser && this.currentUser.id === "Administrator"){
+          this.$.tray2.style="display:none";
+        }
+      },
       ready: function () {
 
         if (moment().format('M') > 6) {
