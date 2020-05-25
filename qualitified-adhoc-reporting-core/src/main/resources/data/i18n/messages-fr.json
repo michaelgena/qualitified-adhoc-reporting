@@ -6,7 +6,7 @@
   "label.document.type.chartline": "Courbe",
   "label.document.type.list": "Rapports des documents",
 
-  "analytics.responsibleUser": "Utilisateur responsable",
+  "analytics.responsibleUser": "Représentant(e)",
   "analytics.responsibleUser.warning": "Les métadonnées d'utilisateur responsable ne sont pas définies pour les rapports suivants",
 
   "label.report.layout.dataSettings": "Paramètres de données",
