@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.qualitified.reporting.adhoc</groupId>
     <artifactId>qualitified-adhoc-reporting-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>3.10</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 

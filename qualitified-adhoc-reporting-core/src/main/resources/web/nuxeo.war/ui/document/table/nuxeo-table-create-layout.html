@@ -1,0 +1,66 @@
+<dom-module id="nuxeo-table-create-layout">
+  <template>
+    <style include="reporting-styles">
+    </style>
+
+    <nuxeo-input role="reportWidget" value="{{document.properties.dc:title}}" label="[[i18n('title')]]" type="text"></nuxeo-input>
+
+    <h3>[[i18n('label.report.layout.dataSettings')]]</h3>
+
+    <nuxeo-input role="reportWidget" value="{{document.properties.report:primarytype}}" label="[[i18n('label.report.documentType')]]" type="text"></nuxeo-input>
+    <nuxeo-input role="reportWidget" value="{{document.properties.report:lifeCycleState}}" label="[[i18n('label.report.lifecycleState')]]" type="text"></nuxeo-input>
+    <nuxeo-input role="reportWidget" value="{{document.properties.report:mixintype}}" label="[[i18n('label.report.facet')]]" type="text"></nuxeo-input>
+    <nuxeo-input role="reportWidget" value="{{document.properties.report:metrics}}" label="[[i18n('label.report.metrics')]]" type="text"></nuxeo-input>
+    <nuxeo-input role="reportWidget" value="{{document.properties.report:groupedBy}}" label="[[i18n('label.report.groupedBy')]]" type="text"></nuxeo-input>
+    <nuxeo-input role="reportWidget" value="{{document.properties.report:groupLimit}}" label="[[i18n('label.report.groupLimit')]]" type="number"></nuxeo-input>
+    <nuxeo-input role="reportWidget" value="{{document.properties.report:dateField}}" label="[[i18n('label.report.dateField')]]" type="text"></nuxeo-input>
+    <nuxeo-input role="reportWidget" value="{{document.properties.report:responsibleUser}}" label="[[i18n('label.report.responsibleUser')]]" type="text"></nuxeo-input>
+
+    <h3>[[i18n('label.report.layout.display')]]</h3>
+
+    <nuxeo-input value="{{document.properties.table:columnName1}}" label="[[i18n('label.table.c1name')]]" type="text" role="reportWidget"></nuxeo-input>
+    <nuxeo-input value="{{document.properties.table:columnName2}}" label="[[i18n('label.table.c2name')]]" type="text" role="reportWidget"></nuxeo-input>
+    <nuxeo-input value="{{document.properties.table:columnStyle1}}" label="[[i18n('label.table.c1style')]]" type="text" role="reportWidget"></nuxeo-input>
+    <nuxeo-input value="{{document.properties.table:columnStyle2}}" label="[[i18n('label.table.c2style')]]" type="text" role="reportWidget"></nuxeo-input>
+    <nuxeo-input role="reportWidget" value="{{document.properties.report:dateFormat}}" label="[[i18n('label.table.dateFormat')]]" type="text"></nuxeo-input>
+    <nuxeo-directory-suggestion role="reportWidget"
+                                value="{{document.properties.table:valuetype}}"
+                                label="[[i18n('label.table.numberTypes')]]"
+                                directory-name="ValueType"
+                                min-chars="0"
+                                dbl10n="true">
+    </nuxeo-directory-suggestion>
+    <nuxeo-input role="reportWidget" value="{{document.properties.table:prefix}}" label="[[i18n('label.table.prefix')]]" type="text"></nuxeo-input>
+    <nuxeo-input role="reportWidget" value="{{document.properties.table:suffix}}" label="[[i18n('label.table.suffix')]]" type="text"></nuxeo-input>
+    <!-- <nuxeo-directory-suggestion role="reportWidget"
+                                value="{{document.properties.table:icon}}"
+                                label="[[i18n('label.table.icon')]]"
+                                directory-name="IconYesNo"
+                                min-chars="0"
+                                dbl10n="true">
+    </nuxeo-directory-suggestion> -->
+
+    <h3>[[i18n('label.report.layout.options')]]</h3>
+
+    <paper-checkbox role="reportWidget" checked="{{document.properties.report:lastYear}}">
+      [[i18n('label.report.lastYear')]]
+    </paper-checkbox>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-table-create-layout',
+      behaviors: [Nuxeo.LayoutBehavior],
+      properties: {
+
+        /**
+           * @doctype Table
+           */
+        document: {
+          type: Object,
+        },
+      }
+    });
+  </script>
+</dom-module>

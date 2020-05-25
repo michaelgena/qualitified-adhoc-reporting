@@ -1,0 +1,168 @@
+<script>
+  var Report = Report || {};
+  var nxHome = document.querySelector("nuxeo-app").shadowRoot.querySelector("nuxeo-home");
+  /**
+   * @polymerBehavior Report.DataBehavior
+   */
+  Report.DataBehavior = {
+
+    refreshDisplay: function () {
+      nxHome._visibleChanged();
+    },
+
+    // _addTrackListener: function (report) {
+    //   var gridEl = nxHome.shadowRoot.querySelector("#grid1");
+    //   Polymer.Gestures.addListener(gridEl, 'track', e => gridEl._handleMove(e));
+    //   Polymer.Gestures.addListener(report, 'track', e => nxHome._changeStyle(e));
+    // },
+
+    // _removeTrackListener: function (report) {
+    //   var gridEl = nxHome.shadowRoot.querySelector("#grid1");
+    //   Polymer.Gestures.removeListener(gridEl, 'track', e => gridEl._handleMove(e));
+    //   Polymer.Gestures.removeListener(report, 'track', e => nxHome._changeStyle(e));      
+    // },
+
+    _changeGridDraggability: function (draggableValue) {
+      nxHome.shadowRoot.querySelector("#grid1").draggable = draggableValue;
+    },
+
+    _changeGridTileResizing: function (resizableValue) {
+      nxHome.shadowRoot.querySelector("#grid1").resizable = resizableValue;
+    },
+
+    /* Nuxeo.ChartDataBehavior */
+    _labels: function (data) {
+      return data.map(function (entry) {
+        if (Array.isArray(entry.value)) {
+          return entry.value.map(this._labels.bind(this));
+        } else {
+          return entry.key;
+        }
+      });
+    },
+
+    /* Nuxeo.ChartDataBehavior */
+    _series: function (data) {
+      return data.map(function (obj) {
+        return obj.key;
+      });
+    },
+
+    /* Nuxeo.ChartDataBehavior */
+    _values: function (data) {
+      if (data) {
+        return [data.map(function (entry) {
+          if (Array.isArray(entry.value)) {
+            return entry.value.map(this._values.bind(this));
+          } else {
+            return entry.value;
+          }
+        })];
+      }
+    },
+
+    _extendEndDate: function (date) {
+      if (date && moment) {
+        return this._formatDate(moment(date).add(1, 'days').subtract(1, 'ms').toJSON());
+      }
+      return date;
+    },
+
+    _formatDate: function (date) {
+      return moment(date).format('YYYY-MM-DD');
+    },
+
+    _lastYear: function (date) {
+      if (date && moment) {
+        return this._formatDate(moment(date).subtract(1, 'years').toJSON());
+      }
+    },
+
+    _calculatePercentage: function (data, lastYearData) {
+      if (data !== null && lastYearData !== null && lastYearData !== 0) {
+        let percentage = Math.trunc(((data - lastYearData) / Math.abs(lastYearData)) * 100);
+        return Math.sign(percentage) == 1 ? "+" + percentage : percentage;
+      }
+
+      if (data !== null && lastYearData !== null && lastYearData == 0) {
+        return 0;
+      }
+    },
+
+    _getPercentage: function (data, lastYearData) {
+      if (data !== null && lastYearData !== null) {
+        let percentageValue = this._calculatePercentage(data, lastYearData);
+        switch (Math.sign(percentageValue)) {
+          case 0:
+            if (this.$$("#lastYearPercentage")) {
+              this.$$("#lastYearPercentage").style.color = "#0000008a";
+            }
+            break;
+
+          case 1:
+            this.$$("#lastYearPercentage").style.color = "#68c321e6";
+            break;
+
+          case -1:
+            this.$$("#lastYearPercentage").style.color = "#ff0000c7";
+            break;
+        }
+        return percentageValue;
+      }
+    },
+
+    _getTablePercentage: function (data, lastYearData, index) {
+      if (data !== null && lastYearData !== null) {
+        let percentageValue = this._calculatePercentage(data, lastYearData);
+        if (index !== undefined) {
+
+          switch (Math.sign(percentageValue)) {
+            case -0:
+              if (this.$$("#lastYearPercentage" + index)) {
+                this.$$("#lastYearPercentage" + index).style.color = "#0000008a";
+              }
+              break;
+
+            case 1:
+              if (this.$$("#lastYearPercentage" + index)) {
+                this.$$("#lastYearPercentage" + index).style.color = "#68c321e6";
+              }
+              break;
+
+            case -1:
+              if (this.$$("#lastYearPercentage" + index)) {
+                this.$$("#lastYearPercentage" + index).style.color = "#ff0000c7";
+              }
+              break;
+          }
+        }
+        return percentageValue;
+      }
+    },
+
+    _isCurrency: function (doc) {
+      return doc ? doc.properties['count:valuetype'] == 'Currency' : false;
+    },
+
+    _formatCurrency: function (value) {
+      return value ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : value;
+    },
+
+    isReportType: function (doc) {
+      if (doc && doc.type) {
+        var reportTypes = ["ChartBar", "ChartLine", "ChartPie", "Count", "Table", "List"];
+        return reportTypes.includes(doc.type);
+      }
+    },
+
+    _setWhereTerm: function (responsibleUserMetdata, responsibleUserFilterValue) {
+      if (responsibleUserMetdata && responsibleUserFilterValue) {
+        var where = {};
+        where[responsibleUserMetdata] = responsibleUserFilterValue;
+        return where;
+      }
+      return "";
+    }
+
+  };
+</script>

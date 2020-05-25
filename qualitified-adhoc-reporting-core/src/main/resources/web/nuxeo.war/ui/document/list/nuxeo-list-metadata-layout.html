@@ -1,0 +1,41 @@
+<dom-module id="nuxeo-count-metadata-layout">
+  <template>
+    <style include="reporting-styles">
+    </style>
+
+    <div role="widget">
+      <label>[[i18n('title')]]</label>
+      <div>[[document.properties.dc:title]]</div>
+    </div>
+
+    <h3>[[i18n('label.report.layout.options')]]</h3>
+
+    <div role="widget">
+      <label>[[i18n('label.list.option')]]</label>
+      <div>[[document.properties.list:listSelected]]</div>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('label.metadata.nxql')]]</label>
+      <div>[[document.properties.list:nxql]]</div>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-count-metadata-layout',
+      behaviors: [Nuxeo.LayoutBehavior],
+      properties: {
+
+        /**
+         * @doctype Count
+         */
+        document: {
+          type: Object,
+        },
+
+      }
+    });
+  </script>
+</dom-module>

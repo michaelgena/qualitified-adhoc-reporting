@@ -1,0 +1,55 @@
+{
+  "label.document.type.chartpie": "Camembert",
+  "label.document.type.table": "Tableau",
+  "label.document.type.count": "Comptage",
+  "label.document.type.chartbar": "Histogramme",
+  "label.document.type.chartline": "Courbe",
+  "label.document.type.list": "Rapports des documents",
+
+  "analytics.responsibleUser": "Responsable",
+  "analytics.responsibleUser.warning": "Les métadonnées d'utilisateur responsable ne sont pas définies pour les rapports suivants",
+
+  "label.report.layout.dataSettings": "Paramètres de données",
+  "label.report.layout.display": "Affichage",
+  "label.report.layout.options": "Options",
+
+  "label.report.dataType": "Type de données",
+  "label.report.documentType": "Type de document",
+  "label.report.lifecycleState": "État du cycle de vie",
+  "label.report.facet": "Facet",
+  "label.report.metrics": "Métriques",
+  "label.report.groupedBy": "Groupé par",
+  "label.report.groupLimit": "Limite de groupe",
+  "label.report.dateField": "Champ de date",
+  "label.report.datesInterval": "Intervalle de dates",
+  "label.report.dateFormat": "Format de date",
+  "label.report.keyMetadata": "Métadonnées clés",
+  "label.report.valueMetadata": "Métadonnées de valeur",
+  "label.report.lastYear": "Afficher la valeur de l'année dernière et la variation en pourcentage",
+  "label.report.lastYearValue": "Valeur de l'année dernière",
+  "label.report.percentageChange": "Variation en pourcentage",
+  "label.report.responsibleUser": "Métadonnée d'utilisateur responsable",
+
+  "label.count.numberTypes": "Types de nombres",
+  "label.count.prefix": "Prefix",
+  "label.count.suffix": "Suffixe",
+  "label.count.icon": "Icône",
+  "label.count.style": "Style",
+
+  "label.table.c1name": "Nom de la colonne 1",
+  "label.table.c2name": "Nom de la colonne 2",
+  "label.table.c1style": "Style de la colonne 1",
+  "label.table.c2style": "Style de la colonne 2",
+  "label.table.dateFormat": "Format de date",
+  "label.table.numberTypes": "Types de nombres",
+  "label.table.prefix": "Prefix",
+  "label.table.suffix": "Suffixe",
+  "label.table.icon": "Icône",
+
+  "label.list.option": "Option sélectionnée",
+
+  "home.custom": "Custom",
+  "label.metadata.nxql": "Nxql",
+  "label.metadata.schemas": "Schémas",
+  "label.metadata.icon": "Icône"
+}

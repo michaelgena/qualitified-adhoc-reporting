@@ -1,0 +1,90 @@
+<dom-module id="nuxeo-chartline-edit-layout">
+  <template>
+    <style include="reporting-styles">
+    </style>
+
+    <paper-tabs selected="{{selected}}">
+      <paper-tab>Simple</paper-tab>
+      <paper-tab>Advanced</paper-tab>
+    </paper-tabs>
+
+    <iron-pages selected="{{selected}}">
+
+      <!-- TAB - Simple -->
+      <div>
+        <nuxeo-input role="reportWidget" value="{{document.properties.dc:title}}" label="[[i18n('title')]]" type="text"></nuxeo-input>
+
+        <h3>[[i18n('label.report.layout.dataSettings')]]</h3>
+
+        <nuxeo-input role="reportWidget" value="{{document.properties.report:primarytype}}" label="[[i18n('label.report.documentType')]]" type="text"></nuxeo-input>
+        <nuxeo-input role="reportWidget" value="{{document.properties.report:lifeCycleState}}" label="[[i18n('label.report.lifecycleState')]]" type="text"></nuxeo-input>
+        <nuxeo-input role="reportWidget" value="{{document.properties.report:groupLimit}}" label="[[i18n('label.report.groupLimit')]]" type="number"></nuxeo-input>
+        <nuxeo-directory-suggestion role="reportWidget"
+                                    value="{{document.properties.report:withDateIntervals}}"
+                                    label="[[i18n('label.report.datesInterval')]]"
+                                    directory-name="DateIntervalsType"
+                                    min-chars="0"
+                                    dbl10n="true">
+        </nuxeo-directory-suggestion>
+
+        <nuxeo-input role="reportWidget" value="{{document.properties.report:responsibleUser}}" label="[[i18n('label.report.responsibleUser')]]" type="text"></nuxeo-input>
+
+        <h3>[[i18n('label.report.layout.display')]]</h3>
+
+        <nuxeo-input role="reportWidget" value="{{document.properties.report:dateFormat}}" label="[[i18n('label.report.dateFormat')]]" type="text"></nuxeo-input>
+      </div>
+
+
+      <!-- TAB - Advanced -->
+      <div>
+        <nuxeo-input role="reportWidget" value="{{document.properties.dc:title}}" label="[[i18n('title')]]" type="text"></nuxeo-input>
+
+        <h3>[[i18n('label.report.layout.dataSettings')]]</h3>
+
+        <nuxeo-input role="reportWidget" value="{{document.properties.report:primarytype}}" label="[[i18n('label.report.documentType')]]" type="text"></nuxeo-input>
+        <nuxeo-input role="reportWidget" value="{{document.properties.report:lifeCycleState}}" label="[[i18n('label.report.lifecycleState')]]" type="text"></nuxeo-input>
+        <nuxeo-input value="{{document.properties.report:mixintype}}" label="[[i18n('label.report.facet')]]" type="text" role="reportWidget"></nuxeo-input>
+        <nuxeo-input role="reportWidget" value="{{document.properties.report:metrics}}" label="[[i18n('label.report.metrics')]]" type="text"></nuxeo-input>
+        <nuxeo-input role="reportWidget" value="{{document.properties.report:groupedBy}}" label="[[i18n('label.report.groupedBy')]]" type="text"></nuxeo-input>
+        <nuxeo-input role="reportWidget" value="{{document.properties.report:groupLimit}}" label="[[i18n('label.report.groupLimit')]]" type="number"></nuxeo-input>
+        <nuxeo-input role="reportWidget" value="{{document.properties.report:dateField}}" label="[[i18n('label.report.dateField')]]" type="text"></nuxeo-input>
+        <nuxeo-input role="reportWidget" value="{{document.properties.report:keyMetadata}}" label="[[i18n('label.report.keyMetadata')]]" type="text"></nuxeo-input>
+        <nuxeo-input role="reportWidget" value="{{document.properties.report:valueMetadata}}" label="[[i18n('label.report.valueMetadata')]]" type="text"></nuxeo-input>
+        <nuxeo-directory-suggestion role="reportWidget"
+                                    value="{{document.properties.report:withDateIntervals}}"
+                                    label="[[i18n('label.report.datesInterval')]]"
+                                    directory-name="DateIntervalsType"
+                                    min-chars="0"
+                                    dbl10n="true">
+        </nuxeo-directory-suggestion>
+
+        <nuxeo-input role="reportWidget" value="{{document.properties.report:responsibleUser}}" label="[[i18n('label.report.responsibleUser')]]" type="text"></nuxeo-input>
+
+        <h3>[[i18n('label.report.layout.display')]]</h3>
+
+        <nuxeo-input role="reportWidget" value="{{document.properties.report:dateFormat}}" label="[[i18n('label.report.dateFormat')]]" type="text"></nuxeo-input>
+      </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-chartline-edit-layout',
+      behaviors: [Nuxeo.LayoutBehavior],
+      properties: {
+
+        /**
+         * @doctype ChartLine
+         */
+        document: {
+          type: Object,
+        },
+
+      },
+
+      ready: function () {
+        this.selected = 0;
+      }
+    });
+  </script>
+</dom-module>

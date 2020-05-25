@@ -1,0 +1,69 @@
+<dom-module id="nuxeo-chartpie-view-layout">
+  <template>
+    <style include="reporting-styles">
+      chart-pie {
+        width: 100% !important;
+        min-width: 30em;
+        display: block;
+        font-size: .8rem;
+        margin-top: 35px;
+      }
+
+    </style>
+
+    <nuxeo-repository-data start-date="[[_formatDate(startDate)]]"
+                           end-date="[[_extendEndDate(endDate)]]"
+                           data="{{data}}"
+                           index="[[index]]"
+                           ecm-primary-type="[[document.properties.report:primarytype]]"
+                           ecm-lifecycle-state="[[document.properties.report:lifeCycleState]]"
+                           ecm-mixin-type="[[document.properties.report:mixintype]]"
+                           date-field="[[document.properties.report:dateField]]"
+                           grouped-by="[[document.properties.report:groupedBy]]"
+                           group-limit="[[document.properties.report:groupLimit]]"
+                           where="[[_setWhereTerm(document.properties.report:responsibleUser, responsibleUser)]]"
+                           metrics="[[document.properties.report:metrics]]">
+    </nuxeo-repository-data>
+
+    <nuxeo-card heading="[[document.properties.dc:title]]">
+      <div id="edit" hidden$="[[!editMode]]">
+        <report-edit-delete document="{{document}}"></report-edit-delete>
+      </div>
+      <chart-pie id="chartPie"
+                 values="[[_values(data)]]"
+                 labels="[[_labels(data)]]"
+                 options='{ "legend": { "display": true, "position": "bottom", "labels": { "boxWidth": 12 } }, "animation": false }'>
+      </chart-pie>
+    </nuxeo-card>
+    <slot></slot>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-chartpie-view-layout',
+      behaviors: [Nuxeo.LayoutBehavior, Report.DataBehavior],
+      properties: {
+
+        /**
+           * @doctype ChartPie
+           */
+        document: {
+          type: Object,
+        },
+        startDate: {
+          type: String,
+          value: ''
+        },
+        endDate: {
+          type: String,
+          value: ''
+        }
+      },
+
+      resizeReport: function () {
+        this.$.chartPie.resize();
+      },
+
+    });
+  </script>
+</dom-module>

@@ -1,0 +1,23 @@
+<link rel="import" href="dist/the-grid.html">
+<link rel="import" href="dist/grid-styles.html">
+<link rel="import" href="dist/debug-grid.html">
+
+<link rel="import" href="report-data-behavior.html">
+<link rel="import" href="reporting-styles.html">
+<link rel="import" href="elements/report-edit-delete.html">
+<link rel="import" href="elements/reporting-document-create-shortcuts.html">
+
+<link rel="import" href="document/chartbar/nuxeo-chartbar-view-layout.html">
+<link rel="import" href="document/chartline/nuxeo-chartline-view-layout.html">
+<link rel="import" href="document/chartpie/nuxeo-chartpie-view-layout.html">
+<link rel="import" href="document/count/nuxeo-count-view-layout.html">
+<link rel="import" href="document/table/nuxeo-table-view-layout.html">
+<link rel="import" href="document/list/nuxeo-list-view-layout.html">
+
+<nuxeo-slot-content name="defaultDocumentCreateActions" slot="DOCUMENT_CREATE_ACTIONS" order="10" priority="10">
+  <template>
+    <reporting-document-create-shortcuts host-visible$="[[hostVisible]]" subtypes='[[subtypes]]'></reporting-document-create-shortcuts>
+  </template>
+</nuxeo-slot-content>
+
+<script></script>

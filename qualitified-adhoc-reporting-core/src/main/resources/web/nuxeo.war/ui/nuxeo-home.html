@@ -1,1054 +1,566 @@
-<!-- Imports -->
-<link rel="import" href="document/countreport/nuxeo-countreport-view-layout.html">
-<link rel="import" href="document/tablereport/nuxeo-tablereport-view-layout.html">
-<link rel="import" href="document/chartlinereport/nuxeo-chartlinereport-view-layout.html">
-<link rel="import" href="document/chartbarreport/nuxeo-chartbarreport-view-layout.html">
-<link rel="import" href="document/chartpiereport/nuxeo-chartpiereport-view-layout.html">
-
-<link rel="stylesheet" href="dist/gridstack.css"/>
-<link rel="stylesheet" href="dist/bootstrap.min.css">
-<script src="dist/jquery-ui.js"></script>
-<script src="dist/bootstrap.min.js"></script>
-<script src="dist/lodash.min.js"></script>
-<script src="dist/gridstack.js"></script>
-<script src="dist/gridstack.jQueryUI.js"></script>
+<!--
+  Created by mmakni on 18-12-2018 
+  mmakni@qualitified.com
+-->
 <dom-module id="nuxeo-home">
   <template>
-    <style>
-      :host {
-        display: block;
-        @apply(--layout-flex);
-        @apply(--layout-vertical);
+    <style include="nuxeo-styles grid-styles">
+      .dates {
+        @apply --layout-horizontal;
+        @apply --layout-center;
+        @apply --layout-flex;
+        @apply --layout-end-justified;
       }
 
-      .flex-layout {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: space-between;
+      nuxeo-date-picker {
+        padding: 0 10px;
+        margin-top: 5px;
+        /*display: inline-flex;*/
       }
 
-      paper-card {
-        min-width: 25em;
-        width: 49%;
-        height: 420px;
+      .toggleBtn {
+        padding: 0 0 0 20px;
       }
 
-      @media (max-width: 1024px) {
-        paper-card {
-          width: 100%;
-        }
+      .responsibleUser {
+        display: inline-flex;
       }
 
-      h3 iron-icon {
-        width: 1.3em;
-        margin-right: 0.4em;
+      .report>span {
+        visibility: hidden;
+        /*visibility: visible;*/
       }
 
-      nuxeo-data-table, nuxeo-tasks-list, nuxeo-tasks-list ::content nuxeo-data-list {
-        height: 350px !important;
+      .report:hover>span {
+        visibility: visible;
+        color: #c9c9c900;
       }
 
-      .ellipsis {
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-        display: block;
-        width: calc(100% - 38px);
+      #responsibleUser {
+        width: 12vw;
       }
 
-      .graph-iron-icon {
-        color: #0f9d58;
-        --iron-icon-width: 144px;
-        --iron-icon-height: 144px;
-        margin-top: 50px;
+      #userWarning {
+        color: #fec847;
+        margin: auto;
       }
 
-      .graph-flex-layout {
-        flex: 1 0 calc(33% - 2em);
-        margin: 0 8px 16px;
-        text-align: center;
+      .userWarningTooltip {
+        --paper-tooltip_-_background-color: #fff2d5;
+        --paper-tooltip-opacity: 1;
+        --paper-tooltip-text-color: #f7bf3a;
+        margin: 0px 15px;
       }
 
-      #button.settings{
-        position: absolute;
-        top: 8px;
-        right: 8px;
-      }
-
-      chart-line,
-      ::content #canvas.chart-line,
-      chart-pie,
-      ::content #canvas.chart-pie {
-        margin: 25px auto 0 auto;
-        width: 100% !important;
-        min-width: 30em;
-        display: block;
-        font-size: .8em;
-      }
-
-      #trayReport {
-        position: fixed;
-        bottom: 32px;
-        right: 32px;
-        z-index: 10000000;
-      }
-
-      #createReportBtn {
-        color: var(--nuxeo-button-primary-text);
-        --paper-fab-background: var(--nuxeo-button-primary);
-        --paper-fab-keyboard-focus-background: var(--nuxeo-button-primary-focus);
-      }
-
-      #container {
-        @apply(--layout-vertical);
-        @apply(--layout-center);
-        @apply(--layout-flex);
-        @apply(--layout-center-justified);
-        border-radius: 2px;
-        border: 1px dashed var(--paper-input-container-color);
-        min-height: 64px;
-        height: calc(100% - 2px);
-      }
-
-      .container {
-        overflow: auto;
-        flex: 1 1 auto;
-        height: 400px;
-      }
-
-      .typeSelection {
-        overflow-y: auto;
-        margin: 1rem 0;
-        align-items: center;
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        min-height: 20em;
-        justify-content: flex-start;
-      }
-
-      .typeSelection paper-button {
-        width: var(--nuxeo-document-creation-form-button-width, 128px);
-        height: var(--nuxeo-document-creation-form-button-height, 128px);
-        box-shadow: none;
-        background-color: var(--nuxeo-dialog-buttons-bar);
-      }
-
-      .typeSelection paper-button:hover {
-        color: var(--nuxeo-link-hover-color);
-        filter: brightness(102%);
-        -webkit-filter: brightness(102%);
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3), 0 -3px 0 var(--nuxeo-link-hover-color) inset;
-      }
-
-      .typeSelection iron-icon {
-        width: var(--nuxeo-document-creation-form-icon-width, 42px);
-        height: var(--nuxeo-document-creation-form-icon-height, 42px);
-        filter: brightness(1.5);
-        -webkit-filter: brightness(1.5);
-      }
-
-      .typeSelection span {
-        margin-top: 1em;
-        word-break: break-word;
-      }
-
-      .docTypeButton {
-        margin: 4px;
-        border: none;
-      }
-
-      .buttons {
-        @apply(--buttons-bar);
-      }
-
-      .heading {
+      li {
+        padding: 2px 0px;
         text-transform: uppercase;
-        font-size: 1.1rem;
-        padding: 1.7rem 2.5rem;
       }
 
-      .heading iron-icon {
-        width: 1.2rem;
-        height: 1.2rem;
-        margin-right: 8px;
+      b {
+        line-height: 1.5;
       }
 
-      .editor {
-        margin: 0 2rem;
-        overflow-y: auto;
-        padding: 0 1rem 0 0;
+      #tray2 {
+        position: fixed;
+        bottom: 30px;
+        right: 32px;
+        z-index: 100;
+        background-color: white;
+        width: 62px;
+        height: 62px;
       }
-
-      #document-create {
-        margin-bottom: 2.5em;
-      }
-
-      .grid-stack {
-          /*background: lightgoldenrodyellow;*/
-          height: 100%;
-          width: 100%;
-      }
-
-      .grid-stack-item-content {
-          color: #2c3e50;
-          text-align: center;
-      }
-      .grid-stack > .grid-stack-item > .grid-stack-item-content {
-        margin: 0;
-        position: absolute;
-        top: 0;
-        left: 10px;
-        right: 10px;
-        bottom: 0;
-        width: auto;
-        /*z-index: 0 !important;*/
-        overflow-x: hidden;
-        overflow-y: auto;
-        background-color: white !important;
-      }
-
     </style>
-
+    <nuxeo-connection id="nxcon" user="{{currentUser}}"></nuxeo-connection>
     <nuxeo-page>
-      <div class="header">[[i18n('home.dashboard')]]</div>
-      <div class="content">
-        <section name="dashboard" class="flex-layout">
 
-		  <!--Get the list of Reports-->
-		  <nuxeo-page-provider
-       role="widget"
-       id="reportProvider"
-       auto
-       query="select * from Document where ecm:primaryType in ('CountReport', 'ChartBarReport', 'ChartPieReport', 'ChartLineReport', 'TableReport') and ecm:currentLifeCycleState != 'deleted' ORDER BY report:order ASC"
-       params="[[params]]"
-       current-page="{{reports}}">
-      </nuxeo-page-provider>
+      <div slot="header">
 
-      <div class="container-fluid">
-          <div class="grid-stack">
-            <div id="0" data-gs-id="0" data-gs-x="0" data-gs-y="0" data-gs-width="4" data-gs-height="4" class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide">
-              <div id="O-doc" class="grid-stack-item-content ui-draggable-handle">
-                <template is="dom-repeat" items="[[reports]]" as="report">
-                  <template is="dom-if" if="[[_equals(index,0)]]">
-                    <template is="dom-if" if="[[isReport(report.type, 'CountReport')]]">
-                      <nuxeo-countreport-view-layout coordinates={{coordinates0}} document="[[report]]"></nuxeo-countreport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'TableReport')]]">
-                      <nuxeo-tablereport-view-layout coordinates={{coordinates0}} document="[[report]]"></nuxeo-tablereport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'ChartLineReport')]]">
-                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates0}} document="[[report]]"></nuxeo-chartlinereport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'ChartBarReport')]]">
-                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates0}} document="[[report]]"></nuxeo-chartbarreport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'ChartPieReport')]]">
-                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates0}} document="[[report]]"></nuxeo-chartpiereport-view-layout>
-                    </template>
-                  </template>
-          		  </template>
-              </div>
-              <div></div>
-            </div>
-            <div id="1" data-gs-id="1" data-gs-x="4" data-gs-y="0" data-gs-width="4" data-gs-height="4" class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide">
-              <div id="1-doc" class="grid-stack-item-content ui-draggable-handle">
-                <template is="dom-repeat" items="[[reports]]" as="report">
-                  <template is="dom-if" if="[[_equals(index,1)]]">
-                    <template is="dom-if" if="[[isReport(report.type, 'CountReport')]]">
-            		  		  <nuxeo-countreport-view-layout coordinates={{coordinates1}} document="[[report]]"></nuxeo-countreport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'TableReport')]]">
-            		  		  <nuxeo-tablereport-view-layout coordinates={{coordinates1}} document="[[report]]"></nuxeo-tablereport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'ChartLineReport')]]">
-                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates1}} document="[[report]]"></nuxeo-chartlinereport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'ChartBarReport')]]">
-                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates1}} document="[[report]]"></nuxeo-chartbarreport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'ChartPieReport')]]">
-                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates1}} document="[[report]]"></nuxeo-chartpiereport-view-layout>
-                    </template>
-                  </template>
-          		  </template>
-              </div>
-              <div></div>
-            </div>
-            <div id="2" data-gs-id="2" data-gs-x="0" data-gs-y="4" data-gs-width="4" data-gs-height="4" class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide">
-              <div id="2-doc" class="grid-stack-item-content ui-draggable-handle">
-                <template is="dom-repeat" items="[[reports]]" as="report">
-                  <template is="dom-if" if="[[_equals(index,2)]]">
-                    <template is="dom-if" if="[[isReport(report.type, 'CountReport')]]">
-            		  		  <nuxeo-countreport-view-layout coordinates={{coordinates2}} document="[[report]]"></nuxeo-countreport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'TableReport')]]">
-            		  		  <nuxeo-tablereport-view-layout coordinates={{coordinates2}} document="[[report]]"></nuxeo-tablereport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'ChartLineReport')]]">
-                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates2}} document="[[report]]"></nuxeo-chartlinereport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'ChartBarReport')]]">
-                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates2}} document="[[report]]"></nuxeo-chartbarreport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'ChartPieReport')]]">
-                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates2}} document="[[report]]"></nuxeo-chartpiereport-view-layout>
-                    </template>
-                  </template>
-          		  </template>
-              </div>
-              <div></div>
-            </div>
-            <div id="3" data-gs-id="3" data-gs-x="4" data-gs-y="4" data-gs-width="4" data-gs-height="4" class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide">
-              <div id="3-doc" class="grid-stack-item-content ui-draggable-handle">
-                <template is="dom-repeat" items="[[reports]]" as="report">
-                  <template is="dom-if" if="[[_equals(index,3)]]">
-                    <template is="dom-if" if="[[isReport(report.type, 'CountReport')]]">
-                      <nuxeo-countreport-view-layout coordinates={{coordinates3}} document="[[report]]"></nuxeo-countreport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'TableReport')]]">
-                      <nuxeo-tablereport-view-layout coordinates={{coordinates3}} document="[[report]]"></nuxeo-tablereport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'ChartLineReport')]]">
-                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates3}} document="[[report]]"></nuxeo-chartlinereport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'ChartBarReport')]]">
-                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates3}} document="[[report]]"></nuxeo-chartbarreport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'ChartPieReport')]]">
-                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates3}} document="[[report]]"></nuxeo-chartpiereport-view-layout>
-                    </template>
-                  </template>
-          		  </template>
-              </div>
-              <div></div>
-            </div>
-            <div id="4" data-gs-id="4" data-gs-x="4" data-gs-y="0" data-gs-width="4" data-gs-height="4" class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide">
-              <div id="4-doc" class="grid-stack-item-content ui-draggable-handle">
-                <template is="dom-repeat" items="[[reports]]" as="report">
-                  <template is="dom-if" if="[[_equals(index,4)]]">
-                    <template is="dom-if" if="[[isReport(report.type, 'CountReport')]]">
-                      <nuxeo-countreport-view-layout coordinates={{coordinates4}} document="[[report]]"></nuxeo-countreport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'TableReport')]]">
-                      <nuxeo-tablereport-view-layout coordinates={{coordinates4}} document="[[report]]"></nuxeo-tablereport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'ChartLineReport')]]">
-                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates4}} document="[[report]]"></nuxeo-chartlinereport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'ChartBarReport')]]">
-                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates4}} document="[[report]]"></nuxeo-chartbarreport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'ChartPieReport')]]">
-                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates4}} document="[[report]]"></nuxeo-chartpiereport-view-layout>
-                    </template>
-                  </template>
-          		  </template>
-              </div>
-              <div></div>
-            </div>
-            <div id="5" data-gs-id="5" data-gs-x="8" data-gs-y="4" data-gs-width="4" data-gs-height="4" class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide">
-              <div id="5-doc" class="grid-stack-item-content ui-draggable-handle">
-                <template is="dom-repeat" items="[[reports]]" as="report">
-                  <template is="dom-if" if="[[_equals(index,5)]]">
-                    <template is="dom-if" if="[[isReport(report.type, 'CountReport')]]">
-                      <nuxeo-countreport-view-layout coordinates={{coordinates5}} document="[[report]]"></nuxeo-countreport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'TableReport')]]">
-                      <nuxeo-tablereport-view-layout coordinates={{coordinates5}} document="[[report]]"></nuxeo-tablereport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'ChartLineReport')]]">
-                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates5}} document="[[report]]"></nuxeo-chartlinereport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'ChartBarReport')]]">
-                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates5}} document="[[report]]"></nuxeo-chartbarreport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'ChartPieReport')]]">
-                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates5}} document="[[report]]"></nuxeo-chartpiereport-view-layout>
-                    </template>
-                  </template>
-          		  </template>
-              </div>
-              <div></div>
-            </div>
-            <div id="6" data-gs-id="6" data-gs-x="8" data-gs-y="8" data-gs-width="4" data-gs-height="4" class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide">
-              <div id="6-doc" class="grid-stack-item-content ui-draggable-handle">
-                <template is="dom-repeat" items="[[reports]]" as="report">
-                  <template is="dom-if" if="[[_equals(index,6)]]">
-                    <template is="dom-if" if="[[isReport(report.type, 'CountReport')]]">
-                      <nuxeo-countreport-view-layout coordinates={{coordinates6}} document="[[report]]"></nuxeo-countreport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'TableReport')]]">
-                      <nuxeo-tablereport-view-layout coordinates={{coordinates6}} document="[[report]]"></nuxeo-tablereport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'ChartLineReport')]]">
-                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates6}} document="[[report]]"></nuxeo-chartlinereport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'ChartBarReport')]]">
-                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates6}} document="[[report]]"></nuxeo-chartbarreport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'ChartPieReport')]]">
-                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates6}} document="[[report]]"></nuxeo-chartpiereport-view-layout>
-                    </template>
-                  </template>
-          		  </template>
-              </div>
-              <div></div>
-            </div>
-            <div id="7" data-gs-id="7" data-gs-x="4" data-gs-y="8" data-gs-width="4" data-gs-height="4" class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide">
-              <div id="7-doc" class="grid-stack-item-content ui-draggable-handle">
-                <template is="dom-repeat" items="[[reports]]" as="report">
-                  <template is="dom-if" if="[[_equals(index,7)]]">
-                    <template is="dom-if" if="[[isReport(report.type, 'CountReport')]]">
-                      <nuxeo-countreport-view-layout coordinates={{coordinates7}} document="[[report]]"></nuxeo-countreport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'TableReport')]]">
-            		  	  <nuxeo-tablereport-view-layout coordinates={{coordinates7}} document="[[report]]"></nuxeo-tablereport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'ChartLineReport')]]">
-                      <nuxeo-chartlinereport-view-layout coordinates={{coordinates7}} document="[[report]]"></nuxeo-chartlinereport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'ChartBarReport')]]">
-                      <nuxeo-chartbarreport-view-layout coordinates={{coordinates7}} document="[[report]]"></nuxeo-chartbarreport-view-layout>
-                    </template>
-                    <template is="dom-if" if="[[isReport(report.type, 'ChartPieReport')]]">
-                      <nuxeo-chartpiereport-view-layout coordinates={{coordinates7}} document="[[report]]"></nuxeo-chartpiereport-view-layout>
-                    </template>
-                  </template>
-          		  </template>
-              </div>
-              <div></div>
-            </div>
+        <!--Dashboard Title-->
+        <div class="title"> [[i18n('home.dashboard')]]</div>
+
+        <!--Dates-->
+        <div class="dates">
+          <nuxeo-date-picker value="{{startDate}}" label="[[i18n('analytics.after')]]"></nuxeo-date-picker>
+          <nuxeo-date-picker value="{{endDate}}" label="[[i18n('analytics.before')]]"></nuxeo-date-picker>
         </div>
+
+        <!--Responsible User-->
+        <div class="responsibleUser">
+          <nuxeo-user-suggestion id="responsibleUser"
+                                 search-type="USER_TYPE"
+                                 label="[[i18n('analytics.responsibleUser')]]"
+                                 min-chars="0"
+                                 params='{"hideThirdLabel": "true"}'
+                                 on-value-changed="_userChanged">
+          </nuxeo-user-suggestion>
+
+          <paper-icon-button id="userWarning" icon="icons:warning" hidden></paper-icon-button>
+          <paper-tooltip for="userWarning" class="userWarningTooltip" animation-delay="0">
+            <b>[[i18n('analytics.responsibleUser.warning')]]:</b>
+            <ul>
+              <template is="dom-repeat" items="{{responsibleUserNotSetDocs}}">
+                <li>
+                  [[item.title]]
+                </li>
+              </template>
+            </ul>
+          </paper-tooltip>
+
+        </div>
+
+        <!--Advanced Mode-->
+        <div class="toggleBtn">
+          <paper-toggle-button id="toggleBtn" on-tap="_switchToEdit"></paper-toggle-button>
+          <nuxeo-tooltip>Edit Mode</nuxeo-tooltip>
+        </div>
+
       </div>
 
-      <!--div id="report" style="display:block;">
-        <template is="dom-repeat" items="[[reports]]" as="report">
-          <div id="report-[[index]]">
-            <div hidden$="[[isReport(report.type, 'CountReport')]]">
-              <nuxeo-countreport-view-layout id="countreport-[[index]]" is-loaded="{{isLoaded}}" document="[[report]]"></nuxeo-countreport-view-layout>
-            </div>
-            <div hidden$="[[!isReport(report.type, 'TableReport')]]">
-              <nuxeo-tablereport-view-layout id="tablereport-[[index]]" is-loaded="{{isLoaded}}" document="[[report]]"></nuxeo-tablereport-view-layout>
-            </div>
-          </div>
-        </template>
-      </div-->
+      <section name="dashboard" class="dashboard">
 
+        <nuxeo-page-provider role="widget"
+                             auto
+                             id="reportsProvider"
+                             query="SELECT * FROM Document
+                                    WHERE ecm:primaryType in ('ChartBar', 'ChartLine', 'ChartPie', 'Count', 'Table', 'List')
+                                    AND ecm:isTrashed = 0
+                                    AND ecm:currentLifeCycleState != 'deleted'
+                                    ORDER BY dc:created ASC"
+                             current-page="{{reportsProvider}}">
+        </nuxeo-page-provider>
 
-    	<paper-dialog id="reportCreationDialog" modal on-iron-overlay-closed="_resetPopup" no-auto-focus>
-        <nuxeo-document id="docRequest" doc-path="/" data="[[document]]" headers="{&quot;nx_es_sync&quot;: &quot;true&quot;}" enrichers="permissions, subtypes" response="{{createResponse}}"></nuxeo-document>
-        <nuxeo-document-creation-stats id="creationStats"></nuxeo-document-creation-stats>
-        <iron-pages selected="[[stage]]" attr-for-selected="name" class="vertical layout flex">
-          <div name="choose" class="vertical layout flex">
-            <div class="editor flex container">
-              <div name="typeSelection" class="typeSelection">
-                <template is="dom-repeat" items="[[reportTypes]]" as="type">
-                  <paper-button noink="" name$="[[type.type]]" class="docTypeButton vertical layout" on-tap="_selectType" data-args$="[[type]]">
-                    <iron-icon src="[[_getTypeIcon(type)]]"></iron-icon>
-                    <span>[[_getTypeLabel(type)]]</span>
-                  </paper-button>
-                </template>
-              </div>
-            </div>
-            <div class="buttons horizontal end-justified layout">
-              <div class="flex start-justified">
-                <paper-button noink="" dialog-dismiss="" on-tap="_cancel">[[i18n('command.cancel')]]</paper-button>
-              </div>
-            </div>
-          </div>
-          <div name="edit" class="vertical layout flex">
-            <div class="horizontal layout heading center">
-              <iron-icon src="[[_getTypeIcon(selectedDocType)]]"></iron-icon>
-              <span>[[_newDocumentLabel(selectedDocType)]]</span>
-            </div>
-            <div id="editor" class="editor flex container">
-              <form is="iron-form" id="form" class="form vertical layout flex">
-                <iron-a11y-keys keys="enter" on-keys-pressed="_submitKeyHandler"></iron-a11y-keys>
-                <nuxeo-document-layout id="document-create" layout="create" document="[[document]]"></nuxeo-document-layout>
-              </form>
-            </div>
-            <div class="buttons horizontal end-justified layout">
-              <div class="flex start-justified">
-                <paper-button noink="" dialog-dismiss="" on-tap="_cancel">[[i18n('command.cancel')]]</paper-button>
-              </div>
-              <paper-button noink="" on-tap="_back">[[i18n('command.back')]]</paper-button>
-              <paper-button noink="" class="primary" on-tap="_create" disabled$="[[!canCreate]]">[[i18n('command.create')]]</paper-button>
-            </div>
-          </div>
-        </iron-pages>
-      </paper-dialog>
+        <nuxeo-operation id="updateOp" op="Document.Update" input="[[input]]" params="[[params]]"></nuxeo-operation>
 
+        <!--debug-grid cell-height="50" cell-width="50" cell-margin="10" col-count="25" row-count="25"></debug-grid-->
+        <the-grid id="grid1" draggable resizable animated row-autogrow col-autogrow cell-height="50" cell-width="50"
+                  cell-margin="10" col-count="25" row-count="25">
 
-          <!-- chart-pie
-          <nuxeo-repository-data start-date="[[startDate]]" end-date="[[endDate]]"
-                                 ecm-primary-type="[[documentType]]"
-                                 grouped-by="ecm:currentLifeCycleState"
-                                 metrics="sum(opportunity:amount)"
-                                 data="{{amountCount}}"
-                                 index="[[index]]">
-          </nuxeo-repository-data>
+          <template id="domRepeat" is="dom-repeat" items="{{reportsProvider}}" as="report">
+            <div style="display: none;"> [[_getSavedCoor(report,index)]]</div>
 
-          <paper-card class="graph-flex-layout" heading="Amount" elevation="0">
-            <paper-icon-button class="settings" id="button" icon="icons:settings" on-tap="_toggleGraphDialog"></paper-icon-button>
-            <paper-tooltip for="button">Settings</paper-tooltip>
-            <div class="card-content">
-              <chart-pie values="[[_values(amountCount)]]"
-                         labels="[[_labels(amountCount)]]"
-                         colors="[[colors]]"
-                         options='{ "legend": { "display": true, "position": "bottom", "labels": { "boxWidth": 12 } }, "animation": false }'>
-              </chart-pie>
-            </div>
-          </paper-card>-->
+            <template is="dom-if" if="[[isReport(report.type, 'ChartBar')]]">
+              <nuxeo-chartbar-view-layout class="report"
+                                          id$="tile{{index}}"
+                                          col$="{{coordinates.col}}"
+                                          row$="{{coordinates.row}}"
+                                          height$="{{coordinates.height}}"
+                                          width$="{{coordinates.width}}"
+                                          min-width="3"
+                                          min-height="3"
+                                          document="[[report]]"
+                                          start-date="[[startDate]]"
+                                          end-date="[[endDate]]"
+                                          responsible-user="[[responsibleUser]]"
+                                          edit-mode="[[editMode]]">
+                <span resize="left">│</span>
+                <span resize="right">│</span>
+                <span resize="top">─</span>
+                <span resize="bottom">─</span>
+                <span resize="top-right">┐</span>
+                <span resize="top-left">┌</span>
+                <span resize="bottom-right">┘</span>
+                <span resize="bottom-left">└</span>
+              </nuxeo-chartbar-view-layout>
+            </template>
 
-          <!-- chart-line
-          <nuxeo-repository-data start-date="[[startDate]]" end-date="[[endDate]]"
-                                 ecm-primary-type="[[documentType]]"
-                                 with-date-intervals="week"
-                                 date-field="dc:created"
-                                 data="{{docsCreatedPerWeek}}"
-                                 index="[[index]]">
-          </nuxeo-repository-data>
+            <template is="dom-if" if="[[isReport(report.type, 'ChartLine')]]">
+              <nuxeo-chartline-view-layout class="report"
+                                           id$="tile{{index}}"
+                                           col$="{{coordinates.col}}"
+                                           row$="{{coordinates.row}}"
+                                           height$="{{coordinates.height}}"
+                                           width$="{{coordinates.width}}"
+                                           min-width="3"
+                                           min-height="3"
+                                           document="[[report]]"
+                                           start-date="[[startDate]]"
+                                           end-date="[[endDate]]"
+                                           responsible-user="[[responsibleUser]]"
+                                           edit-mode="[[editMode]]">
+                <span resize="left">│</span>
+                <span resize="right">│</span>
+                <span resize="top">─</span>
+                <span resize="bottom">─</span>
+                <span resize="top-right">┐</span>
+                <span resize="top-left">┌</span>
+                <span resize="bottom-right">┘</span>
+                <span resize="bottom-left">└</span>
+              </nuxeo-chartline-view-layout>
 
-          <paper-card heading="{{documentType}}" elevation="0">
-            <paper-icon-button class="settings" id="button" icon="icons:settings" on-tap="_toggleGraphDialog"></paper-icon-button>
-            <paper-tooltip for="button">Settings</paper-tooltip>
-            <div class="card-content">
-              <chart-line labels="[[_labels(docsCreatedPerWeek)]]"
-                          values="[[_values(docsCreatedPerWeek)]]"
-                          options='{ "legend": { "display": false }, "animation": false }'>
-              </chart-line>
-            </div>
-          </paper-card>-->
+            </template>
 
+            <template is="dom-if" if="[[isReport(report.type, 'ChartPie')]]">
+              <nuxeo-chartpie-view-layout class="report"
+                                          id$="tile{{index}}"
+                                          col$="{{coordinates.col}}"
+                                          row$="{{coordinates.row}}"
+                                          height$="{{coordinates.height}}"
+                                          width$="{{coordinates.width}}"
+                                          min-width="3"
+                                          min-height="3"
+                                          document="[[report]]"
+                                          start-date="[[startDate]]"
+                                          end-date="[[endDate]]"
+                                          responsible-user="[[responsibleUser]]"
+                                          edit-mode="[[editMode]]">
+                <span resize="left">│</span>
+                <span resize="right">│</span>
+                <span resize="top">─</span>
+                <span resize="bottom">─</span>
+                <span resize="top-right">┐</span>
+                <span resize="top-left">┌</span>
+                <span resize="bottom-right">┘</span>
+                <span resize="bottom-left">└</span>
+              </nuxeo-chartpie-view-layout>
+            </template>
 
-          <!-- Number of calls per hour
-          <nuxeo-search-data start-date="[[startDate]]" end-date="[[_extendEndDate(endDate)]]"
-                            with-date-intervals="hour"
-                            without-extended-bounds
-                            date-format="HH"
-                            data="{{callsPerHour}}"
-                            index="[[index]]">
-          </nuxeo-search-data>
+            <template is="dom-if" if="[[isReport(report.type, 'Count')]]">
+              <nuxeo-count-view-layout class="report"
+                                       id$="tile{{index}}"
+                                       col$="{{coordinates.col}}"
+                                       row$="{{coordinates.row}}"
+                                       height$="{{coordinates.height}}"
+                                       width$="{{coordinates.width}}"
+                                       min-width="3"
+                                       min-height="3"
+                                       document="[[report]]"
+                                       start-date="[[startDate]]"
+                                       end-date="[[endDate]]"
+                                       responsible-user="[[responsibleUser]]"
+                                       edit-mode="[[editMode]]">
+                <span resize="left">│</span>
+                <span resize="right">│</span>
+                <span resize="top">─</span>
+                <span resize="bottom">─</span>
+                <span resize="top-right">┐</span>
+                <span resize="top-left">┌</span>
+                <span resize="bottom-right">┘</span>
+                <span resize="bottom-left">└</span>
+              </nuxeo-count-view-layout>
+            </template>
 
-          <paper-card heading="[[i18n('searchAnalytics.callsPerHour.heading')]]" elevation="0">
-            <chart-bar labels="[[_range(0,23)]]"
-                      values="[[_aggregatePerHourOfDay(callsPerHour)]]"
-                      series="[[_range(0,23)]]"
-                      options='{ "legend": { "display": false }, "animation": false }'>
-            </chart-bar>
-          </paper-card>
-        </section>
-      </div>-->
+            <template is="dom-if" if="[[isReport(report.type, 'Table')]]">
+              <nuxeo-table-view-layout class="report"
+                                       id$="tile{{index}}"
+                                       col$="{{coordinates.col}}"
+                                       row$="{{coordinates.row}}"
+                                       height$="{{coordinates.height}}"
+                                       width$="{{coordinates.width}}"
+                                       min-width="3"
+                                       min-height="3"
+                                       document="[[report]]"
+                                       start-date="[[startDate]]"
+                                       end-date="[[endDate]]"
+                                       responsible-user="[[responsibleUser]]"
+                                       edit-mode="[[editMode]]">
+                <span resize="left">│</span>
+                <span resize="right">│</span>
+                <span resize="top">─</span>
+                <span resize="bottom">─</span>
+                <span resize="top-right">┐</span>
+                <span resize="top-left">┌</span>
+                <span resize="bottom-right">┘</span>
+                <span resize="bottom-left">└</span>
+              </nuxeo-table-view-layout>
+            </template>
 
+            <template is="dom-if" if="[[isReport(report.type, 'List')]]">
+              <nuxeo-list-view-layout class="report"
+                                      id$="tile{{index}}"
+                                      col$="{{coordinates.col}}"
+                                      row$="{{coordinates.row}}"
+                                      height$="{{coordinates.height}}"
+                                      width$="{{coordinates.width}}"
+                                      min-width="3"
+                                      min-height="3"
+                                      document="[[report]]"
+                                      edit-mode="[[editMode]]"
+                                      visible="[[visible]]">
+                <span resize="left">│</span>
+                <span resize="right">│</span>
+                <span resize="top">─</span>
+                <span resize="bottom">─</span>
+                <span resize="top-right">┐</span>
+                <span resize="top-left">┌</span>
+                <span resize="bottom-right">┘</span>
+                <span resize="bottom-left">└</span>
+              </nuxeo-list-view-layout>
+            </template>
+          </template>
+
+          <div placeholder></div>
+        </the-grid>
+
+      </section>
     </nuxeo-page>
-    <div id="trayReport">
-      <paper-fab id="createReportBtn" noink="" icon="nuxeo:add" on-tap="_toggleReportCreationDialog"></paper-fab>
-       <paper-tooltip for="createReportBtn" position="left">Create Report</paper-tooltip>
+
+    <div id="tray2" >
     </div>
-    <nuxeo-document id="doc" doc-id="[[uid]]" response="{{document}}" headers="[[headers]]"></nuxeo-document>
   </template>
+
   <script>
-  HTMLImports.whenReady(_ => {
-  "use strict";
+    Polymer({
+      is: 'nuxeo-home',
+      behaviors: [Nuxeo.RoutingBehavior, Nuxeo.FormatBehavior, Nuxeo.ChartDataBehavior, Report.DataBehavior],
+      properties: {
 
-  Polymer({
-    is: 'nuxeo-home',
-    behaviors: [Nuxeo.RoutingBehavior, Nuxeo.FormatBehavior, Nuxeo.ChartDataBehavior,Nuxeo.DocumentCreationBehavior],
-    properties: {
-      index: {
-        type: String,
-        value: 'nuxeo'
-      },
-      startDate: String,
-      endDate: String,
-      hoursBounds: {
-        value: {min: 0, max: 23}
-      },
-      reportTypes: {
-      	type: Array
-      },
-      stage: {
-        type: String,
-        value: 'choose'
-      },
-      visible: {
-        type: Boolean
-      },
-      _showTabs: {
-        type: Boolean,
-        value: true
-      },
-      selectedTab: {
-        type: String,
-        value: ''
-      },
-      reports: {
-        type: Array,
-        observer:'_reportsLoaded'
-      },
-      isLoaded: {
-        type: Boolean,
-        notify:true,
-        observer:'_reportsLoaded'
-      },
-      alreadyLoaded: {
-        type: Boolean,
-        value: false
-      },
-      coordinates0: {
-        type: Object,
-        notify:true,
-        observer:'_coordinates0Changed'
-      },
-      coordinates1: {
-        type: Object,
-        notify:true,
-        observer:'_coordinates1Changed'
-      },
-      coordinates2: {
-        type: Object,
-        notify:true,
-        observer:'_coordinates2Changed'
-      },
-      coordinates3: {
-        type: Object,
-        notify:true,
-        observer:'_coordinates3Changed'
-      },
-      coordinates4: {
-        type: Object,
-        notify:true,
-        observer:'_coordinates4Changed'
-      },
-      coordinates5: {
-        type: Object,
-        notify:true,
-        observer:'_coordinates5Changed'
-      },
-      coordinates6: {
-        type: Object,
-        notify:true,
-        observer:'_coordinates6Changed'
-      },
-      coordinates7: {
-        type: Object,
-        notify:true,
-        observer:'_coordinates7Changed'
-      }
-    },
+        startDate: {
+          type: String,
+          value: ''
+        },
 
-    listeners: {
-      'nx-creation-wizard-hide-tabs': '_hideTabs',
-      'nx-creation-wizard-show-tabs': '_displayTabs',
-      'nx-document-creation-finished': '_close'
-    },
+        endDate: {
+          type: String,
+          value: ''
+        },
 
-    _hideTabs: function() {
-      this._showTabs = false;
-    },
+        editMode: {
+          type: Boolean,
+          value: false,
+        },
 
-    _displayTabs: function() {
-      this._showTabs = true;
-    },
+        where: {
+          type: String,
+        },
 
-    _close: function() {
-      if (this.$.reportCreationDialog.opened) {
-        this.$.reportCreationDialog.toggle();
-        this._showTabs = true;
-      }
-    },
+        coordinates: {
+          type: Array,
+          value: {}
+        },
 
-    _navigate: function(e) {
-      var detail;
-      if (e.detail.item) {
-        detail = {
-          doc: e.detail.item
-        };
-        page('/browse' + detail.doc.path);
-      } else {
-        detail = {
-          doc: e.model.item
-        };
-      }
-      this.fire('navigate', detail);
-    },
+        reports: {
+          type: Array,
+          notify: true,
+          value: []
+        },
 
-    ready: function() {
-      //jQuery("#tray").css("display","none");
-      this.reportTypes = ['CountReport', 'ChartBarReport', 'ChartPieReport', 'ChartLineReport', 'TableReport'];
-      this._initializeGridStack();
+        params: {
+          type: Object,
+          value: {}
+        },
 
-    },
+        input: {
+          type: Object,
+          value: {}
+        },
 
-    /*_reportsLoaded: function() {
-      console.log("this.isLoaded "+ this.isLoaded);
-      console.log("!this.alreadyLoaded "+ !this.alreadyLoaded);
-      console.log("this.reports.length "+ this.reports.length);
-      if (this.isLoaded && !this.alreadyLoaded && this.reports && this.reports.length > 0) {
-        this.alreadyLoaded = true;
-        //console.log(this.$['report-0']);
-        let grid = jQuery('.grid-stack').data('gridstack');
-        this.reports.map(function(report, i) {
-          console.log(this.$.report);
-          console.log(this.$["#report-"+i]);
-          console.log(this.$["#countreport-"+i]);
-          let gridContent = '<div id="'+i+'" data-gs-id="'+i+'" data-gs-x="'+report.properties['report:x']+'" data-gs-y="'+report.properties['report:y']+'" data-gs-width="'+report.properties['report:width']+'" data-gs-height="'+report.properties['report:height']+'" class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide">'+
-            '<div id="'+i+'-doc" class="grid-stack-item-content ui-draggable-handle">';
-            gridContent += '<div id="container-'+i+'"></div>';
-            gridContent += '</div>'+
-            '<div></div>'+
-          '</div>';
+        visible: {
+          type: Boolean,
+          observer: '_visibleChanged'
+        },
 
-          grid.addWidget(jQuery(gridContent),
-          report.properties['report:x'],
-          report.properties['report:y'],
-          report.properties['report:width'],
-          report.properties['report:height']);
+        currentUser: {
+          type: Object,
+          observer:'_currentUserChanged'
+        }
+      },
 
-          //append the Polymer element to the grid
-          jQuery("#container-"+i).append(jQuery("#report-"+i));
-          jQuery('#'+i+' > .grid-stack-item-content').css('background-color','white');
-          //add event listener
-          var nh=document.querySelector("nuxeo-home");
-          nh._addDragStopAndResizeStopEventListener(i);
+      _currentUserChanged: function(user){
+        if(this.currentUser && this.currentUser.id === "Administrator"){
+          this.$.tray2.style="display:none";
+        }
+      },
+      ready: function () {
+
+        if (moment().format('M') > 6) {
+          this.startDate = moment().format('YYYY') + '-07-01';
+          this.endDate = moment().format('YYYY') + '-12-31';
+        } else {
+          this.startDate = moment().format('YYYY') + '-01-01';
+          this.endDate = moment().format('YYYY') + '-06-30';
+        }
+
+        this.$$('#grid1').addEventListener('move', e => {
+          this._tileMoved(e);
+        });
+        this.$$('#grid1').addEventListener('resize', e => {
+          this._tileResized(e);
         });
 
-      }
-    },*/
+        this.$$('#domRepeat').addEventListener('dom-change', e => {
+          this.async(function () {
+            this._setCoor();
+          }, 0)
+        });
 
-    _initializeGridStack: function(){
-      var options = {
-          float: true
-      };
-      //set the default width
-      jQuery('.grid-stack').css("width", jQuery(window).width() - 110);
-      jQuery('.grid-stack').gridstack(options);
+        this._disableMobileDraggability();
+      },
 
-      this._addDragStopAndResizeStopEventListener(0);
-      this._addDragStopAndResizeStopEventListener(1);
-      this._addDragStopAndResizeStopEventListener(2);
-      this._addDragStopAndResizeStopEventListener(3);
-      this._addDragStopAndResizeStopEventListener(4);
-      this._addDragStopAndResizeStopEventListener(5);
-      this._addDragStopAndResizeStopEventListener(6);
-      this._addDragStopAndResizeStopEventListener(7);
-    },
+      mobileAndTabletcheck: function () {
+        var check = false;
+        (function (a) { if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0, 4))) check = true; })(navigator.userAgent || navigator.vendor || window.opera);
+        return check;
+      },
 
-    _addDragStopAndResizeStopEventListener: function(id){
-      jQuery("#"+id).on("dragstop resizestop", function(event) {
-        let gridStack = jQuery('.grid-stack').data();
-        let i = jQuery.map(gridStack.gridstack.grid.nodes, function(el, i){
-          if(el.id == id){
-            return i;
+      _disableMobileDraggability: function () {
+        var isMobile = this.mobileAndTabletcheck();
+
+        if (isMobile) {
+          this._changeGridDraggability(!isMobile);
+          this._changeGridTileResizing(!isMobile);
+        }
+      },
+
+      _visibleChanged: function () {
+        this.$.reportsProvider.fetch().then(function (results) {
+          this.reportsProvider = results.entries;
+        }.bind(this));
+      },
+
+      _userChanged: function () {
+        if (this.$.responsibleUser.value) {
+          this.responsibleUser = this.$.responsibleUser.value;
+        } else {
+          this.responsibleUser = null;
+        }
+        this._checkToShowWarning();
+      },
+
+      _checkToShowWarning: function () {
+        this.responsibleUserNotSetDocs = [];
+        this.reportsProvider.forEach(report => {
+          if ((report.properties["report:responsibleUser"] == null || report.properties["report:responsibleUser"] == "") && report.type !== "List") {
+            this.responsibleUserNotSetDocs.push(report);
           }
-        },this);
+        });
 
-        let doc = {
-          'uid': '',
-          'properties': {
+        if (this.responsibleUserNotSetDocs && this.responsibleUserNotSetDocs.length > 0 && this.$.responsibleUser.value) {
+          this.$.userWarning.hidden = false;
+        } else {
+          this.$.userWarning.hidden = true;
+        }
+      },
+
+      /* move event when tile is dropped. */
+      _tileMoved: function (e) {
+        var idTile = e.target.getAttribute('id');
+        this._getCoor(idTile);
+      },
+
+      /* resize event when resizer is dropped. */
+      _tileResized: function (e) {
+        if (e.target.resizeReport) {
+          e.target.resizeReport();
+        }
+        var idTile = e.target.getAttribute('id');
+        this._getCoor(idTile);
+      },
+
+      isReport: function (type, reportType, report) {
+        return type ? type == reportType : false;
+      },
+
+      /* Switch to edit mode */
+      _switchToEdit: function (e) {
+        var btn = this.$.toggleBtn;
+        if (btn.checked) {
+          this.editMode = true;
+        } else {
+          this.editMode = false;
+        }
+      },
+
+      /* Initialize reports: the tile ID and index are the same(id$="tile{{index}}").  reports =[{id,report},...] */
+      _getSavedCoor: function (report, index) {
+        var savedReport = {};
+        savedReport.id = "tile" + index;
+        savedReport.report = report;
+        this.reports.push(savedReport);
+      },
+
+      /*Find an empty player position [The last row on the left] */
+      _findPosition: function () {
+        var grid = this.$$('#grid1').serialize();
+        var maxRow = 0;
+        var cors = {};
+        for (var i = 0; i < grid.length; i++) {
+          if (Number(grid[i].row) > maxRow) {
+            maxRow = grid[i].row;
+            cors = grid[i];
           }
+        }
+        cors.col = 0;
+        cors.row = Number(cors.row) + Number(cors.height);
+        cors.width = 4;
+        cors.height = 4;
+        return cors;
+      },
+
+      /* Initialize the grid. */
+      _setCoor: function () {
+        for (var i = 0; i < this.reports.length; i++) {
+          var tile = this.$$("#" + this.reports[i].id);
+
+          /* Set coordinates when adding a new report. */
+          if (this.reports[i].report.properties['report:col'] == null && this.reports[i].report.properties['report:row'] == null &&
+            this.reports[i].report.properties['report:width'] == null && this.reports[i].report.properties['report:height'] == null) {
+            var cors = this._findPosition();
+            tile.setAttribute('col', cors.col);
+            tile.setAttribute('row', cors.row);
+            tile.setAttribute('width', cors.width);
+            tile.setAttribute('height', cors.height);
+            this.reports[i].report.properties['report:col'] = cors.col;
+            this.reports[i].report.properties['report:row'] = cors.row;
+            this.reports[i].report.properties['report:width'] = cors.width;
+            this.reports[i].report.properties['report:height'] = cors.height;
+            this.$$("#grid1").ensureSpace(tile); //Increase the grid size if the given tile is out of grid bounds.
+          } else {
+            /* Set saved coordinates. */
+            if (tile) {
+              tile.setAttribute('col', this.reports[i].report.properties['report:col']);
+              tile.setAttribute('row', this.reports[i].report.properties['report:row']);
+              tile.setAttribute('width', this.reports[i].report.properties['report:width']);
+              tile.setAttribute('height', this.reports[i].report.properties['report:height']);
+              this.$$("#grid1").ensureSpace(tile); //Increase the grid size if the given tile is out of grid bounds.
+            }
+          }
+        }
+      },
+
+      /* Get and save coordinates when moving or resizing the tile. */
+      _getCoor: function (idTile) {
+        this.coordinates = this.$$("#grid1").getCoordinates(this.$$("#" + idTile));
+        for (var i = 0; i < this.reports.length; i++) {
+          if (this.reports[i].id == idTile) {
+            this.input = this.reports[i].report.uid;
+            this.reports[i].report.properties['report:col'] = this.coordinates.col;
+            this.reports[i].report.properties['report:row'] = this.coordinates.row;
+            this.reports[i].report.properties['report:width'] = this.coordinates.width;
+            this.reports[i].report.properties['report:height'] = this.coordinates.height;
+          }
+        }
+        /* Update coordinates with new values. */
+        this.params = {
+          properties:
+            'report:col =' + this.coordinates.col + '\n' +
+            'report:row =' + this.coordinates.row + '\n' +
+            'report:width =' + this.coordinates.width + '\n' +
+            'report:height =' + this.coordinates.height
         };
-        doc.uid = gridStack.gridstack.grid.nodes[i].uid;
-        doc.properties['report:x'] = gridStack.gridstack.grid.nodes[i].x;
-        doc.properties['report:y'] = gridStack.gridstack.grid.nodes[i].y;
-        doc.properties['report:width'] = gridStack.gridstack.grid.nodes[i].width;
-        doc.properties['report:height'] = gridStack.gridstack.grid.nodes[i].height;
-        var nh=document.querySelector("nuxeo-home");
-        nh._save(doc);
-      });
-    },
 
-    _coordinates0Changed: function(coordinates){
-      this._coordinatesChanged(coordinates,0);
-    },
-    _coordinates1Changed: function(coordinates){
-      this._coordinatesChanged(coordinates,1);
-    },
-    _coordinates2Changed: function(coordinates){
-      this._coordinatesChanged(coordinates,2);
-    },
-    _coordinates3Changed: function(coordinates){
-      this._coordinatesChanged(coordinates,3);
-    },
-    _coordinates4Changed: function(coordinates){
-      this._coordinatesChanged(coordinates,4);
-    },
-    _coordinates5Changed: function(coordinates){
-      this._coordinatesChanged(coordinates,5);
-    },
-    _coordinates6Changed: function(coordinates){
-      this._coordinatesChanged(coordinates,6);
-    },
-    _coordinates7Changed: function(coordinates){
-      this._coordinatesChanged(coordinates,7);
-    },
-    _coordinatesChanged: function(coordinates, id){
-      jQuery('#'+id).attr('data-gs-x',coordinates.x);
-      jQuery('#'+id).attr('data-gs-y',coordinates.y);
-      jQuery('#'+id).attr('data-gs-width',coordinates.width);
-      jQuery('#'+id).attr('data-gs-height',coordinates.height);
-      //set background color
-      jQuery('#'+id+' > .grid-stack-item-content').css('background-color','white');
-      //jQuery('#'+id+' > .grid-stack-item-content').addClass('paper-card-1');
-
-      //update the coordinates in the data of the gridStack
-      let gridStack = jQuery('.grid-stack').data();
-      let i = jQuery.map(gridStack.gridstack.grid.nodes, function(el, i){
-        if(el.id == id){
-          return i;
-        }
-      },this);
-
-      gridStack.gridstack.grid.nodes[i].uid = coordinates.uid;
-      gridStack.gridstack.grid.nodes[i].x = coordinates.x;
-      gridStack.gridstack.grid.nodes[i].y = coordinates.y;
-      gridStack.gridstack.grid.nodes[i].width = coordinates.width;
-      gridStack.gridstack.grid.nodes[i].height = coordinates.height;
-      jQuery('.grid-stack').data(gridStack);
-    },
-
-    _equals: function(index, val){
-        return index == val;
-    },
-
-    _save: function(doc){
-      this.uid = doc.uid;
-      this.$.doc.data = {
-        'entity-type': 'document',
-        uid: doc.uid,
-        properties: doc.properties
-      };
-      this.$.doc.put().then(console.log('saved coordinates.'));
-    },
-
-    _toggleGraphDialog: function(){
-      this.$.dialog.toggle();
-    },
-
-    // builds page provider query to get info about downloaded docs
-    _downloadsQuery: function(entries) {
-      if (entries.length > 0) {
-        var values = entries.map(function(entry) {
-          return '\'' + entry.key + '\'';
-        }).join(',');
-        return 'SELECT * FROM Document WHERE ecm:uuid IN (' + values + ')';
-      }
-    },
-
-    _numberOfDownloads: function(doc) {
-      return this.downloads.find(function(entry) {
-        return entry.key === doc.uid;
-      }).value;
-    },
-
-    _range: function(start, end) {
-      var res = [];
-      for (var i = start; i <= end; i++) {
-        res.push(i);
-      }
-      return res;
-    },
-
-    _aggregatePerHourOfDay: function(entries) {
-      // aggregate our buckets by key
-      var agg = {};
-      entries.forEach(function(e) {
-        agg[e.key] = agg[e.key] || [];
-        agg[e.key].push(e.value);
-      });
-      // build our total per bucket
-      var hours = this._range(this.hoursBounds.min, this.hoursBounds.max);
-      return [hours.map(function(i) {
-        if (!agg[i] || !agg[i].length) { return 0; }
-        // TODO: use Array.reduce once prototype.js is removed!
-        // return agg[i].reduce(function(a, b) { return a + b; });
-        var sum = 0;
-        agg[i].forEach(function(v) { sum += v; });
-        return sum;
-      })];
-    },
-    _formatCurrency: function(val) {
-      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    },
-    _isEmpty: function(items) {
-      return items && items.length === 0;
-    },
-
-    _toggleReportCreationDialog: function(){
-    	this.$.reportCreationDialog.toggle();
-    },
-
-    /**
-       * Retrieves and creates the layout for the current document type
-       */
-    _updateDocument: function() {
-        /*if (!this._isValidType(this.selectedDocType) || !this.parent) {
-          this.document = null;
-          return;
-        }*/
-
-        this.newDocument(this.selectedDocType, this._getDocumentProperties()).then(function(document) {
-          //document.parentRef = this.parent.uid;
-          this.document = document;
-          this.stage = 'edit';
-    	}.bind(this));
-    },
-
-    newDocument: function(type, properties) {
-      var doc = {
-        'entity-type': 'document',
-        'type': type,
-        'name': '',
-        'properties': {
-          'dc:title': '',
-          'dc:description': ''
-        }
-      };
-      var schemaFetcher = null;
-      var schemaRegistry = {};
-      // NXP-22300: initialize complex properties
-      if (!(type in schemaRegistry)) {
-        if (!schemaFetcher) {
-          schemaFetcher = document.createElement('nuxeo-resource');
-        }
-        schemaFetcher.path = '/config/types/' + this.selectedDocType;
-        return schemaFetcher.get().then(function(doctype) {
-          // cache doctype schemas
-          schemaRegistry[doctype.name] = doctype;
-          return this._newDocument(doctype, doc, properties);
+        this.$.updateOp.execute().then(function (doc) {
         }.bind(this));
-      } else {
-        return Promise.resolve(this._newDocument(schemaRegistry[type], doc, properties));
-      }
-    },
 
-    _newDocument: function(doctype, doc, properties) {
-      if (doctype.schemas) {
-        doctype.schemas.forEach(function(schema) {
-          this._initializeFields(doc, schema);
-        }.bind(this));
-      }
-      if (properties) {
-        for (var prop in properties) {
-          doc.properties[prop] = properties[prop];
+        /* Reinitialize the grid with the new coordinates. */
+        this._setCoor();
+      },
+
+      _changeStyle: function (e) {
+        switch (e.detail.state) {
+          case 'start':
+          case 'track':
+            e.target.style.cursor = "grabbing";
+            e.target.style.overflow = "hidden";
+            e.target.style.filter = "drop-shadow(8px 8px 10px gray)";
+            break;
+          case 'end':
+            e.target.style.cursor = '';
+            e.target.style.overflow = '';
+            e.target.style.filter = '';
+            break;
         }
-      }
-      return doc;
-    },
-
-    _initializeFields: function(doc, node, nodePath) {
-      if (typeof nodePath === 'undefined') {
-        nodePath = '';
-      }
-      var prefix = (node['@prefix'] ? node['@prefix'] : node['name']);
-      Object.keys(node.fields).forEach(function(fieldName) {
-        var field = node.fields[fieldName]
-        if (field !== null && typeof field === 'object' &&
-            field.type && field.type === 'complex') {
-          this._deepFind(doc.properties, nodePath)[prefix + ':' + fieldName] = {};
-          this._initializeFields(doc, field, field, nodePath === '' ? fieldName : nodePath + '.' + fieldName);
-        }
-      }.bind(this));
-    },
-
-    _deepFind: function(node, path) {
-      return path ? path.split('.').reduce(function(obj,p) { return obj[p]; }, node) : node;
-    },
-
-    // extension point
-    _getDocumentProperties: function() {
-      return null;
-    },
-
-    _selectType: function(e) {
-        this.selectedDocType = e.model.type;
-        this._updateDocument();
-        //this.fire('nx-creation-wizard-hide-tabs');
-    },
-
-    _validate: function() {
-        // run our custom validation function first to allow setting custom native validity
-        var valid = this.$['document-create'].validate();
-
-        // fake submit to trigger native validation checks and UI
-        if (valid) {
-          this.$.form._doFakeSubmitForValidation();
-        }
-
-        // XXX: could rely on onsubmit to avoid rechecking for validity
-        return this.$.form.validate() && this.$.form.checkValidity() && valid;
-      },
-
-      _create: function() {
-        /*if (!this._validate() || !this.canCreate) {
-          return;
-        }*/
-        if (!this._validate()) {
-          return;
-        }
-        //set default value for x,y, width and height
-        if(!this.document.uuid){
-          this.document.properties['report:x'] = 0;
-          this.document.properties['report:y'] = 0;
-          this.document.properties['report:width'] = 4;
-          this.document.properties['report:height'] = 4;
-        }
-
-        this.document.name = this._sanitizeName(this.document.properties['dc:title']);
-        this.$.docRequest.post().then(function(response) {
-          this.$.creationStats.storeType(this.selectedDocType);
-          this._refresh();
-
-          /*this._clear();
-          this.navigateTo('browse', response.path);
-          this._notify(response);*/
-        }.bind(this));
-      },
-
-      _refresh: function() {
-        this._clear();
-        page('/');
-        //this.fire('document-updated');
-      },
-
-      _clear: function() {
-        this.stage = 'view';
-        this.$.dialog.close();
-      },
-
-      _back: function() {
-        this._clear();
-        this.fire('nx-creation-wizard-show-tabs');
-      },
-
-      _cancel: function() {
-        this._clear();
-        this.fire('nx-creation-wizard-show-tabs');
-      },
-
-      _newDocumentLabel: function() {
-        return this.selectedDocType;
-      },
-
-      _clear: function() {
-        this.stage = 'choose';
-        this.selectedDocType = {};
-      },
-
-      _getTypeLabel: function(type) {
-        return type? this.i18n('label.document.type.' + type.toLowerCase()):'';
-      },
-
-      _getTypeIcon: function(type) {
-        return type? 'images/doctypes/' + type.toLowerCase() + '.svg' :'';
-      },
-      isReport: function(type, reportType){
-        return type?  type == reportType : false;
       }
     });
-  });
   </script>
-
 </dom-module>

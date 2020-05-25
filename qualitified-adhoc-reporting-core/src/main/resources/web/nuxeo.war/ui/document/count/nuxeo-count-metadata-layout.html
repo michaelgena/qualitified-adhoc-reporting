@@ -1,0 +1,97 @@
+<dom-module id="nuxeo-count-metadata-layout">
+  <template>
+    <style include="reporting-styles">
+    </style>
+
+    <div role="widget">
+      <label>[[i18n('title')]]</label>
+      <div>[[document.properties.dc:title]]</div>
+    </div>
+
+    <h3>[[i18n('label.report.layout.dataSettings')]]</h3>
+
+    <div role="widget">
+      <label>[[i18n('label.report.documentType')]]</label>
+      <div>[[document.properties.report:primarytype]]</div>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('label.report.lifecycleState')]]</label>
+      <div>[[document.properties.report:lifeCycleState]]</div>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('label.report.facet')]]</label>
+      <div>[[document.properties.report:mixintype]]</div>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('label.report.metrics')]]</label>
+      <div>[[document.properties.report:metrics]]</div>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('label.report.dateField')]]</label>
+      <div>[[document.properties.report:dateField]]</div>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('label.report.responsibleUser')]]</label>
+      <div>[[document.properties.report:responsibleUser]]</div>
+    </div>
+
+    <h3>[[i18n('label.report.layout.display')]]</h3>
+
+    <nuxeo-directory-suggestion role="widget"
+                                value="[[document.properties.count:valuetype]]"
+                                label="[[i18n('label.count.numberTypes')]]"
+                                readonly="true"
+                                directory-name="ValueType">
+    </nuxeo-directory-suggestion>
+
+    <div role="widget">
+      <label>[[i18n('label.count.prefix')]]</label>
+      <div>[[document.properties.count:prefix]]</div>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('label.count.suffix')]]</label>
+      <div>[[document.properties.count:suffix]]</div>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('label.count.icon')]]</label>
+      <div>[[document.properties.report:icon]]</div>
+    </div>
+
+    <div role="widget">
+      <label>[[i18n('label.count.style')]]</label>
+      <div>[[document.properties.count:style]]</div>
+    </div>
+
+    <h3>[[i18n('label.report.layout.options')]]</h3>
+
+    <div role="widget">
+      <label>[[i18n('label.report.lastYear')]]</label>
+      <div>[[document.properties.report:lastYear]]</div>
+    </div>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-count-metadata-layout',
+      behaviors: [Nuxeo.LayoutBehavior],
+      properties: {
+
+        /**
+         * @doctype Count
+         */
+        document: {
+          type: Object,
+        },
+
+      }
+    });
+  </script>
+</dom-module>

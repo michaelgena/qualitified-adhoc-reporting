@@ -1,0 +1,96 @@
+<dom-module id="reporting-document-create-shortcuts">
+  <template>
+    <style>
+      #shortcuts {
+        @apply --layout-vertical;
+        @apply --layout-center;
+        @apply --layout-end-justified;
+      }
+
+      nuxeo-document-create-shortcut {
+        margin: 0 0 10px 0;
+      }
+
+    </style>
+
+    <nuxeo-document auto doc-path="/" response="{{rootDoc}}"></nuxeo-document>
+
+    <div id="shortcuts"></div>
+
+    <nuxeo-document-creation-stats id="creationStats"></nuxeo-document-creation-stats>
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'reporting-document-create-shortcuts',
+
+      behaviors: [Nuxeo.FormatBehavior],
+
+      properties: {
+        hostVisible: {
+          type: Boolean,
+          observer: '_observeVisibility'
+        },
+        subtypes: {
+          type: Array
+        }
+      },
+
+      _observeVisibility: function () {
+        if (this.hostVisible) {
+          this._updateShortcuts();
+        }
+      },
+
+      _updateShortcuts: function () {
+        var types = [];
+
+        if (window.location.hash.localeCompare("#!/home") == 0) {
+          this.subtypes = ["chartbar", "chartline", "chartpie", "count", "list", "table"];
+          types = this.subtypes;
+          var nxDocCreatePopup = document.querySelector("nuxeo-app").shadowRoot.querySelector("#importPopup");
+          nxDocCreatePopup.parent = this.rootDoc;
+        } else {
+          var types = this.$.creationStats.lastType(1);
+          this.$.creationStats.mostCommonType(2).forEach(function (type) {
+            if (types.indexOf(type) < 0) {
+              types.push(type);
+            }
+          });
+        }
+
+        var shorcuts = [];
+        types.forEach(function (type) {
+          if (this.subtypes && this.subtypes.indexOf(type) > -1) {
+            var el = document.createElement('nuxeo-document-create-shortcut');
+            el.type = type;
+            el.icon = 'images/doctypes/' + type + '.svg';
+            el.label = this.formatDocType(type);
+            shorcuts.push(el);
+          }
+        }.bind(this));
+
+        this._putNodes(Polymer.dom(this.$.shortcuts), shorcuts.reverse());
+      },
+
+      _putNodes: function (parent) {
+        while (parent.firstChild) {
+          parent.removeChild(parent.firstChild);
+        }
+        if (arguments && arguments.length > 1) {
+          for (var i = 1; i < arguments.length; i++) {
+            if (Array.isArray(arguments[i])) {
+              for (var j = 0; j < arguments[i].length; j++) {
+                parent.appendChild(arguments[i][j]);
+              }
+            } else {
+              parent.appendChild(arguments[i]);
+            }
+          }
+        }
+      }
+
+    });
+  </script>
+</dom-module>

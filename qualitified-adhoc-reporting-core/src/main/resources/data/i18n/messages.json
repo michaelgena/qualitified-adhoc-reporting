@@ -1,8 +1,55 @@
 {
-  "label.document.type.countreport":"Number",
-  "label.document.type.chartpiereport":"Chart Pie",
-  "label.document.type.chartbarreport":"Chart Bar",
-  "label.document.type.chartlinereport":"Chart Line",
-  "label.document.type.tablereport":"Table",
-  "label.delete.report.document":"Delete Report"
+  "label.document.type.chartpie": "Chart Pie",
+  "label.document.type.table": "Table",
+  "label.document.type.count": "Number",
+  "label.document.type.chartbar": "Chart Bar",
+  "label.document.type.chartline": "Chart Line",
+  "label.document.type.list": "Document Reports",
+
+  "analytics.responsibleUser": "Responsible",
+  "analytics.responsibleUser.warning": "Responsible User Metadata is not set for the following reports",
+
+  "label.report.layout.dataSettings": "Data Settings",
+  "label.report.layout.display": "Display",
+  "label.report.layout.options": "Options",
+
+  "label.report.dataType": "Data Type",
+  "label.report.documentType": "Document Type",
+  "label.report.lifecycleState": "Life Cycle State",
+  "label.report.facet": "Facet",
+  "label.report.metrics": "Metrics",
+  "label.report.groupedBy": "Grouped By",
+  "label.report.groupLimit": "Group Limit",
+  "label.report.dateField": "Date Field",
+  "label.report.datesInterval": "Dates Interval",
+  "label.report.dateFormat": "Date Format",
+  "label.report.keyMetadata": "Key Metadata",
+  "label.report.valueMetadata": "Value Metadata",
+  "label.report.lastYear": "Display last year's value and percentage change",
+  "label.report.lastYearValue": "Last year's value",
+  "label.report.percentageChange": "Percentage change",
+  "label.report.responsibleUser": "Responsible User Metadata",
+
+  "label.count.numberTypes":"Number Types",
+  "label.count.prefix":"Prefix",
+  "label.count.suffix":"Suffix",
+  "label.count.icon":"Icon",
+  "label.count.style":"Style",
+
+  "label.table.c1name":"Column 1 Name",
+  "label.table.c2name":"Column 2 Name",
+  "label.table.c1style":"Column 1 Style",
+  "label.table.c2style":"Column 2 Style",
+  "label.table.dateFormat":"Date Format",
+  "label.table.numberTypes":"Number Types",
+  "label.table.prefix":"Prefix",
+  "label.table.suffix":"Suffix",
+  "label.table.icon":"Icon",
+
+  "label.list.option":"Selected option",
+
+  "home.custom": "Custom",
+  "label.metadata.nxql": "Nxql",
+  "label.metadata.schemas": "Schemas",
+  "label.metadata.icon": "Icon"
 }

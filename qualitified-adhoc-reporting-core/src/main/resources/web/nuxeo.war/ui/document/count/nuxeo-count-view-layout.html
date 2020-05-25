@@ -1,0 +1,121 @@
+<dom-module id="nuxeo-count-view-layout">
+  <template>
+    <style include="reporting-styles">
+      nuxeo-card {
+        bottom: 20px;
+      }
+
+      #icon {
+        text-align: center;
+      }
+
+      h2 {
+        text-align: center;
+      }
+
+      iron-icon {
+        --iron-icon-width: 110px;
+        --iron-icon-height: 110px;
+        margin-top: 10px;
+        text-align: center;
+      }
+
+    </style>
+
+    <nuxeo-repository-data role="widget"
+                           start-date="[[startDate]]"
+                           end-date="[[_extendEndDate(endDate)]]"
+                           metrics="[[document.properties.report:metrics]]"
+                           data="{{data}}"
+                           ecm-primary-type="[[document.properties.report:primarytype]]"
+                           ecm-lifecycle-state="[[document.properties.report:lifeCycleState]]"
+                           ecm-mixin-type="[[document.properties.report:mixintype]]"
+                           where="[[_setWhereTerm(document.properties.report:responsibleUser, responsibleUser)]]"
+                           date-field="[[document.properties.report:dateField]]">
+    </nuxeo-repository-data>
+
+    <nuxeo-repository-data role="widget"
+                           start-date="[[_lastYear(startDate)]]"
+                           end-date="[[_lastYear(endDate)]]"
+                           metrics="[[document.properties.report:metrics]]"
+                           data="{{lastYearData}}"
+                           ecm-primary-type="[[document.properties.report:primarytype]]"
+                           ecm-lifecycle-state="[[document.properties.report:lifeCycleState]]"
+                           ecm-mixin-type="[[document.properties.report:mixintype]]"
+                           where="[[_setWhereTerm(document.properties.report:responsibleUser, responsibleUser)]]"
+                           date-field="[[document.properties.report:dateField]]">
+    </nuxeo-repository-data>
+
+    <nuxeo-card heading="[[document.properties.dc:title]]">
+
+      <div id="edit" hidden$="[[!editMode]]">
+        <report-edit-delete document="{{document}}"></report-edit-delete>
+      </div>
+
+      <div id="icon">
+        <iron-icon hidden$="[[!_iconExists(document.properties.report:icon)]]"
+                   src$="[[document.properties.report:icon]]">
+        </iron-icon>
+      </div>
+
+      <h2 style$="[[document.properties.count:style]]">
+        [[document.properties.count:prefix]]
+        [[_getValue(data)]]
+        [[document.properties.count:suffix]]
+      </h2>
+
+      <!-- last year's value and percentage change -->
+      <template is="dom-if" if="{{document.properties.report:lastYear}}">
+        <span class="last-year">
+          <span class="last-year-value">
+            [[document.properties.count:prefix]]
+            [[_getValue(lastYearData)]]
+            [[document.properties.count:suffix]]
+          </span>
+          <span id="lastYearPercentage">
+            [[[_getPercentage(data,lastYearData)]]%]
+          </span>
+        </span>
+      </template>
+
+    </nuxeo-card>
+
+    <slot></slot>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nuxeo-count-view-layout',
+      behaviors: [Nuxeo.LayoutBehavior, Report.DataBehavior],
+      properties: {
+
+        /**
+           * @doctype Count
+           */
+        document: {
+          type: Object,
+        },
+      },
+
+      /* Value Type: Number - Currency */
+      _getValue: function (value) {
+        if (this._isCurrency(this.document)) {
+          return this._formatCurrency(value);
+        } else {
+          return value;
+        }
+      },
+
+      /* Check the existence of the icon */
+      _iconExists: function (icon) {
+        if (icon) {
+          return true;
+        }
+        else {
+          return false;
+        }
+      }
+
+    });
+  </script>
+</dom-module>
