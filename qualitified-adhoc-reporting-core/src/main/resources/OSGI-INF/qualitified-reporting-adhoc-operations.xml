@@ -1,5 +1,5 @@
-<component name="org.qualitified.crm.operations">
+<component name="org.qualitified.reporting.adhoc.operations">
     <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent" point="operations" >
-        <operation class="org.qualitified.reporting.adhoc.operation.GetOptionValue" override="true"/>
+        <operation class="org.qualitified.reporting.adhoc.operation.GetOptionValue" replace="true"/>
     </extension>
  </component>
