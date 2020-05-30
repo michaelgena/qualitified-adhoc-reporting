@@ -111,10 +111,10 @@
         }
       },
       _dataChanged: async function(data){
-        this.value = await this._getValue(data);
+        this.value = await this._getValue((data).toFixed());
       },
       _lastYearDataChanged: async function(data){
-        this.lastYearValue = await this._getValue(data);
+        this.lastYearValue = await this._getValue((data).toFixed());
       },
       /* Value Type: Number - Currency */
       _getValue: async function (value) {
