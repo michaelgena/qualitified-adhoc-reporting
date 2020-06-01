@@ -141,7 +141,7 @@
     },
 
     _isCurrency: function (doc) {
-      return doc ? doc.properties['count:valuetype'] == 'Currency' : false;
+      return doc ? (doc.properties['count:valuetype'] == 'Currency' || doc.properties['table:valuetype'] == 'Currency') : false;
     },
 
     _formatCurrency: function (value) {
