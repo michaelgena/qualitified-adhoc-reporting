@@ -15,6 +15,11 @@
         margin-right: 8px;
       }
 
+      .align-right{
+        text-align:right;
+        width:50%;
+      }
+
     </style>
     <nuxeo-operation id="getOption" op="Qualitified.GetOptionValue"></nuxeo-operation>
     <nuxeo-repository-data start-date="[[startDate]]"
@@ -68,22 +73,22 @@
 
         <nuxeo-data-table-column name="{{document.properties.table:columnName2}}">
           <template>
-            {{_values(item.value)}}
+            <div class="align-right">{{_values(item.value)}}</div>
           </template>
         </nuxeo-data-table-column>
 
         <nuxeo-data-table-column name="[[i18n('label.report.lastYearValue')]]"
                                  hidden="{{!document.properties.report:lastYear}}">
           <template>
-            <span class="last-year-value">{{_values(item.lastYearValue)}}</span>
+            <div class="align-right"><span class="last-year-value">{{_values(item.lastYearValue)}}</span></div>
           </template>
         </nuxeo-data-table-column>
 
         <nuxeo-data-table-column name="[[i18n('label.report.percentageChange')]]"
                                  hidden="{{!document.properties.report:lastYear}}">
           <template>
-            <span id$="lastYearPercentage{{index}}">[[_getTablePercentage(item.value,item.lastYearValue,
-              index)]]%</span>
+            <div class="align-right"><span id$="lastYearPercentage{{index}}">[[_getTablePercentage(item.value,item.lastYearValue,
+              index)]]%</span></div>
           </template>
         </nuxeo-data-table-column>
 
