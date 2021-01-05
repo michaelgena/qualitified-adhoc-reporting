@@ -13,6 +13,7 @@
       <paper-radio-button name="tasks">[[i18n('home.tasks')]]</paper-radio-button>
       <paper-radio-button name="favorites">[[i18n('home.favorites')]]</paper-radio-button>
       <paper-radio-button name="custom">[[i18n('home.custom')]]</paper-radio-button>
+      <paper-radio-button name="feed">feed</paper-radio-button>
     </paper-radio-group>
 
 
@@ -60,6 +61,9 @@
 
           case "custom":
             this.set('document.properties.list:listSelected', "custom");
+            break;
+          case "feed":
+            this.set('document.properties.list:listSelected', "feed");
             break;
 
         }

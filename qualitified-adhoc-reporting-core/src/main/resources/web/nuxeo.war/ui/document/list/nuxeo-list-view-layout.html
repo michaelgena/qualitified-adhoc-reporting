@@ -1,6 +1,7 @@
+<link rel="import" href="../../elements/qualitified-document-comments.html">
 <dom-module id="nuxeo-list-view-layout">
   <template>
-    <style include="nuxeo-styles reporting-styles">
+    <style include="nuxeo-styles reporting-styles grid-styles">
       nuxeo-data-table {
         height: 85%;
         width: 100%;
@@ -39,6 +40,97 @@
       .Haut {
         background-color: #ffe500;
       }
+       .lire {
+          color: gray;
+          background-color: transparent;
+          text-decoration: none;
+        }
+     .board {
+          display: flex;
+          margin-bottom: 15px;
+          margin-top: 53px;
+          height: 2200px;
+          width: 620px;
+          background-color: #FFFFFF;
+          box-shadow: 0 3px 5px 0 rgba(0,0,0,0.07), 0 1px 9px 0 rgba(0,0,0,0.06), 0 2px 2px -1px rgba(0,0,0,0.1);
+      }
+      .column2 {
+      margin-top: 20px;
+      margin-bottom: 15px;
+      margin-left: 15px;
+      margin-right: 15px;
+      height: 2000px;
+      width: 600px;
+      }
+      .dashboard {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+      }
+      .news-card {
+          position: relative;
+          margin-bottom: 15px;
+          height: 500px;
+          width: 600px;
+          border-radius: 12px;
+          background-color: #FFFFFF;
+          box-shadow: 0 3px 5px 0 rgba(0,0,0,0.07), 0 1px 9px 0 rgba(0,0,0,0.06), 0 2px 2px -1px rgba(0,0,0,0.1);
+          transition: 0.35s ease-in-out;
+      }
+      .thumbnail {
+            height: 96px;
+            width: 96px;
+            border-radius: 50%;
+            background-color: #E6E6E6;
+       }
+        .news-content {
+            padding: 10px;
+            display: inline-flex;
+            color: #696969;
+        }
+        .news-title{
+        padding-top: 10px;
+        padding-left: 20px;
+        font-family: Arial, Helvetica, sans-serif;
+        }
+        .news-date{
+            padding: 10px;
+            font-weight: bold;
+            color: #545454;
+        }
+        .commentsSection{
+            position: absolute;
+            bottom: 0;
+            background-color: aliceblue;
+            padding: 5px;
+            height: 200px;
+        }
+        .news-description{
+            padding: 10px;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #000000;
+        }
+       .title {
+          border-top-right-radius: 12px;
+          border-top-left-radius: 12px;
+          background: #ff8100bd;
+          color: #fefefe;
+          font-size: 16px;
+          line-height: 50px;
+          text-align: center;
+    }
+      .boxTitle {
+        border-bottom: 2px solid #eb1615;
+        color: #ff8100bd;
+        font-size: 20px;
+        background-color: #fff;
+        margin-bottom: 5px;
+        text-align: left;
+        }
+      .circular--square {
+        border-radius: 50%;
+        }
     </style>
 
     <!-- recently edited -->
@@ -216,10 +308,46 @@
       </nuxeo-card>
     </template>
 
+    <!-- feed -->
+    <nuxeo-page-provider id="feedProvider" page-size="50" auto
+                         query="[[document.properties.list:nxql]]"
+                         schemas="dublincore,common,uid,[[document.properties.list:schemas]]" current-page="{{docList}}" enrichers="thumbnail">
+    </nuxeo-page-provider>
+    <template id="domIfFeed" is="dom-if" if="{{_checkOption(document, 'feed')}}">
+      <nuxeo-card icon="[[document.properties.list:icon]]" heading="[[document.properties.dc:title]]">
+        <div>
+          <section name="dashboard" class="dashboard">
+            <div class="board">
+              <div class="column2">
+                <div class="boxTitle"><h2 >Feed</h2></div>
+                <template is="dom-repeat" items="{{docList}}" as="item">
+                  <div class="news-card" >
+                    <div class="news-content">
+                      <iron-image sizing="cover" class="thumbnail" src="[[item.properties.imagecontent.data]]"></iron-image>
+                      <div class="news-title">
+                        <a> <h3  on-tap="_goToAlaune">{{_previewDesc(item.title)}}</h3></a>
+                        {{item.type}}
+                      </div>
+                    </div>
+                    <div class="news-description">{{_previewDesc(item.properties.dc:description)}}... <a class="lire" on-tap="_goToAlaune">voir plus</a> </div>
+                    <div class="news-date">[[formatDate(item.properties.dc:modified)]]</div>
+                    <div class="commentsSection"style=" position: absolute; bottom: 0; background-color: aliceblue; width: 600px; border-top: outset;">
+                      <qualitified-document-comments document="[[item]]" name="comments"></qualitified-document-comments>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </section>
+        </div>
+      </nuxeo-card>
+    </template>
+
     <slot></slot>
 
-  </template>
 
+
+  </template>
   <script>
     Polymer({
       is: 'nuxeo-list-view-layout',
@@ -239,9 +367,16 @@
           type: Array,
           value: [],
           observer: '_recentDocumentsChanged'
-        }
+        },
+        opportunityList: {
+          type: Array,
+          value: [],
+        },
+         params:{
+          type: Object,
+          value: {}
+        },
       },
-
       ready: function () {
 
         this.$$('#domIfFavorites').addEventListener('dom-change', function () {
@@ -268,6 +403,26 @@
           customDocs.fetch();
         }.bind(this));
 
+        this.$$('#domIfFeed').addEventListener('dom-change', function () {
+         // var customDocs = this.$$("#customDocs");
+         // customDocs.nxProvider = this.$.customProvider;
+          //customDocs.fetch();
+        }.bind(this));
+
+      },
+      _previewDesc: function(e) {
+          if(e==null){
+          return "";
+          }
+           var desc
+           desc=e.substring(0,120);
+          return desc;
+      },
+      _goToAlaune:function(e){
+        this.navigateTo('browse', e.model.__data.listealaune.path);
+      },
+      _goToAnepasmanquer:function(e){
+         this.navigateTo('browse', e.model.__data.listeanepasmanquer.path);
       },
 
       _checkOption: function (doc, option) {
