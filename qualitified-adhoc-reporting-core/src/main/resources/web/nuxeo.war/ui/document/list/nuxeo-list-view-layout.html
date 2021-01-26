@@ -41,26 +41,25 @@
         background-color: #ffe500;
       }
        .lire {
-          color: gray;
-          background-color: transparent;
-          text-decoration: none;
-        }
-     .board {
+        color: gray;
+        background-color: transparent;
+        text-decoration: none;
+      }
+      .board {
           display: flex;
           margin-bottom: 15px;
-          margin-top: 53px;
           height: 2200px;
-          width: 620px;
+          width: 630px;
           background-color: #FFFFFF;
           box-shadow: 0 3px 5px 0 rgba(0,0,0,0.07), 0 1px 9px 0 rgba(0,0,0,0.06), 0 2px 2px -1px rgba(0,0,0,0.1);
       }
       .column2 {
-      margin-top: 20px;
-      margin-bottom: 15px;
-      margin-left: 15px;
-      margin-right: 15px;
-      height: 2000px;
-      width: 600px;
+          margin-top: 20px;
+          margin-bottom: 15px;
+          margin-left: 15px;
+          margin-right: 15px;
+          height: 2000px;
+          width: 600px;
       }
       .dashboard {
         display: flex;
@@ -78,32 +77,29 @@
           box-shadow: 0 3px 5px 0 rgba(0,0,0,0.07), 0 1px 9px 0 rgba(0,0,0,0.06), 0 2px 2px -1px rgba(0,0,0,0.1);
           transition: 0.35s ease-in-out;
       }
-      .thumbnail {
-            height: 96px;
-            width: 96px;
-            border-radius: 50%;
+       .content {
+            height: 130px;
+            width: 600px;
             background-color: #E6E6E6;
        }
         .news-content {
             padding: 10px;
             display: inline-flex;
             color: #696969;
+
         }
         .news-title{
         padding-top: 10px;
         padding-left: 20px;
         font-family: Arial, Helvetica, sans-serif;
         }
-        .news-date{
-            padding: 10px;
+        .date{
             font-weight: bold;
             color: #545454;
         }
         .commentsSection{
             position: absolute;
-            bottom: 0;
             background-color: aliceblue;
-            padding: 5px;
             height: 200px;
         }
         .news-description{
@@ -120,12 +116,15 @@
           line-height: 50px;
           text-align: center;
     }
-      .boxTitle {
-        border-bottom: 2px solid #eb1615;
+       .post-title {
         color: #ff8100bd;
         font-size: 20px;
-        background-color: #fff;
         margin-bottom: 5px;
+        text-align: left;
+        }
+        .user {
+        color: black;
+        font-size: 15px;
         text-align: left;
         }
       .circular--square {
@@ -319,18 +318,23 @@
           <section name="dashboard" class="dashboard">
             <div class="board">
               <div class="column2">
-                <div class="boxTitle"><h2 >Feed</h2></div>
                 <template is="dom-repeat" items="{{docList}}" as="item">
                   <div class="news-card" >
                     <div class="news-content">
-                      <iron-image sizing="cover" class="thumbnail" src="[[item.properties.imagecontent.data]]"></iron-image>
+                      <nuxeo-user-avatar user="[[item.properties.dc:lastContributor]]" height="[[_computeAvatarDimensions(level)]]" width="[[_computeAvatarDimensions(level)]]" border-radius="50" font-size="[[_computeAvatarFontSize(level)]]">
+                      </nuxeo-user-avatar>
                       <div class="news-title">
-                        <a> <h3  on-tap="_goToAlaune">{{_previewDesc(item.title)}}</h3></a>
-                        {{item.type}}
+                        <a> <div class="user" >{{item.properties.dc:lastContributor}}</div></a>
+                        <div class="news-date">[[formatDate(item.properties.dc:created,'relative')]]</div>
+                        <a> <div class="post-title" on-tap="_goTodoc"> {{_previewDesc(item.title)}}</div></a>
                       </div>
                     </div>
-                    <div class="news-description">{{_previewDesc(item.properties.dc:description)}}... <a class="lire" on-tap="_goToAlaune">voir plus</a> </div>
-                    <div class="news-date">[[formatDate(item.properties.dc:modified)]]</div>
+                    <div class="news-description">{{_previewDesc(item.properties.dc:description)}}... <a class="lire" on-tap="_goTodoc">voir plus</a> </div>
+                    <div class="content">
+                      <template>
+                        <nuxeo-document-thumbnail document="[[item]]"></nuxeo-document-thumbnail>
+                      </template>
+                    </div>
                     <div class="commentsSection"style=" position: absolute; bottom: 0; background-color: aliceblue; width: 600px; border-top: outset;">
                       <qualitified-document-comments document="[[item]]" name="comments"></qualitified-document-comments>
                     </div>
@@ -362,15 +366,15 @@
           type: Boolean,
           observer: '_visibleChanged'
         },
+         level: {
+          type: Number,
+          value: 1,
+        },
 
         _recentDocuments: {
           type: Array,
           value: [],
           observer: '_recentDocumentsChanged'
-        },
-        opportunityList: {
-          type: Array,
-          value: [],
         },
          params:{
           type: Object,
@@ -415,14 +419,21 @@
           return "";
           }
            var desc
-           desc=e.substring(0,120);
+           desc=e.substring(0,200);
           return desc;
       },
-      _goToAlaune:function(e){
-        this.navigateTo('browse', e.model.__data.listealaune.path);
+      _goTodoc:function(e){
+        this.navigateTo('browse', e.model.__data.item.path);
       },
-      _goToAnepasmanquer:function(e){
-         this.navigateTo('browse', e.model.__data.listeanepasmanquer.path);
+        _computeAvatarDimensions: function(level) {
+        return this._isRootElement(level) ? 72 : 60;
+      },
+
+      _computeAvatarFontSize: function(level) {
+        return this._isRootElement(level) ? 39 : 33;
+      },
+       _isRootElement: function (level) {
+        return level === 1;
       },
 
       _checkOption: function (doc, option) {

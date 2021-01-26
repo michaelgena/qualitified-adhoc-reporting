@@ -105,7 +105,7 @@
             this.comments = [];
             var result = result.detail.response;
             var newComments = result.entries;
-            if(newComments !== undefined ){
+            if(newComments !=='undefined'){
             while (newComments.length > 0 && !!olderComment
             && (newComments[0].creationDate > olderComment.creationDate || newComments[0].id === olderComment.id)) {
               newComments.shift();
