@@ -6,7 +6,7 @@
   "label.document.type.chartline": "Chart Line",
   "label.document.type.list": "Document Reports",
 
-  "analytics.responsibleUser": "Responsible",
+  "analytics.responsible.user": "Responsible",
   "analytics.responsibleUser.warning": "Responsible User Metadata is not set for the following reports",
 
   "label.report.layout.dataSettings": "Data Settings",

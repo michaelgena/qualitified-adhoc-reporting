@@ -89,7 +89,7 @@
         <div class="responsibleUser">
           <nuxeo-user-suggestion id="responsibleUser"
                                  search-type="USER_TYPE"
-                                 label="[[i18n('analytics.responsibleUser')]]"
+                                 label="[[i18n('analytics.responsible.user')]]"
                                  min-chars="0"
                                  params='{"hideThirdLabel": "true"}'
                                  on-value-changed="_userChanged">
@@ -303,7 +303,7 @@
   <script>
     Polymer({
       is: 'nuxeo-home',
-      behaviors: [Nuxeo.RoutingBehavior, Nuxeo.FormatBehavior, Nuxeo.ChartDataBehavior, Report.DataBehavior],
+      behaviors: [Nuxeo.RoutingBehavior, Nuxeo.FormatBehavior, Nuxeo.ChartDataBehavior, Report.DataBehavior, Nuxeo.LayoutBehavior],
       properties: {
 
         startDate: {
