@@ -130,6 +130,18 @@
       .circular--square {
         border-radius: 50%;
         }
+      .infoType {
+        font-size: larger;
+        color: cadetblue;
+        font-weight: 700;
+        padding-left: 10px;
+      }
+      .info {
+        font-size: larger;
+        color: #a2a09e;
+        font-weight: 550;
+        padding-left: 20px;
+      }
     </style>
 
     <!-- recently edited -->
@@ -308,6 +320,8 @@
     </template>
 
     <!-- feed -->
+    <nuxeo-operation id="getOption" op="Qualitified.GetOptionValue"></nuxeo-operation>
+
     <nuxeo-page-provider id="feedProvider" page-size="50" auto
                          query="[[document.properties.list:nxql]]"
                          schemas="dublincore,common,uid,[[document.properties.list:schemas]]" current-page="{{docList}}" enrichers="thumbnail">
@@ -330,9 +344,21 @@
                       </div>
                     </div>
                     <div class="news-description">{{_previewDesc(item.properties.dc:description)}}... <a class="lire" on-tap="_goTodoc">voir plus</a> </div>
-                    <div class="content">
-                      <template>
-                        <nuxeo-document-thumbnail document="[[item]]"></nuxeo-document-thumbnail>
+                    <div>
+                      <template id="domIfOpportunity" is="dom-if" if="{{_checkDocType(item, 'Opportunity')}}">
+                        <template is="dom-repeat" items="{{opportunity}}" as="opp">
+                          <div style="display: flex; padding-bottom: 15px;"><div class="infoType"> [[i18n('{{opp.name}}')]] :</div><div class="info"> {{item.properties.{{opp.value}}}}</div></div>
+                        </template>
+                      </template>
+                      <template id="domIfInteraction" is="dom-if" if="{{_checkDocType(item, 'Interaction')}}">
+                        <template is="dom-repeat" items="{{interaction}}" as="int">
+                          <div style="display: flex; padding-bottom: 15px;"> <div class="infoType">  [[i18n('{{int.name}}')]] :</div><div class="info"> {{item.properties.{{int.value}}}}</div></div>
+                        </template>
+                      </template>
+                      <template id="domIfContact" is="dom-if" if="{{_checkDocType(item, 'Contact')}}">
+                        <template is="dom-repeat" items="{{contact}}" as="cnt">
+                          <div style="display: flex; padding-bottom: 15px;"> <div class="infoType">  [[i18n('{{cnt.name}}')]] :</div><div class="info"> {{item.properties.{{cnt.value}}}}</div></div>
+                        </template>
                       </template>
                     </div>
                     <div class="commentsSection"style=" position: absolute; bottom: 0; background-color: aliceblue; width: 600px; border-top: outset; overflow-y: scroll;">
@@ -380,9 +406,33 @@
           type: Object,
           value: {}
         },
+         amount: {
+          type: Number,
+          value: 10000,
+        },
+         opportunity: {
+          type: Array,
+          value: [{'label':'title',
+                    'value':'dc:title'}],
+        },
+         interaction: {
+          type: Array,
+          value: [{'label':'title',
+                    'value':'dc:title'}],
+        },
+         contact: {
+          type: Array,
+          value: [{'label':'title',
+                    'value':'dc:title'}],
+        },
       },
-      ready: function () {
 
+      ready: async function () {
+        const curr = await this._getFeedDisplayedMetadata();
+        var obj = JSON.parse(curr);
+        this.opportunity=obj.documents[0].Opportunity;
+        this.interaction=obj.documents[1].Interaction;
+        this.contact=obj.documents[2].Contact;
         this.$$('#domIfFavorites').addEventListener('dom-change', function () {
           var favoriteDocs = this.$$("#favoriteDocs");
           var favoritesProvider = this.$.favoritesProvider;
@@ -438,6 +488,12 @@
 
       _checkOption: function (doc, option) {
         if (this.document.properties["list:listSelected"] == option) {
+          return true;
+        }
+        return false;
+      },
+      _checkDocType: function (doc, option) {
+        if (doc.type == option) {
           return true;
         }
         return false;
@@ -515,7 +571,20 @@
             this.$$("#latestViewedDocs").notifyResize(); // XXX: force rendering for Edge (NXP-26244)
           }.bind(this));
         }
-      }
+      },
+             _getFeedDisplayedMetadata: async function(){
+               let params = {};
+               params.name = "FeedDisplayedMetadata";
+               this.$.getOption.params = params;
+               let result = await this.$.getOption.execute().then(function(response){
+                   if(response === null){
+                      return "";
+                   }else{
+                      return response.value;
+                   }
+               }.bind(this));
+               return result;
+        },
 
     });
   </script>
