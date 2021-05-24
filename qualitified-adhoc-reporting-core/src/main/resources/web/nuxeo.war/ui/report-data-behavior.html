@@ -156,12 +156,12 @@
     },
 
     _setWhereTerm: function (responsibleUserMetdata, responsibleUserFilterValue) {
-      if (responsibleUserMetdata && responsibleUserFilterValue) {
-        var where = {};
-        where[responsibleUserMetdata] = responsibleUserFilterValue;
-        return where;
-      }
-      return "";
+       var where = {};
+       if (responsibleUserMetdata && responsibleUserFilterValue) {
+          where[responsibleUserMetdata] = responsibleUserFilterValue;
+       }
+       where['ecm:isVersion'] = false;
+       return where;
     },
 
     _formatCurrency: function(val, format) {
