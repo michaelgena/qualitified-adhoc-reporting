@@ -1,13 +1,17 @@
-<link rel="import" href="qualitified-document-comment-thread.html">
-<dom-module id="qualitified-document-comments">
+<!--
+`txm-document-comments`
+@group Nuxeo UI
+@element txm-document-comments
+-->
+<dom-module id="txm-document-comments">
     <template>
         <nuxeo-card>
-            <qualitified-document-comment-thread id ="thread" name="comments" uid="[[document.uid]]"></qualitified-document-comment-thread>
+            <txm-document-comment-thread name="comments" uid="[[document.uid]]"></txm-document-comment-thread>
         </nuxeo-card>
     </template>
     <script>
     Polymer({
-      is: 'qualitified-document-comments',
+      is: 'txm-document-comments',
       behaviors: [Nuxeo.LayoutBehavior],
       properties: {
         //You can use either @schema or @doctype annotation in your model
@@ -17,7 +21,7 @@
         document: {
           type: Object
         }
-      },
+      }
     });
   </script>
 </dom-module>
