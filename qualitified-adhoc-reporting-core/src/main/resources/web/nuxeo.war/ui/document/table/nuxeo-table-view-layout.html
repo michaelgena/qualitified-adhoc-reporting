@@ -1,3 +1,4 @@
+<link href="../../elements/qualitified-export-csv-button.html" rel="import">
 <dom-module id="nuxeo-table-view-layout">
   <template>
     <style include="reporting-styles">
@@ -19,7 +20,12 @@
         text-align:right;
         width:50%;
       }
-
+      .csvAction {
+         display: inline-flex;
+         position: absolute;
+         top: 3px;
+         right: 47px;
+        }
     </style>
     <nuxeo-operation id="getOption" op="Qualitified.GetOptionValue"></nuxeo-operation>
     <nuxeo-repository-data start-date="[[startDate]]"
@@ -59,6 +65,9 @@
     <nuxeo-card heading="[[document.properties.dc:title]]">
 
       <div id="edit" hidden$="[[!editMode]]">
+        <div class="csvAction">
+          <qualitified-export-csv-button id="csvExport" query="[[queryCsvExport]]" schemas="dublincore,common,uid"></qualitified-export-csv-button>
+        </div>
         <report-edit-delete document="{{document}}"></report-edit-delete>
       </div>
 
@@ -114,10 +123,14 @@
         },
         currency:{
           type: String
-        }
+        },
+        queryCsvExport: {
+          type: String
+        },
       },
 
       ready: async function () {
+        this.queryCsvExport = "SELECT * FROM "+this.document.properties['report:primarytype']+"";
         const format = await this._getCurrencyFormat();
         this.currencyFormat = format;
         const curr = await this._getCurrency();

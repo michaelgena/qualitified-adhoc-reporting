@@ -1,3 +1,4 @@
+<link href="../../elements/qualitified-export-csv-button.html" rel="import">
 <dom-module id="nuxeo-count-view-layout">
   <template>
     <style include="reporting-styles">
@@ -18,6 +19,12 @@
         --iron-icon-height: 110px;
         margin-top: 10px;
         text-align: center;
+      }
+       .csvAction {
+        display: inline-flex;
+        position: absolute;
+        top: 3px;
+        right: 47px;
       }
 
     </style>
@@ -49,6 +56,9 @@
     <nuxeo-card heading="[[document.properties.dc:title]]">
 
       <div id="edit" hidden$="[[!editMode]]">
+        <div class="csvAction">
+          <qualitified-export-csv-button id="csvExport" query="[[queryCsvExport]]" schemas="dublincore,common,uid"></qualitified-export-csv-button>
+        </div>
         <report-edit-delete document="{{document}}"></report-edit-delete>
       </div>
 
@@ -98,6 +108,9 @@
         value: {
           type: String
         },
+        queryCsvExport: {
+          type: String
+        },
         lastYearValue: {
           type: String
         },
@@ -109,6 +122,9 @@
           type: Number,
           observer: '_lastYearDataChanged'
         }
+      },
+      ready: function() {
+      this.queryCsvExport = "SELECT * FROM "+this.document.properties['report:primarytype']+"";
       },
       _dataChanged: async function(data){
         this.value = await this._getValue((data).toFixed());
