@@ -1,3 +1,4 @@
+<link href="../../elements/qualitified-export-csv-button.html" rel="import">
 <dom-module id="nuxeo-chartpie-view-layout">
   <template>
     <style include="reporting-styles">
@@ -7,6 +8,12 @@
         display: block;
         font-size: .8rem;
         margin-top: 35px;
+      }
+      .csvAction {
+       display: inline-flex;
+       position: absolute;
+       top: 3px;
+       right: 47px;
       }
 
     </style>
@@ -27,6 +34,9 @@
 
     <nuxeo-card heading="[[document.properties.dc:title]]">
       <div id="edit" hidden$="[[!editMode]]">
+        <div class="csvAction">
+          <qualitified-export-csv-button id="csvExport" query="[[queryCsvExport]]" schemas="dublincore,common,uid"></qualitified-export-csv-button>
+        </div>
         <report-edit-delete document="{{document}}"></report-edit-delete>
       </div>
       <chart-pie id="chartPie"
@@ -57,7 +67,13 @@
         endDate: {
           type: String,
           value: ''
+        },
+        queryCsvExport: {
+          type: String
         }
+      },
+      ready: function() {
+      this.queryCsvExport = "SELECT * FROM "+this.document.properties['report:primarytype']+"";
       },
 
       resizeReport: function () {

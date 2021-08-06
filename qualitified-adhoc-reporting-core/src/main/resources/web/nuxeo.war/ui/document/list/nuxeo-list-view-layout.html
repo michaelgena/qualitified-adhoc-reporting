@@ -1,4 +1,3 @@
-<link rel="import" href="../../elements/qualitified-document-comments.html">
 <dom-module id="nuxeo-list-view-layout">
   <template>
     <style include="nuxeo-styles reporting-styles grid-styles">
@@ -130,6 +129,25 @@
       .circular--square {
         border-radius: 50%;
         }
+      .infoType {
+        font-size: larger;
+        color: cadetblue;
+        font-weight: 700;
+        padding-left: 10px;
+      }
+      .info {
+        font-size: larger;
+        color: #a2a09e;
+        font-weight: 550;
+        padding-left: 20px;
+      }
+      .csvAction {
+        display: inline-flex;
+        position: absolute;
+        top: 3px;
+        right: 47px;
+      }
+
     </style>
 
     <!-- recently edited -->
@@ -308,215 +326,299 @@
     </template>
 
     <!-- feed -->
+    <nuxeo-operation id="getOption" op="Qualitified.GetOptionValue"></nuxeo-operation>
+
     <nuxeo-page-provider id="feedProvider" page-size="50" auto
                          query="[[document.properties.list:nxql]]"
-                         schemas="dublincore,common,uid,[[document.properties.list:schemas]]" current-page="{{docList}}" enrichers="thumbnail">
+                         schemas="dublincore,opportunity,common,uid,[[document.properties.list:schemas]]" current-page="{{docList}}" enrichers="thumbnail">
+    </nuxeo-page-provider>
+    <nuxeo-page-provider id="csvExportProvider" page-size="50"
+                         query="[[document.properties.list:nxql]]"
+                         schemas="dublincore,common,uid" enrichers="thumbnail">
     </nuxeo-page-provider>
     <template id="domIfFeed" is="dom-if" if="{{_checkOption(document, 'feed')}}">
-      <nuxeo-card icon="[[document.properties.list:icon]]" heading="[[document.properties.dc:title]]">
-        <div>
-          <section name="dashboard" class="dashboard">
-            <div class="board">
-              <div class="column2">
-                <template is="dom-repeat" items="{{docList}}" as="item">
-                  <div class="news-card" >
-                    <div class="news-content">
-                      <nuxeo-user-avatar user="[[item.properties.dc:lastContributor]]" height="[[_computeAvatarDimensions(level)]]" width="[[_computeAvatarDimensions(level)]]" border-radius="50" font-size="[[_computeAvatarFontSize(level)]]">
-                      </nuxeo-user-avatar>
-                      <div class="news-title">
-                        <a> <div class="user" >{{item.properties.dc:lastContributor}}</div></a>
-                        <div class="news-date">[[formatDate(item.properties.dc:created,'relative')]]</div>
-                        <a> <div class="post-title" on-tap="_goTodoc"> {{_previewDesc(item.title)}}</div></a>
-                      </div>
-                    </div>
-                    <div class="news-description">{{_previewDesc(item.properties.dc:description)}}... <a class="lire" on-tap="_goTodoc">voir plus</a> </div>
-                    <div class="content">
-                      <template>
-                        <nuxeo-document-thumbnail document="[[item]]"></nuxeo-document-thumbnail>
-                      </template>
-                    </div>
-                    <div class="commentsSection"style=" position: absolute; bottom: 0; background-color: aliceblue; width: 600px; border-top: outset;">
-                      <qualitified-document-comments document="[[item]]" name="comments"></qualitified-document-comments>
-                    </div>
-                  </div>
-                </template>
-              </div>
+        <nuxeo-card icon="[[document.properties.list:icon]]" heading="[[document.properties.dc:title]]">
+          <div id="editFeed" hidden$="[[!editMode]]">
+            <div class="csvAction">
+            <nuxeo-csv-export-button id="csvExport" provider="[[csvExport]]"></nuxeo-csv-export-button>
             </div>
-          </section>
-        </div>
-      </nuxeo-card>
-    </template>
+            <report-edit-delete document="{{document}}"></report-edit-delete>
+          </div>
+          <div>
+            <section name="dashboard" class="dashboard">
+              <div class="board">
+                <div class="column2">
+                  <template is="dom-repeat" items="{{docList}}" as="item">
+                    <div class="news-card" >
+                      <div class="news-content">
+                        <nuxeo-user-avatar user="[[item.properties.dc:lastContributor]]" height="[[_computeAvatarDimensions(level)]]" width="[[_computeAvatarDimensions(level)]]" border-radius="50" font-size="[[_computeAvatarFontSize(level)]]">
+                        </nuxeo-user-avatar>
+                        <div class="news-title">
+                          <a> <div class="user" >{{item.properties.dc:lastContributor}}</div></a>
+                          <div class="news-date">[[formatDate(item.properties.dc:created,'relative')]]</div>
+                          <a> <div class="post-title" on-tap="_goTodoc"> {{_previewDesc(item.title)}}</div></a>
+                        </div>
+                      </div>
+                      <div class="news-description">{{_previewDesc(item.properties.dc:description)}}... <a class="lire" on-tap="_goTodoc">voir plus</a> </div>
+                     <div>
+                       <template id="domIfOpportunity" is="dom-if" if="{{_checkDocType(item, 'Opportunity')}}">
+                         <template is="dom-repeat" items="{{opportunity}}" as="opp">
+                           <div style="display: flex; padding-bottom: 15px;"><div class="infoType">{{_getValueName(opp)}} :</div><div class="info">{{_getValue(item,opp)}}</div></div>
+                         </template>
+                       </template>
+                       <template id="domIfInteraction" is="dom-if" if="{{_checkDocType(item, 'Interaction')}}">
+                         <template is="dom-repeat" items="{{interaction}}" as="int">
+                           <div style="display: flex; padding-bottom: 15px;"> <div class="infoType">  {{_getValueName(int)}} :</div><div class="info"> {{_getValue(item,int)}}</div></div>
+                         </template>
+                       </template>
+                       <template id="domIfContact" is="dom-if" if="{{_checkDocType(item, 'Contact')}}">
+                         <template is="dom-repeat" items="{{contact}}" as="cnt">
+                           <div style="display: flex; padding-bottom: 15px;"> <div class="infoType">  {{_getValueName(cnt)}} :</div><div class="info"> {{_getValue(item,cnt)}}</div></div>
+                         </template>
+                       </template>
+                     </div>
+                      <div class="commentsSection"style=" position: absolute; bottom: 0; background-color: aliceblue; width: 600px; border-top: outset; overflow-y: scroll;">
+                        <qualitified-document-comments document="[[item]]" name="comments"></qualitified-document-comments>
+                     </div>
+                   </div>
+                 </template>
+               </div>
+             </div>
+           </section>
+         </div>
+       </nuxeo-card>
+     </template>
 
-    <slot></slot>
+   <slot></slot>
 
 
 
-  </template>
-  <script>
-    Polymer({
-      is: 'nuxeo-list-view-layout',
-      behaviors: [Nuxeo.RoutingBehavior, Nuxeo.FormatBehavior],
-      properties: {
+ </template>
+ <script>
+   Polymer({
+     is: 'nuxeo-list-view-layout',
+     behaviors: [Nuxeo.RoutingBehavior, Nuxeo.FormatBehavior],
+     properties: {
 
-        document: {
-          type: Object,
-        },
+       document: {
+         type: Object,
+       },
 
-        visible: {
-          type: Boolean,
-          observer: '_visibleChanged'
-        },
-         level: {
-          type: Number,
-          value: 1,
-        },
+       visible: {
+         type: Boolean,
+         observer: '_visibleChanged'
+       },
+        level: {
+         type: Number,
+         value: 1,
+       },
 
-        _recentDocuments: {
-          type: Array,
-          value: [],
-          observer: '_recentDocumentsChanged'
-        },
-         params:{
-          type: Object,
-          value: {}
-        },
-      },
-      ready: function () {
+       _recentDocuments: {
+         type: Array,
+         value: [],
+         observer: '_recentDocumentsChanged'
+       },
+        params:{
+         type: Object,
+         value: {}
+       },
+       csvExport:{
+         type: Object,
+         value: {}
+       },
+        amount: {
+         type: Number,
+         value: 10000,
+       },
+        opportunity: {
+         type: Array,
+         value: [{'label':'title',
+                   'value':'dc:title'}],
+       },
+        interaction: {
+         type: Array,
+         value: [{'label':'title',
+                   'value':'dc:title'}],
+       },
+        contact: {
+         type: Array,
+         value: [{'label':'title',
+                   'value':'dc:title'}],
+       },
+     },
 
-        this.$$('#domIfFavorites').addEventListener('dom-change', function () {
-          var favoriteDocs = this.$$("#favoriteDocs");
-          var favoritesProvider = this.$.favoritesProvider;
-          favoriteDocs.nxProvider = favoritesProvider;
+     ready: async function () {
+     this.csvExport =this.$.csvExportProvider;
+       const curr = await this._getFeedDisplayedMetadata();
+       var obj = JSON.parse(curr);
+       this.opportunity=obj.documents[0].Opportunity;
+       this.interaction=obj.documents[1].Interaction;
+       this.contact=obj.documents[2].Contact;
+       this.$$('#domIfFavorites').addEventListener('dom-change', function () {
+         var favoriteDocs = this.$$("#favoriteDocs");
+         var favoritesProvider = this.$.favoritesProvider;
+         favoriteDocs.nxProvider = favoritesProvider;
 
-          this._fetchFavorite().then(function (favorite) {
-            favoritesProvider.params = [favorite.uid];
-            favoritesProvider.page = 1;
-            favoriteDocs.fetch();
-          }.bind(this));
-        }.bind(this));
+         this._fetchFavorite().then(function (favorite) {
+           favoritesProvider.params = [favorite.uid];
+           favoritesProvider.page = 1;
+           favoriteDocs.fetch();
+         }.bind(this));
+       }.bind(this));
 
-        this.$$('#domIfModified').addEventListener('dom-change', function () {
-          var latestEditedDocs = this.$$("#latestEditedDocs");
-          latestEditedDocs.nxProvider = this.$.latestQuery;
-          latestEditedDocs.fetch();
-        }.bind(this));
+       this.$$('#domIfModified').addEventListener('dom-change', function () {
+         var latestEditedDocs = this.$$("#latestEditedDocs");
+         latestEditedDocs.nxProvider = this.$.latestQuery;
+         latestEditedDocs.fetch();
+       }.bind(this));
 
-        this.$$('#domIfCustom').addEventListener('dom-change', function () {
-          var customDocs = this.$$("#customDocs");
-          customDocs.nxProvider = this.$.customProvider;
-          customDocs.fetch();
-        }.bind(this));
+       this.$$('#domIfCustom').addEventListener('dom-change', function () {
+         var customDocs = this.$$("#customDocs");
+         customDocs.nxProvider = this.$.customProvider;
+         customDocs.fetch();
+       }.bind(this));
 
-        this.$$('#domIfFeed').addEventListener('dom-change', function () {
-         // var customDocs = this.$$("#customDocs");
-         // customDocs.nxProvider = this.$.customProvider;
-          //customDocs.fetch();
-        }.bind(this));
+       this.$$('#domIfFeed').addEventListener('dom-change', function () {
+        // var customDocs = this.$$("#customDocs");
+        // customDocs.nxProvider = this.$.customProvider;
+         //customDocs.fetch();
+       }.bind(this));
 
-      },
-      _previewDesc: function(e) {
-          if(e==null){
-          return "";
-          }
-           var desc
-           desc=e.substring(0,200);
-          return desc;
-      },
-      _goTodoc:function(e){
-        this.navigateTo('browse', e.model.__data.item.path);
-      },
-        _computeAvatarDimensions: function(level) {
-        return this._isRootElement(level) ? 72 : 60;
-      },
+     },
+     _previewDesc: function(e) {
+         if(e==null){
+         return "";
+         }
+          var desc
+          desc=e.substring(0,200);
+         return desc;
+     },
+     _goTodoc:function(e){
+       this.navigateTo('browse', e.model.__data.item.path);
+     },
+       _computeAvatarDimensions: function(level) {
+       return this._isRootElement(level) ? 72 : 60;
+     },
 
-      _computeAvatarFontSize: function(level) {
-        return this._isRootElement(level) ? 39 : 33;
-      },
-       _isRootElement: function (level) {
-        return level === 1;
-      },
+     _computeAvatarFontSize: function(level) {
+       return this._isRootElement(level) ? 39 : 33;
+     },
+      _isRootElement: function (level) {
+       return level === 1;
+     },
 
-      _checkOption: function (doc, option) {
-        if (this.document.properties["list:listSelected"] == option) {
-          return true;
-        }
-        return false;
-      },
+     _checkOption: function (doc, option) {
+       if (this.document.properties["list:listSelected"] == option) {
+         return true;
+       }
+       return false;
+     },
+     _checkDocType: function (doc, option) {
+       if (doc.type == option) {
+         return true;
+       }
+       return false;
+     },
+     _getValue: function (item,opp) {
+     if(opp.name.substring(opp.name.lastIndexOf('.')+1) == "amount"){
+        return this._formatCurrency(item.properties[""+opp.value+""]);
+     }
+     else if(opp.name.substring(opp.name.lastIndexOf('.')+1) == "closeDate"){
+       return this.formatDate(item.properties[""+opp.value+""]);}
+     },
+     _getValueName: function (opp) {
+       return opp.name.substring(opp.name.lastIndexOf('.')+1);
+     },
+    _formatCurrency: function (value) {
+     return value ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : value;
+     },
+     _visibleChanged: function (visible) {
+       if (visible) {
+         this._refresh();
+       }
+     },
 
-      _visibleChanged: function (visible) {
-        if (visible) {
-          this._refresh();
-        }
-      },
+     _refresh: function () {
+       if (this.$$("#latestEditedDocs")) {
+         this.$$("#latestEditedDocs").fetch();
+       }
 
-      _refresh: function () {
-        if (this.$$("#latestEditedDocs")) {
-          this.$$("#latestEditedDocs").fetch();
-        }
+       if (this.$$("#recentStorage")) {
+         this.$$("#recentStorage").reload();
+       }
 
-        if (this.$$("#recentStorage")) {
-          this.$$("#recentStorage").reload();
-        }
+       if (this.$.favoritesProvider && this.$$("#favoriteDocs")) {
+         this._fetchFavorite().then(function (favorite) {
+           this.$.favoritesProvider.params = [favorite.uid];
+           this.$.favoritesProvider.page = 1;
+           this.$$("#favoriteDocs").fetch();
+         }.bind(this));
+       }
 
-        if (this.$.favoritesProvider && this.$$("#favoriteDocs")) {
-          this._fetchFavorite().then(function (favorite) {
-            this.$.favoritesProvider.params = [favorite.uid];
-            this.$.favoritesProvider.page = 1;
-            this.$$("#favoriteDocs").fetch();
-          }.bind(this));
-        }
+       if (this.$$("#customdDocs")) {
+         this.$$("#customDocs").fetch();
+       }
 
-        if (this.$$("#customdDocs")) {
-          this.$$("#customDocs").fetch();
-        }
+     },
 
-      },
+     _navigate: function (e) {
+       var detail;
+       if (e.detail.item) {
+         detail = {
+           doc: e.detail.item
+         };
+         this.navigateTo('browse', detail.doc.path);
+       } else {
+         detail = {
+           doc: e.model.item
+         };
+       }
+       this.fire('navigate', detail);
+     },
 
-      _navigate: function (e) {
-        var detail;
-        if (e.detail.item) {
-          detail = {
-            doc: e.detail.item
-          };
-          this.navigateTo('browse', detail.doc.path);
-        } else {
-          detail = {
-            doc: e.model.item
-          };
-        }
-        this.fire('navigate', detail);
-      },
+     _fetchFavorite: function () {
+       if (this.favorite) {
+         return Promise.resolve(this.favorite);
+       } else {
+         return this.$.fetchFavOp.execute()
+           .then(function (resp) {
+             this.favorite = resp;
+             return resp;
+           }.bind(this));
+       }
+     },
 
-      _fetchFavorite: function () {
-        if (this.favorite) {
-          return Promise.resolve(this.favorite);
-        } else {
-          return this.$.fetchFavOp.execute()
-            .then(function (resp) {
-              this.favorite = resp;
-              return resp;
-            }.bind(this));
-        }
-      },
+     _recentDocumentsChanged: function (docs) {
+       if (docs && docs.length > 0) {
+         var storage = this.$$("#recentStorage");
+         var provider = this.$$("#recentProvider");
+         var ids = docs.map(function (doc) { return "'" + doc.uid + "'" }).join(',');
+         provider.query = 'SELECT * FROM Document WHERE ecm:uuid IN (' + ids + ') AND ecm:isTrashed = 0';
+         provider.fetch().then(function (result) {
+           docs.forEach(function (doc) {
+             if (result.entries.findIndex(function (entry) { return entry.uid === doc.uid; }) === -1) {
+               storage.remove(doc);
+             }
+           });
+           this.$$("#latestViewedDocs").items = docs;
+           this.$$("#latestViewedDocs").notifyResize(); // XXX: force rendering for Edge (NXP-26244)
+         }.bind(this));
+       }
+     },
+            _getFeedDisplayedMetadata: async function(){
+              let params = {};
+              params.name = "FeedDisplayedMetadata";
+              this.$.getOption.params = params;
+              let result = await this.$.getOption.execute().then(function(response){
+                  if(response === null){
+                     return "";
+                  }else{
+                     return response.value;
+                  }
+              }.bind(this));
+              return result;
+       },
 
-      _recentDocumentsChanged: function (docs) {
-        if (docs && docs.length > 0) {
-          var storage = this.$$("#recentStorage");
-          var provider = this.$$("#recentProvider");
-          var ids = docs.map(function (doc) { return "'" + doc.uid + "'" }).join(',');
-          provider.query = 'SELECT * FROM Document WHERE ecm:uuid IN (' + ids + ') AND ecm:isTrashed = 0';
-          provider.fetch().then(function (result) {
-            docs.forEach(function (doc) {
-              if (result.entries.findIndex(function (entry) { return entry.uid === doc.uid; }) === -1) {
-                storage.remove(doc);
-              }
-            });
-            this.$$("#latestViewedDocs").items = docs;
-            this.$$("#latestViewedDocs").notifyResize(); // XXX: force rendering for Edge (NXP-26244)
-          }.bind(this));
-        }
-      }
-
-    });
-  </script>
+   });
+ </script>
 </dom-module>
