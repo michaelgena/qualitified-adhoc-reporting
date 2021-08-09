@@ -161,6 +161,7 @@
           where[responsibleUserMetdata] = responsibleUserFilterValue;
        }
        where['ecm:isVersion'] = false;
+       where['ecm:isTrashed']= false;
        return where;
     },
 
