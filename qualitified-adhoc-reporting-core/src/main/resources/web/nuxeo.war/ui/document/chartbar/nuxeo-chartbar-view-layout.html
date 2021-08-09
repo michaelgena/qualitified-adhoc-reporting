@@ -9,6 +9,12 @@
         font-size: .8rem;
         margin-top: 35px;
       }
+      .csvAction {
+         display: inline-flex;
+         position: absolute;
+         top: 3px;
+         right: 47px;
+        }
 
     </style>
 
@@ -27,7 +33,7 @@
                            metrics="[[document.properties.report:metrics]]">
     </nuxeo-repository-data>
 
-    <nuxeo-page-provider auto page-size="10"
+    <nuxeo-page-provider id="provider" auto page-size="10"
                          query="[[_query(data)]]"
                          schemas="*"
                          current-page="{{documents}}">
@@ -35,6 +41,9 @@
 
     <nuxeo-card heading="[[document.properties.dc:title]]">
       <div id="edit" hidden$="[[!editMode]]">
+        <div class="csvAction">
+          <nuxeo-csv-export-button id="csvExport" provider="[[csvExport]]" schemas="dublincore,common,uid"></nuxeo-csv-export-button>
+        </div>
         <report-edit-delete document="{{document}}"></report-edit-delete>
       </div>
       <chart-bar id="chartBar"
@@ -65,12 +74,19 @@
         endDate: {
           type: String,
           value: ''
-        }
+        },
+        csvExport:{
+         type: Object,
+         value: {}
+       }
       },
 
       resizeReport: function () {
         this.$.chartBar.resize();
       },
+      ready:  function () {
+       this.csvExport =this.$.provider;
+     },
 
       _query: function (entries) {
         if (this.document && entries && entries.length > 0) {

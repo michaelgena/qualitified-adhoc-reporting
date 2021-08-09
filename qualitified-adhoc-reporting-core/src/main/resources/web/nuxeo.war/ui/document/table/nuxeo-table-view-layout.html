@@ -1,3 +1,4 @@
+<link href="../../elements/qualitified-export-csv-button.html" rel="import">
 <dom-module id="nuxeo-table-view-layout">
   <template>
     <style include="reporting-styles">
@@ -15,7 +16,18 @@
         margin-right: 8px;
       }
 
+      .align-right{
+        text-align:right;
+        width:50%;
+      }
+      .csvAction {
+         display: inline-flex;
+         position: absolute;
+         top: 3px;
+         right: 47px;
+        }
     </style>
+    <nuxeo-operation id="getOption" op="Qualitified.GetOptionValue"></nuxeo-operation>
     <nuxeo-repository-data start-date="[[startDate]]"
                            end-date="[[_extendEndDate(endDate)]]"
                            data="{{data}}"
@@ -53,6 +65,9 @@
     <nuxeo-card heading="[[document.properties.dc:title]]">
 
       <div id="edit" hidden$="[[!editMode]]">
+        <div class="csvAction">
+          <qualitified-export-csv-button id="csvExport" query="[[queryCsvExport]]" schemas="dublincore,common,uid"></qualitified-export-csv-button>
+        </div>
         <report-edit-delete document="{{document}}"></report-edit-delete>
       </div>
 
@@ -67,22 +82,22 @@
 
         <nuxeo-data-table-column name="{{document.properties.table:columnName2}}">
           <template>
-            {{_values(item.value)}}
+            <div class="align-right">{{_values(item.value)}}</div>
           </template>
         </nuxeo-data-table-column>
 
         <nuxeo-data-table-column name="[[i18n('label.report.lastYearValue')]]"
                                  hidden="{{!document.properties.report:lastYear}}">
           <template>
-            <span class="last-year-value">{{_values(item.lastYearValue)}}</span>
+            <div class="align-right"><span class="last-year-value">{{_values(item.lastYearValue)}}</span></div>
           </template>
         </nuxeo-data-table-column>
 
         <nuxeo-data-table-column name="[[i18n('label.report.percentageChange')]]"
                                  hidden="{{!document.properties.report:lastYear}}">
           <template>
-            <span id$="lastYearPercentage{{index}}">[[_getTablePercentage(item.value,item.lastYearValue,
-              index)]]%</span>
+            <div class="align-right"><span id$="lastYearPercentage{{index}}">[[_getTablePercentage(item.value,item.lastYearValue,
+              index)]]%</span></div>
           </template>
         </nuxeo-data-table-column>
 
@@ -102,10 +117,30 @@
         document: {
           type: Object,
           observer: 'refresh'
-        }
+        },
+        currencyFormat:{
+          type: String
+        },
+        currency:{
+          type: String
+        },
+        queryCsvExport: {
+          type: String
+        },
       },
 
-      ready: function () {
+      ready: async function () {
+        var mixintype= this.document.properties['report:mixintype'] !== null ? "' AND ecm:mixintype='"+this.document.properties['report:mixintype']+"'":"";
+        var currentLifeCycleState=this.document.properties['report:lifeCycleState'] !== "" ? "AND ecm:currentLifeCycleState='"+this.document.properties['report:lifeCycleState']+"'":"";
+
+        this.queryCsvExport = "SELECT * FROM "+this.document.properties['report:primarytype']+
+        " WHERE ecm:isProxy = 0 AND ecm:isVersion = 0 AND ecm:isTrashed = 0 "+currentLifeCycleState+mixintype+
+        " AND "+this.document.properties['report:dateField']+" BETWEEN DATE '"+this._formatDate(this.startDate)+"' AND DATE '"+this._extendEndDate(this.endDate)+"'";
+
+        const format = await this._getCurrencyFormat();
+        this.currencyFormat = format;
+        const curr = await this._getCurrency();
+        this.currency = curr;
         setTimeout(function () {
           this.$.table.shadowRoot.getElementById("container").style.width = '100%';
         }.bind(this), 1000);
@@ -147,7 +182,7 @@
             }
           });
 
-          return mergedData;
+          return mergedData.sort(this.compare);
         }
       },
 
@@ -192,7 +227,9 @@
       /* Value Type: Number - Currency */
       _getValue: function (value) {
         if (this._isCurrency(this.document)) {
-          return this._formatCurrency(value);
+          //TODO get the currency format from option
+          return this._formatCurrency(value, this.currencyFormat) +" "+ this.currency;
+
         } else {
           return value;
         }
@@ -221,6 +258,46 @@
         //   this.iconHidden = false;
         //   this.$.table.fetch();
         // }
+      },
+
+       _getCurrencyFormat: async function(){
+         let params = {};
+         params.name = "CurrencyFormat";
+         this.$.getOption.params = params;
+         let result = await this.$.getOption.execute().then(function(response){
+             if(response === null){
+                return ",";
+             }else{
+                return response.value;
+             }
+         }.bind(this));
+         return result;
+      },
+
+      _getCurrency: async function(){
+         let params = {};
+         params.name = "Currency";
+         this.$.getOption.params = params;
+         let result = await this.$.getOption.execute().then(function(response){
+             if(response === null){
+                return "$";
+             }else{
+                return response.value;
+             }
+         }.bind(this));
+         return result;
+      },
+
+      compare: function(a, b) {
+        const valueA = a.value;
+        const valueB = b.value;
+        let comparison = 0;
+        if (valueA > valueB) {
+          comparison = 1;
+        } else if (valueA < valueB) {
+          comparison = -1;
+        }
+        return comparison * -1;
       }
 
     });

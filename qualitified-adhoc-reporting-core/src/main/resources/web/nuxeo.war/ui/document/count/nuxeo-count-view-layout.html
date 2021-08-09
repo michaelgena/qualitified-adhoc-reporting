@@ -1,3 +1,4 @@
+<link href="../../elements/qualitified-export-csv-button.html" rel="import">
 <dom-module id="nuxeo-count-view-layout">
   <template>
     <style include="reporting-styles">
@@ -19,9 +20,15 @@
         margin-top: 10px;
         text-align: center;
       }
+       .csvAction {
+        display: inline-flex;
+        position: absolute;
+        top: 3px;
+        right: 47px;
+      }
 
     </style>
-
+    <nuxeo-operation id="getOption" op="Qualitified.GetOptionValue"></nuxeo-operation>
     <nuxeo-repository-data role="widget"
                            start-date="[[startDate]]"
                            end-date="[[_extendEndDate(endDate)]]"
@@ -49,6 +56,9 @@
     <nuxeo-card heading="[[document.properties.dc:title]]">
 
       <div id="edit" hidden$="[[!editMode]]">
+        <div class="csvAction">
+          <qualitified-export-csv-button id="csvExport" query="[[queryCsvExport]]" schemas="dublincore,common,uid"></qualitified-export-csv-button>
+        </div>
         <report-edit-delete document="{{document}}"></report-edit-delete>
       </div>
 
@@ -60,7 +70,7 @@
 
       <h2 style$="[[document.properties.count:style]]">
         [[document.properties.count:prefix]]
-        [[_getValue(data)]]
+        [[value]] <template is="dom-if" if="[[_isCurrency(document)]]"><qualitified-option id="currency" name="Currency" default="$"></qualitified-option></template>
         [[document.properties.count:suffix]]
       </h2>
 
@@ -69,7 +79,7 @@
         <span class="last-year">
           <span class="last-year-value">
             [[document.properties.count:prefix]]
-            [[_getValue(lastYearData)]]
+            [[lastYearValue]] <template is="dom-if" if="[[_isCurrency(document)]]"><qualitified-option id="currency" name="Currency" default="$"></qualitified-option></template>
             [[document.properties.count:suffix]]
           </span>
           <span id="lastYearPercentage">
@@ -95,12 +105,44 @@
         document: {
           type: Object,
         },
+        value: {
+          type: String
+        },
+        queryCsvExport: {
+          type: String
+        },
+        lastYearValue: {
+          type: String
+        },
+        data: {
+          type: Number,
+          observer: '_dataChanged'
+        },
+        lastYearData: {
+          type: Number,
+          observer: '_lastYearDataChanged'
+        }
+      },
+      ready: function() {
+        var mixintype= this.document.properties['report:mixintype'] !== null ? "' AND ecm:mixintype='"+this.document.properties['report:mixintype']+"'":"";
+        var currentLifeCycleState=this.document.properties['report:lifeCycleState'] !== "" ? "AND ecm:currentLifeCycleState='"+this.document.properties['report:lifeCycleState']+"'":"";
+
+        this.queryCsvExport = "SELECT * FROM "+this.document.properties['report:primarytype']+
+        " WHERE ecm:isProxy = 0 AND ecm:isVersion = 0 AND ecm:isTrashed = 0 "+currentLifeCycleState+mixintype+
+        " AND "+this.document.properties['report:dateField']+" BETWEEN DATE '"+this._formatDate(this.startDate)+"' AND DATE '"+this._extendEndDate(this.endDate)+"'";
       },
 
+      _dataChanged: async function(data){
+        this.value = await this._getValue((data).toFixed());
+      },
+      _lastYearDataChanged: async function(data){
+        this.lastYearValue = await this._getValue((data).toFixed());
+      },
       /* Value Type: Number - Currency */
-      _getValue: function (value) {
+      _getValue: async function (value) {
         if (this._isCurrency(this.document)) {
-          return this._formatCurrency(value);
+          const format = await this._getCurrencyFormat();
+          return this._formatCurrency(value, format);
         } else {
           return value;
         }
@@ -114,6 +156,26 @@
         else {
           return false;
         }
+      },
+
+      _getCurrencyFormat: async function(){
+         let params = {};
+         params.name = "CurrencyFormat";
+         this.$.getOption.params = params;
+         let result = await this.$.getOption.execute().then(function(response){
+             if(response === null){
+                return ",";
+             }else{
+                return response.value;
+             }
+         }.bind(this));
+         return result;
+      },
+      _formatCurrency: function(val, format) {
+        if(val == null){
+          return "";
+        }
+        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, format);
       }
 
     });

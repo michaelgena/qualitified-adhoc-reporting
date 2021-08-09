@@ -141,7 +141,7 @@
     },
 
     _isCurrency: function (doc) {
-      return doc ? doc.properties['count:valuetype'] == 'Currency' : false;
+      return doc ? (doc.properties['count:valuetype'] == 'Currency' || doc.properties['table:valuetype'] == 'Currency') : false;
     },
 
     _formatCurrency: function (value) {
@@ -162,7 +162,14 @@
         return where;
       }
       return "";
-    }
+    },
+
+    _formatCurrency: function(val, format) {
+        if(val == null){
+          return "";
+        }
+        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, format);
+      }
 
   };
 </script>

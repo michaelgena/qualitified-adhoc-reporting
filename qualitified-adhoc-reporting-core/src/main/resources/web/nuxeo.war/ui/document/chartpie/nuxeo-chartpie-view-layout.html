@@ -8,6 +8,12 @@
         font-size: .8rem;
         margin-top: 35px;
       }
+      .csvAction {
+       display: inline-flex;
+       position: absolute;
+       top: 3px;
+       right: 47px;
+      }
 
     </style>
 
@@ -27,6 +33,9 @@
 
     <nuxeo-card heading="[[document.properties.dc:title]]">
       <div id="edit" hidden$="[[!editMode]]">
+        <div class="csvAction">
+          <qualitified-export-csv-button id="csvExport" query="[[queryCsvExport]]" schemas="dublincore,common,uid"></qualitified-export-csv-button>
+        </div>
         <report-edit-delete document="{{document}}"></report-edit-delete>
       </div>
       <chart-pie id="chartPie"
@@ -57,7 +66,23 @@
         endDate: {
           type: String,
           value: ''
+        },
+        data: {
+          type: Object,
+        },
+
+        queryCsvExport: {
+          type: String
         }
+      },
+      ready: function() {
+        var mixintype= this.document.properties['report:mixintype'] !== null ? "' AND ecm:mixintype='"+this.document.properties['report:mixintype']+"'":"";
+        var currentLifeCycleState=this.document.properties['report:lifeCycleState'] !== "" ? "AND ecm:currentLifeCycleState='"+this.document.properties['report:lifeCycleState']+"'":"";
+
+        this.queryCsvExport = "SELECT * FROM "+this.document.properties['report:primarytype']+
+        " WHERE ecm:isProxy = 0 AND ecm:isVersion = 0 AND ecm:isTrashed = 0 "+currentLifeCycleState+mixintype+
+        " AND "+this.document.properties['report:dateField']+" BETWEEN DATE '"+this._formatDate(this.startDate)+"' AND DATE '"+this._extendEndDate(this.endDate)+"'";
+
       },
 
       resizeReport: function () {
