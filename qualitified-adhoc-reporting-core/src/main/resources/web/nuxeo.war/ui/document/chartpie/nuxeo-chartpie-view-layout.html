@@ -1,4 +1,3 @@
-<link href="../../elements/qualitified-export-csv-button.html" rel="import">
 <dom-module id="nuxeo-chartpie-view-layout">
   <template>
     <style include="reporting-styles">
@@ -68,12 +67,22 @@
           type: String,
           value: ''
         },
+        data: {
+          type: Object,
+        },
+
         queryCsvExport: {
           type: String
         }
       },
       ready: function() {
-      this.queryCsvExport = "SELECT * FROM "+this.document.properties['report:primarytype']+"";
+        var mixintype= this.document.properties['report:mixintype'] !== null ? "' AND ecm:mixintype='"+this.document.properties['report:mixintype']+"'":"";
+        var currentLifeCycleState=this.document.properties['report:lifeCycleState'] !== "" ? "AND ecm:currentLifeCycleState='"+this.document.properties['report:lifeCycleState']+"'":"";
+
+        this.queryCsvExport = "SELECT * FROM "+this.document.properties['report:primarytype']+
+        " WHERE ecm:isProxy = 0 AND ecm:isVersion = 0 AND ecm:isTrashed = 0 "+currentLifeCycleState+mixintype+
+        " AND "+this.document.properties['report:dateField']+" BETWEEN DATE '"+this._formatDate(this.startDate)+"' AND DATE '"+this._extendEndDate(this.endDate)+"'";
+
       },
 
       resizeReport: function () {
