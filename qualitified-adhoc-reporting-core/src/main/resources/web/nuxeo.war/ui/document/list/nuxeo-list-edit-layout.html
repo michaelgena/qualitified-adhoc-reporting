@@ -18,6 +18,9 @@
                     label="[[i18n('label.metadata.nxql')]]"></nuxeo-textarea>
     <nuxeo-input label="[[i18n('label.metadata.schemas')]]" value="{{document.properties.list:schemas}}"></nuxeo-input>
 
+    <h3>[[i18n('label.report.layout.csv')]]</h3>
+    <nuxeo-input role="reportWidget" value="{{document.properties.report:schemas}}" label="[[i18n('label.report.schemas')]]" type="text"></nuxeo-input>
+
   </template>
 
   <script>
