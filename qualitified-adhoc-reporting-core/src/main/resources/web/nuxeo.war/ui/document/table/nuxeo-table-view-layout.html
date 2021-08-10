@@ -130,7 +130,13 @@
       },
 
       ready: async function () {
-        this.queryCsvExport = "SELECT * FROM "+this.document.properties['report:primarytype']+"";
+        var mixintype= this.document.properties['report:mixintype'] !== null ? "' AND ecm:mixintype='"+this.document.properties['report:mixintype']+"'":"";
+        var currentLifeCycleState=this.document.properties['report:lifeCycleState'] !== "" ? "AND ecm:currentLifeCycleState='"+this.document.properties['report:lifeCycleState']+"'":"";
+
+        this.queryCsvExport = "SELECT * FROM "+this.document.properties['report:primarytype']+
+        " WHERE ecm:isProxy = 0 AND ecm:isVersion = 0 AND ecm:isTrashed = 0 "+currentLifeCycleState+mixintype+
+        " AND "+this.document.properties['report:dateField']+" BETWEEN DATE '"+this._formatDate(this.startDate)+"' AND DATE '"+this._extendEndDate(this.endDate)+"'";
+
         const format = await this._getCurrencyFormat();
         this.currencyFormat = format;
         const curr = await this._getCurrency();
