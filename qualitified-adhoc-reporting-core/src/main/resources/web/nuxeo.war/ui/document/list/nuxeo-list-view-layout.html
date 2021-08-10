@@ -334,7 +334,7 @@
     </nuxeo-page-provider>
     <nuxeo-page-provider id="csvExportProvider" page-size="50"
                          query="[[document.properties.list:nxql]]"
-                         schemas="dublincore,common,uid" enrichers="thumbnail">
+                         schemas="[[_getSchemas(document)]]" enrichers="thumbnail">
     </nuxeo-page-provider>
     <template id="domIfFeed" is="dom-if" if="{{_checkOption(document, 'feed')}}">
         <nuxeo-card icon="[[document.properties.list:icon]]" heading="[[document.properties.dc:title]]">
@@ -447,13 +447,13 @@
        },
      },
 
-     ready: async function () {
-     this.csvExport =this.$.csvExportProvider;
-       const curr = await this._getFeedDisplayedMetadata();
-       var obj = JSON.parse(curr);
-       this.opportunity=obj.documents[0].Opportunity;
-       this.interaction=obj.documents[1].Interaction;
-       this.contact=obj.documents[2].Contact;
+     ready: function () {
+       this.csvExport =this.$.csvExportProvider;
+       //const curr = await this._getFeedDisplayedMetadata();
+       //var obj = JSON.parse(curr);
+       //this.opportunity=obj.documents[0].Opportunity;
+       //this.interaction=obj.documents[1].Interaction;
+       //this.contact=obj.documents[2].Contact;
        this.$$('#domIfFavorites').addEventListener('dom-change', function () {
          var favoriteDocs = this.$$("#favoriteDocs");
          var favoritesProvider = this.$.favoritesProvider;

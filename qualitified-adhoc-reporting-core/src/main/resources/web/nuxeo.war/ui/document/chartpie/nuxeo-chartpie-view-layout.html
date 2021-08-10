@@ -34,7 +34,7 @@
     <nuxeo-card heading="[[document.properties.dc:title]]">
       <div id="edit" hidden$="[[!editMode]]">
         <div class="csvAction">
-          <qualitified-export-csv-button id="csvExport" query="[[queryCsvExport]]" schemas="dublincore,common,uid"></qualitified-export-csv-button>
+          <qualitified-export-csv-button id="csvExport" query="[[queryCsvExport]]" schemas="[[_getSchemas(document)]]"></qualitified-export-csv-button>
         </div>
         <report-edit-delete document="{{document}}"></report-edit-delete>
       </div>

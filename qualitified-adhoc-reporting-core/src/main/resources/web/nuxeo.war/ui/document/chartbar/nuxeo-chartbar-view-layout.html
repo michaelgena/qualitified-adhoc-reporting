@@ -42,7 +42,7 @@
     <nuxeo-card heading="[[document.properties.dc:title]]">
       <div id="edit" hidden$="[[!editMode]]">
         <div class="csvAction">
-          <nuxeo-csv-export-button id="csvExport" provider="[[csvExport]]" schemas="dublincore,common,uid"></nuxeo-csv-export-button>
+          <nuxeo-csv-export-button id="csvExport" provider="[[csvExport]]" schemas="[[_getSchemas(document)]]"></nuxeo-csv-export-button>
         </div>
         <report-edit-delete document="{{document}}"></report-edit-delete>
       </div>

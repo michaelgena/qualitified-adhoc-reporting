@@ -73,4 +73,6 @@
 
   <xs:element name="responsibleUser" type="xs:string"/>
 
+  <xs:element name="schemas" type="xs:string"/>
+
 </xs:schema>
