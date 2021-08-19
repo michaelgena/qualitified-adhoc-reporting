@@ -3,15 +3,19 @@
 @group Nuxeo UI
 @element txm-document-comments
 -->
-<dom-module id="txm-document-comments">
+<!-- As a workaround of https://jira.nuxeo.com/browse/WEBUI-182 -->
+<link rel="import" href="../elements.html">
+<link rel="import" href="../themes/default/theme.html">
+<link rel="import" href="qualitified-document-comment-thread.html">
+<dom-module id="qualitified-document-comments">
     <template>
         <nuxeo-card>
-            <txm-document-comment-thread name="comments" uid="[[document.uid]]"></txm-document-comment-thread>
+            <qualitified-document-comment-thread name="comments" uid="[[document.uid]]"></qualitified-document-comment-thread>
         </nuxeo-card>
     </template>
     <script>
     Polymer({
-      is: 'txm-document-comments',
+      is: 'qualitified-document-comments',
       behaviors: [Nuxeo.LayoutBehavior],
       properties: {
         //You can use either @schema or @doctype annotation in your model
