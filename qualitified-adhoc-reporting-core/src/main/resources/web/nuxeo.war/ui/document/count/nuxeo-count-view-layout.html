@@ -121,19 +121,50 @@
         lastYearData: {
           type: Number,
           observer: '_lastYearDataChanged'
+        },
+        startDate: {
+          type: String,
+          observer: '_buildCSVQuery'
+        },
+        endDate: {
+          type: String,
+          observer: '_buildCSVQuery'
+        },
+        responsibleUser: {
+          type: String,
+          value: null,
+          observer: '_buildCSVQuery'
         }
       },
       ready: function() {
-        var mixintype= this.document.properties['report:mixintype'] !== null ? "' AND ecm:mixintype='"+this.document.properties['report:mixintype']+"'":"";
-        var currentLifeCycleState=this.document.properties['report:lifeCycleState'] !== "" ? "AND ecm:currentLifeCycleState='"+this.document.properties['report:lifeCycleState']+"'":"";
+        this._buildCSVQuery();
+      },
+      
+      _buildCSVQuery: function(){
+        let mixintype= this.document.properties['report:mixintype'] !== null ? " AND ecm:mixintype='"+this.document.properties['report:mixintype']+"'":"";
+        let currentLifeCycleState=this.document.properties['report:lifeCycleState'] !== null ? " AND ecm:currentLifeCycleState='"+this.document.properties['report:lifeCycleState']+"'":"";
+        let responsibleUser = (this.document.properties['report:responsibleUser'] !== null && this.responsibleUser !== null) ? " AND "+this.document.properties['report:responsibleUser']+"= '"+ this.responsibleUser+"'":"";
+        let dateFilter = "";
+        if(this.document.properties['report:dateField'] !== null){
+          dateFilter = (this.startDate !== null && this.endDate !== null) ? " AND "+this.document.properties['report:dateField']+" BETWEEN DATE '"+this._formatDate(this.startDate)+"' AND DATE '"+this._extendEndDate(this.endDate)+"'" : "";
+          if(dateFilter === ""){
+            dateFilter = (this.startDate !== null && this.endDate === null) ? " AND "+this.document.properties['report:dateField']+" >= DATE '"+this._formatDate(this.startDate)+"'" : "";
+          }
+          if(dateFilter === ""){
+            dateFilter = (this.startDate === null && this.endDate !== null) ? " AND "+this.document.properties['report:dateField']+" <= DATE '"+this._extendEndDate(this.endDate)+"'" : "";
+          }
+        }
 
         this.queryCsvExport = "SELECT * FROM "+this.document.properties['report:primarytype']+
-        " WHERE ecm:isProxy = 0 AND ecm:isVersion = 0 AND ecm:isTrashed = 0 "+currentLifeCycleState+mixintype+
-        " AND "+this.document.properties['report:dateField']+" BETWEEN DATE '"+this._formatDate(this.startDate)+"' AND DATE '"+this._extendEndDate(this.endDate)+"'";
+        " WHERE ecm:isProxy = 0 AND ecm:isVersion = 0 AND ecm:isTrashed = 0 "+
+        currentLifeCycleState+
+        mixintype+
+        responsibleUser+
+        dateFilter;
       },
 
       _dataChanged: async function(data){
-        this.value = await this._getValue((data).toFixed());
+        this.value = data? await this._getValue((data).toFixed()): "";
       },
       _lastYearDataChanged: async function(data){
         this.lastYearValue = await this._getValue((data).toFixed());
