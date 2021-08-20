@@ -370,7 +370,7 @@
                         <a> <div class="post-title" on-tap="_goTodoc"> {{_previewDesc(item.title)}}</div></a>
                       </div>
                     </div>
-                    <div class="news-description">{{_previewDesc(item.properties.dc:description)}}... <a class="lire" on-tap="_goTodoc">voir plus</a> </div>
+                    <div class="news-description">{{_previewDesc(item.properties.dc:description)}} <a class="lire" on-tap="_goTodoc">...</a> </div>
                     <div>
                       <template is="dom-repeat" items="{{_getMetadataForDocumentType(item.type)}}" as="metadata">
                         <div role="widget" hidden$="[[!_getValue(item,metadata)]]">
