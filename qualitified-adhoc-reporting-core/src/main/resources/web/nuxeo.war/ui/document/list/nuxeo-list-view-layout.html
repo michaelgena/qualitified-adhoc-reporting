@@ -341,7 +341,7 @@
 
     <nuxeo-page-provider id="feedProvider" page-size="50" auto
                          query="[[document.properties.list:nxql]]"
-                         schemas="dublincore,opportunity,common,uid,[[document.properties.list:schemas]]" current-page="{{docList}}" enrichers="thumbnail">
+                         schemas="*" current-page="{{docList}}" enrichers="thumbnail">
     </nuxeo-page-provider>
     <nuxeo-page-provider id="csvExportProvider" page-size="50"
                          query="[[document.properties.list:nxql]]"
@@ -371,23 +371,14 @@
                       </div>
                     </div>
                     <div class="news-description">{{_previewDesc(item.properties.dc:description)}}... <a class="lire" on-tap="_goTodoc">voir plus</a> </div>
-                    <!--div>
-                      <template id="domIfOpportunity" is="dom-if" if="{{_checkDocType(item, 'Opportunity')}}">
-                        <template is="dom-repeat" items="{{opportunity}}" as="opp">
-                          <div style="display: flex; padding-bottom: 15px;"><div class="infoType">{{_getValueName(opp)}} :</div><div class="info">{{_getValue(item,opp)}}</div></div>
-                        </template>
+                    <div>
+                      <template is="dom-repeat" items="{{_getMetadataForDocumentType(item.type)}}" as="metadata">
+                        <div role="widget" hidden$="[[!_getValue(item,metadata)]]">
+                          <label>[[i18n(metadata.name)]]</label>
+                          <div>[[_getValue(item,metadata)]] <template is="dom-if" if="[[_isCurrency(metadata.type)]]"><qualitified-option id="currency" name="Currency" default="$"></qualitified-option></template></div>
+                        </div>
                       </template>
-                      <template id="domIfInteraction" is="dom-if" if="{{_checkDocType(item, 'Interaction')}}">
-                        <template is="dom-repeat" items="{{interaction}}" as="int">
-                          <div style="display: flex; padding-bottom: 15px;"> <div class="infoType">  {{_getValueName(int)}} :</div><div class="info"> {{_getValue(item,int)}}</div></div>
-                        </template>
-                      </template>
-                      <template id="domIfContact" is="dom-if" if="{{_checkDocType(item, 'Contact')}}">
-                        <template is="dom-repeat" items="{{contact}}" as="cnt">
-                          <div style="display: flex; padding-bottom: 15px;"> <div class="infoType">  {{_getValueName(cnt)}} :</div><div class="info"> {{_getValue(item,cnt)}}</div></div>
-                        </template>
-                      </template>
-                    </div-->
+                    </div>
                     <div class="commentsSection"style=" position: absolute; bottom: 0; background-color: #FFFFFF; width: 500px; border-top: outset; overflow-y: scroll;">
                       <qualitified-document-comments document="[[item]]" name="comments"></qualitified-document-comments>
                     </div>
@@ -445,30 +436,13 @@
          type: Number,
          value: 10000,
        },
-        opportunity: {
-         type: Array,
-         value: [{'label':'title',
-                   'value':'dc:title'}],
-       },
-        interaction: {
-         type: Array,
-         value: [{'label':'title',
-                   'value':'dc:title'}],
-       },
-        contact: {
-         type: Array,
-         value: [{'label':'title',
-                   'value':'dc:title'}],
-       },
+       feedDisplayedMetadata: {
+         type: Array
+       }
      },
 
-     ready: function () {
-
-       //const curr = await this._getFeedDisplayedMetadata();
-       //var obj = JSON.parse(curr);
-       //this.opportunity=obj.documents[0].Opportunity;
-       //this.interaction=obj.documents[1].Interaction;
-       //this.contact=obj.documents[2].Contact;
+     ready: async function () {
+      this.feedDisplayedMetadata = await this._getFeedDisplayedMetadata();
        this.$$('#domIfFavorites').addEventListener('dom-change', function () {
          var favoriteDocs = this.$$("#favoriteDocs");
          var favoritesProvider = this.$.favoritesProvider;
@@ -529,21 +503,19 @@
        }
        return false;
      },
-     _checkDocType: function (doc, option) {
-       if (doc.type == option) {
-         return true;
-       }
-       return false;
+
+     _getValue: function (item, metadata) {
+        if(metadata.type === "currency"){
+          return this._formatCurrency(item.properties[metadata.value]);
+        }
+        else if(metadata.type === "date"){
+          return this.formatDate(item.properties[metadata.value]);
+        }else{
+          return item.properties[metadata.value];
+        }
      },
-     _getValue: function (item,opp) {
-     if(opp.name.substring(opp.name.lastIndexOf('.')+1) == "amount"){
-        return this._formatCurrency(item.properties[""+opp.value+""]);
-     }
-     else if(opp.name.substring(opp.name.lastIndexOf('.')+1) == "closeDate"){
-       return this.formatDate(item.properties[""+opp.value+""]);}
-     },
-     _getValueName: function (opp) {
-       return opp.name.substring(opp.name.lastIndexOf('.')+1);
+     _isCurrency: function (metadataType){
+        return metadataType === "currency";
      },
     _formatCurrency: function (value) {
      return value ? value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : value;
@@ -635,7 +607,17 @@
         }.bind(this));
         return result;
       },
-
+      _getMetadataForDocumentType: function(docType){
+        let obj = JSON.parse(this.feedDisplayedMetadata);
+        let metadata = null;
+        obj.documents.forEach(function(item){
+          if (item.documentType === docType){
+            metadata = item.data;
+            return;
+          }
+        });
+        return metadata;
+      }
    });
  </script>
 </dom-module>
