@@ -17,7 +17,11 @@
 
     <nuxeo-textarea role="widget" value="{{document.properties.list:nxql}}"
                     label="[[i18n('label.metadata.nxql')]]"></nuxeo-textarea>
-    <nuxeo-input label="[[i18n('label.metadata.schemas')]]" value="{{document.properties.list:schemas}}"></nuxeo-input>
+    <!--nuxeo-input label="[[i18n('label.metadata.schemas')]]" value="{{document.properties.list:schemas}}"></nuxeo-input-->
+    <template is="dom-if" if="{{_isFeed(selectedOption)}}">
+      <nuxeo-textarea role="widget" value="{{document.properties.list:feedMetadata}}"
+                      label="[[i18n('label.metadata.feedmetadata')]]"></nuxeo-textarea>
+    </template>
 
     <h3>[[i18n('label.report.layout.csv')]]</h3>
     <nuxeo-input role="reportWidget" value="{{document.properties.report:schemas}}" label="[[i18n('label.report.schemas')]]" type="text"></nuxeo-input>
@@ -75,6 +79,9 @@
             break;
         }
         return true;
+      },
+      _isFeed: function(selectedOption){
+        return selectedOption && selectedOption === "feed";
       }
     });
   </script>

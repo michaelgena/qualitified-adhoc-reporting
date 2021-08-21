@@ -67,6 +67,7 @@
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: space-between;
+        overflow:scroll;
       }
       .news-card {
           position: relative;
@@ -351,7 +352,7 @@
       <nuxeo-card icon="[[document.properties.list:icon]]" heading="[[document.properties.dc:title]]">
         <div id="editFeed" hidden$="[[!editMode]]">
           <div class="csvAction">
-            <nuxeo-csv-export-button id="csvFeedExport" provider="[[document.properties.list:nxql]]"></nuxeo-csv-export-button>
+            <qualitified-export-csv-button id="csvFeedExport" query="[[document.properties.list:nxql]]" schemas="[[_getSchemas(document)]]"></qualitified-export-csv-button>
           </div>
           <report-edit-delete document="{{document}}"></report-edit-delete>
         </div>
@@ -365,12 +366,13 @@
                       <nuxeo-user-avatar user="[[item.properties.dc:lastContributor]]" height="[[_computeAvatarDimensions(level)]]" width="[[_computeAvatarDimensions(level)]]" border-radius="50" font-size="[[_computeAvatarFontSize(level)]]">
                       </nuxeo-user-avatar>
                       <div class="news-title">
-                        <a> <div class="user">{{item.properties.dc:lastContributor}}</div></a>
+                        <a><div class="user">{{item.properties.dc:lastContributor}}</div></a>
                         <div class="news-date"><nuxeo-date datetime="[[item.properties.dc:modified]]" format="relative"></nuxeo-date></div>
-                        <a> <div class="post-title" on-tap="_goTodoc"> {{_previewDesc(item.title)}}</div></a>
+                        <a><div on-tap="_goTodoc"> {{_previewDesc(item.title)}}</div></a>
+                        <nuxeo-tag>[[formatDocType(item.type)]]</nuxeo-tag>
                       </div>
                     </div>
-                    <div class="news-description">{{_previewDesc(item.properties.dc:description)}} <a class="lire" on-tap="_goTodoc">...</a> </div>
+                    <div class="news-description" hidden$="[[!item.properties.dc:description]]">{{_previewDesc(item.properties.dc:description)}} <a class="lire" on-tap="_goTodoc">...</a> </div>
                     <div>
                       <template is="dom-repeat" items="{{_getMetadataForDocumentType(item.type)}}" as="metadata">
                         <div role="widget" hidden$="[[!_getValue(item,metadata)]]">
@@ -435,14 +437,10 @@
         amount: {
          type: Number,
          value: 10000,
-       },
-       feedDisplayedMetadata: {
-         type: Array
        }
      },
 
-     ready: async function () {
-      this.feedDisplayedMetadata = await this._getFeedDisplayedMetadata();
+     ready: function () {
        this.$$('#domIfFavorites').addEventListener('dom-change', function () {
          var favoriteDocs = this.$$("#favoriteDocs");
          var favoritesProvider = this.$.favoritesProvider;
@@ -467,11 +465,7 @@
          customDocs.nxProvider = this.$.customProvider;
          customDocs.fetch();
        }.bind(this));
-
        this.$$('#domIfFeed').addEventListener('dom-change', function () {
-        // var customDocs = this.$$("#customDocs");
-        // customDocs.nxProvider = this.$.customProvider;
-         //customDocs.fetch();
        }.bind(this));
 
      },
@@ -594,21 +588,8 @@
          }.bind(this));
        }
      },
-      _getFeedDisplayedMetadata: async function(){
-        let params = {};
-        params.name = "FeedDisplayedMetadata";
-        this.$.getOption.params = params;
-        let result = await this.$.getOption.execute().then(function(response){
-            if(response === null){
-                return "";
-            }else{
-                return response.value;
-            }
-        }.bind(this));
-        return result;
-      },
       _getMetadataForDocumentType: function(docType){
-        let obj = JSON.parse(this.feedDisplayedMetadata);
+        let obj = JSON.parse(this.document.properties["list:feedMetadata"]);
         let metadata = null;
         obj.documents.forEach(function(item){
           if (item.documentType === docType){
