@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <component name="adhoc.reporting.extensions" version="1.0.0">
-  <!--require>org.nuxeo.runtime.started</require-->
+  <require>org.nuxeo.runtime.started</require>
   <extension target="org.nuxeo.ecm.core.schema.TypeService" point="schema">
     <schema name="chartbar" prefix="chartbar" override="true" src="data/schemas/chartbar.xsd"/>
     <schema name="chartline" prefix="chartline" override="true" src="data/schemas/chartline.xsd"/>
@@ -114,6 +114,16 @@
     <doctype name="Root" append="true">
       <subtypes>
         <type>Options</type>
+      </subtypes>
+    </doctype>
+    <doctype name="Workspace" append="true">
+      <subtypes>
+        <type>ChartBar</type>
+        <type>ChartLine</type>
+        <type>ChartPie</type>
+        <type>Count</type>
+        <type>Table</type>
+        <type>List</type>
       </subtypes>
     </doctype>
   </extension>

@@ -14,6 +14,9 @@
        top: 3px;
        right: 47px;
       }
+      .buttons {
+         opacity:20%;
+      }
 
     </style>
 
@@ -30,20 +33,23 @@
                            where="[[_setWhereTerm(document.properties.report:responsibleUser, responsibleUser)]]"
                            metrics="[[document.properties.report:metrics]]">
     </nuxeo-repository-data>
-
-    <nuxeo-card heading="[[document.properties.dc:title]]">
-      <div id="edit" hidden$="[[!editMode]]">
-        <div class="csvAction">
-          <qualitified-export-csv-button id="csvExport" query="[[queryCsvExport]]" schemas="[[_getSchemas(document)]]"></qualitified-export-csv-button>
+    <div on-mouseover="_show" on-mouseout="_hide">
+      <nuxeo-card heading="[[document.properties.dc:title]]">
+        <div id="displaybtns" class="buttons">
+          <div class="csvAction">
+            <qualitified-export-csv-button id="csvExport" query="[[queryCsvExport]]" schemas="[[_getSchemas(document)]]"></qualitified-export-csv-button>
+          </div>
+          <div id="edit" hidden$="[[!editMode]]">
+            <report-edit-delete document="{{document}}"></report-edit-delete>
+          </div>
         </div>
-        <report-edit-delete document="{{document}}"></report-edit-delete>
-      </div>
-      <chart-pie id="chartPie"
-                 values="[[_values(data)]]"
-                 labels="[[_labels(data)]]"
-                 options='{ "legend": { "display": true, "position": "bottom", "labels": { "boxWidth": 12 } }, "animation": false }'>
-      </chart-pie>
-    </nuxeo-card>
+        <chart-pie id="chartPie"
+                   values="[[_values(data)]]"
+                   labels="[[_labels(data)]]"
+                   options='{ "legend": { "display": true, "position": "bottom", "labels": { "boxWidth": 12 } }, "animation": false }'>
+        </chart-pie>
+      </nuxeo-card>
+    </div>
     <slot></slot>
   </template>
 
@@ -70,7 +76,6 @@
         data: {
           type: Object,
         },
-
         queryCsvExport: {
           type: String
         },
@@ -92,7 +97,15 @@
       ready: function() {
         this._buildCSVQuery();
       },
-
+      _show: function () {
+       this.$.displaybtns.style.opacity ='100%';
+       this.$$("#displaybtns").querySelector("#edit > report-edit-delete").shadowRoot.querySelector("div").style.opacity='100%';
+       this.$$("#displaybtns").querySelector("#csvExport").shadowRoot.querySelector("#btn").shadowRoot.querySelector("div").style.opacity='100%';
+      },
+       _hide: function () {
+       this.$$("#displaybtns").querySelector("#edit > report-edit-delete").shadowRoot.querySelector("div").style.opacity='20%';
+       this.$$("#displaybtns").querySelector("#csvExport").shadowRoot.querySelector("#btn").shadowRoot.querySelector("div").style.opacity='20%';
+      },
       _buildCSVQuery: function(){
         let mixintype= this.document.properties['report:mixintype'] !== null ? " AND ecm:mixintype='"+this.document.properties['report:mixintype']+"'":"";
         let currentLifeCycleState=this.document.properties['report:lifeCycleState'] !== null ? " AND ecm:currentLifeCycleState='"+this.document.properties['report:lifeCycleState']+"'":"";

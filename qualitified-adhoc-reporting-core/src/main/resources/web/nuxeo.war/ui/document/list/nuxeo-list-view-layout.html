@@ -150,6 +150,9 @@
         top: 3px;
         right: 47px;
       }
+      .buttons {
+         opacity:20%;
+      }
 
     </style>
 
@@ -349,48 +352,52 @@
                          schemas="[[_getSchemas(document)]]" enrichers="thumbnail">
     </nuxeo-page-provider>
     <template id="domIfFeed" is="dom-if" if="{{_checkOption(document, 'feed')}}">
-      <nuxeo-card icon="[[document.properties.list:icon]]" heading="[[document.properties.dc:title]]">
-        <div id="editFeed" hidden$="[[!editMode]]">
-          <div class="csvAction">
-            <qualitified-export-csv-button id="csvFeedExport" query="[[document.properties.list:nxql]]" schemas="[[_getSchemas(document)]]"></qualitified-export-csv-button>
+      <div on-mouseover="_show" on-mouseout="_hide">
+        <nuxeo-card icon="[[document.properties.list:icon]]" heading="[[document.properties.dc:title]]">
+          <div id="displaybtns" class="buttons">
+            <div class="csvAction">
+              <qualitified-export-csv-button id="csvFeedExport" query="[[document.properties.list:nxql]]" schemas="[[_getSchemas(document)]]"></qualitified-export-csv-button>
+            </div>
+            <div id="editFeed" hidden$="[[!editMode]]">
+              <report-edit-delete document="{{document}}"></report-edit-delete>
+            </div>
           </div>
-          <report-edit-delete document="{{document}}"></report-edit-delete>
-        </div>
-        <div>
-          <section name="dashboard" class="dashboard">
-            <div class="board">
-              <div class="column2">
-                <template is="dom-repeat" items="{{docList}}" as="item">
-                  <div class="news-card" >
-                    <div class="news-content">
-                      <nuxeo-user-avatar user="[[item.properties.dc:lastContributor]]" height="[[_computeAvatarDimensions(level)]]" width="[[_computeAvatarDimensions(level)]]" border-radius="50" font-size="[[_computeAvatarFontSize(level)]]">
-                      </nuxeo-user-avatar>
-                      <div class="news-title">
-                        <a><div class="user">{{item.properties.dc:lastContributor}}</div></a>
-                        <div class="news-date"><nuxeo-date datetime="[[item.properties.dc:modified]]" format="relative"></nuxeo-date></div>
-                        <a><div on-tap="_goTodoc"> {{_previewDesc(item.title)}}</div></a>
-                        <nuxeo-tag>[[formatDocType(item.type)]]</nuxeo-tag>
+          <div>
+            <section name="dashboard" class="dashboard">
+              <div class="board">
+                <div class="column2">
+                  <template is="dom-repeat" items="{{docList}}" as="item">
+                    <div class="news-card" >
+                      <div class="news-content">
+                        <nuxeo-user-avatar user="[[item.properties.dc:lastContributor]]" height="[[_computeAvatarDimensions(level)]]" width="[[_computeAvatarDimensions(level)]]" border-radius="50" font-size="[[_computeAvatarFontSize(level)]]">
+                        </nuxeo-user-avatar>
+                        <div class="news-title">
+                          <a><div class="user">{{item.properties.dc:lastContributor}}</div></a>
+                          <div class="news-date"><nuxeo-date datetime="[[item.properties.dc:modified]]" format="relative"></nuxeo-date></div>
+                          <a><div on-tap="_goTodoc"> {{_previewDesc(item.title)}}</div></a>
+                          <nuxeo-tag>[[formatDocType(item.type)]]</nuxeo-tag>
+                        </div>
+                      </div>
+                      <div class="news-description" hidden$="[[!item.properties.dc:description]]">{{_previewDesc(item.properties.dc:description)}} <a class="lire" on-tap="_goTodoc">...</a> </div>
+                      <div>
+                        <template is="dom-repeat" items="{{_getMetadataForDocumentType(item.type)}}" as="metadata">
+                          <div role="widget" hidden$="[[!_getValue(item,metadata)]]">
+                            <label>[[i18n(metadata.name)]]</label>
+                            <div>[[_getValue(item,metadata)]] <template is="dom-if" if="[[_isCurrency(metadata.type)]]"><qualitified-option id="currency" name="Currency" default="$"></qualitified-option></template></div>
+                          </div>
+                        </template>
+                      </div>
+                      <div class="commentsSection"style=" position: absolute; bottom: 0; background-color: #FFFFFF; width: 500px; border-top: outset; overflow-y: scroll;">
+                        <qualitified-document-comments document="[[item]]" name="comments"></qualitified-document-comments>
                       </div>
                     </div>
-                    <div class="news-description" hidden$="[[!item.properties.dc:description]]">{{_previewDesc(item.properties.dc:description)}} <a class="lire" on-tap="_goTodoc">...</a> </div>
-                    <div>
-                      <template is="dom-repeat" items="{{_getMetadataForDocumentType(item.type)}}" as="metadata">
-                        <div role="widget" hidden$="[[!_getValue(item,metadata)]]">
-                          <label>[[i18n(metadata.name)]]</label>
-                          <div>[[_getValue(item,metadata)]] <template is="dom-if" if="[[_isCurrency(metadata.type)]]"><qualitified-option id="currency" name="Currency" default="$"></qualitified-option></template></div>
-                        </div>
-                      </template>
-                    </div>
-                    <div class="commentsSection"style=" position: absolute; bottom: 0; background-color: #FFFFFF; width: 500px; border-top: outset; overflow-y: scroll;">
-                      <qualitified-document-comments document="[[item]]" name="comments"></qualitified-document-comments>
-                    </div>
-                  </div>
-                </template>
+                  </template>
+                </div>
               </div>
-            </div>
-          </section>
-        </div>
-      </nuxeo-card>
+            </section>
+          </div>
+        </nuxeo-card>
+      </div>
     </template>
 
     <slot></slot>
@@ -477,6 +484,24 @@
           desc=e.substring(0,200);
          return desc;
      },
+       _show: function () {
+       this.$$("#displaybtns").style.opacity='100%';
+       document.querySelector("body > nuxeo-app").shadowRoot.querySelector("#pages > nuxeo-home").shadowRoot.querySelector("nuxeo-page > iron-pages > div.iron-selected > section > qualitified-dashboard").shadowRoot.querySelector("#tile6").shadowRoot.querySelector("#editFeed > report-edit-delete").shadowRoot.querySelector("div").style.opacity='100%';
+       document.querySelector("body > nuxeo-app").shadowRoot.querySelector("#pages > nuxeo-home").shadowRoot.querySelector("nuxeo-page > iron-pages > div.iron-selected > section > qualitified-dashboard").shadowRoot.querySelector("#tile6").shadowRoot.querySelector("#csvFeedExport").shadowRoot.querySelector("#btn").shadowRoot.querySelector("div").style.opacity='100%';
+      },
+       _hide: function () {
+       document.querySelector("body > nuxeo-app").shadowRoot.querySelector("#pages > nuxeo-home").shadowRoot.querySelector("nuxeo-page > iron-pages > div.iron-selected > section > qualitified-dashboard").shadowRoot.querySelector("#tile6").shadowRoot.querySelector("#editFeed > report-edit-delete").shadowRoot.querySelector("div").style.opacity='20%';
+       document.querySelector("body > nuxeo-app").shadowRoot.querySelector("#pages > nuxeo-home").shadowRoot.querySelector("nuxeo-page > iron-pages > div.iron-selected > section > qualitified-dashboard").shadowRoot.querySelector("#tile6").shadowRoot.querySelector("#csvFeedExport").shadowRoot.querySelector("#btn").shadowRoot.querySelector("div").style.opacity='20%';
+      },
+     _show: function () {
+       this.$$("#displaybtns").style.opacity='100%';
+       this.$$("#displaybtns").querySelector("#editFeed > report-edit-delete").shadowRoot.querySelector("div").style.opacity='100%';
+       this.$$("#displaybtns").querySelector("#csvFeedExport").shadowRoot.querySelector("#btn").shadowRoot.querySelector("div").style.opacity='100%';
+      },
+       _hide: function () {
+       this.$$("#displaybtns").querySelector("#editFeed > report-edit-delete").shadowRoot.querySelector("div").style.opacity='20%';
+       this.$$("#displaybtns").querySelector("#csvFeedExport").shadowRoot.querySelector("#btn").shadowRoot.querySelector("div").style.opacity='20%';
+      },
      _goTodoc:function(e){
        this.navigateTo('browse', e.model.__data.item.path);
      },
