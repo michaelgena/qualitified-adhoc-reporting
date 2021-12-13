@@ -26,6 +26,9 @@
          top: 3px;
          right: 47px;
         }
+      .buttons {
+         opacity:20%;
+      }
     </style>
     <nuxeo-operation id="getOption" op="Qualitified.GetOptionValue"></nuxeo-operation>
     <nuxeo-repository-data start-date="[[startDate]]"
@@ -61,49 +64,51 @@
                          schemas="*"
                          current-page="{{documents}}">
     </nuxeo-page-provider> -->
-
-    <nuxeo-card heading="[[document.properties.dc:title]]">
-
-      <div id="edit" hidden$="[[!editMode]]">
-        <div class="csvAction">
-          <qualitified-export-csv-button id="csvExport" query="[[queryCsvExport]]" schemas="[[_getSchemas(document)]]"></qualitified-export-csv-button>
+    <div on-mouseover="_show" on-mouseout="_hide">
+      <nuxeo-card heading="[[document.properties.dc:title]]">
+        <div id="displaybtns" class="buttons">
+          <div class="csvAction">
+            <qualitified-export-csv-button id="csvExport" query="[[queryCsvExport]]" schemas="[[_getSchemas(document)]]"></qualitified-export-csv-button>
+          </div>
+          <div id="edit" hidden$="[[!editMode]]">
+            <report-edit-delete document="{{document}}"></report-edit-delete>
+          </div>
         </div>
-        <report-edit-delete document="{{document}}"></report-edit-delete>
-      </div>
 
-      <nuxeo-data-table id="table" items="{{_getData(data, lastYearData)}}">
+        <nuxeo-data-table id="table" items="{{_getData(data, lastYearData)}}">
 
-        <nuxeo-data-table-column name="{{document.properties.table:columnName1}}">
-          <template>
-            <!-- <iron-icon id="icon" hidden$="{{iconHidden}}" src="{{_getDocIcon(item.key)}}"></iron-icon> -->
-            {{_labels(item.key)}}
-          </template>
-        </nuxeo-data-table-column>
+          <nuxeo-data-table-column name="{{document.properties.table:columnName1}}">
+            <template>
+              <!-- <iron-icon id="icon" hidden$="{{iconHidden}}" src="{{_getDocIcon(item.key)}}"></iron-icon> -->
+              {{_labels(item.key)}}
+            </template>
+          </nuxeo-data-table-column>
 
-        <nuxeo-data-table-column name="{{document.properties.table:columnName2}}">
-          <template>
-            <div class="align-right">{{_values(item.value)}}</div>
-          </template>
-        </nuxeo-data-table-column>
+          <nuxeo-data-table-column name="{{document.properties.table:columnName2}}">
+            <template>
+              <div class="align-right">{{_values(item.value)}}</div>
+            </template>
+          </nuxeo-data-table-column>
 
-        <nuxeo-data-table-column name="[[i18n('label.report.lastYearValue')]]"
-                                 hidden="{{!document.properties.report:lastYear}}">
-          <template>
-            <div class="align-right"><span class="last-year-value">{{_values(item.lastYearValue)}}</span></div>
-          </template>
-        </nuxeo-data-table-column>
+          <nuxeo-data-table-column name="[[i18n('label.report.lastYearValue')]]"
+                                   hidden="{{!document.properties.report:lastYear}}">
+            <template>
+              <div class="align-right"><span class="last-year-value">{{_values(item.lastYearValue)}}</span></div>
+            </template>
+          </nuxeo-data-table-column>
 
-        <nuxeo-data-table-column name="[[i18n('label.report.percentageChange')]]"
-                                 hidden="{{!document.properties.report:lastYear}}">
-          <template>
-            <div class="align-right"><span id$="lastYearPercentage{{index}}">[[_getTablePercentage(item.value,item.lastYearValue,
+          <nuxeo-data-table-column name="[[i18n('label.report.percentageChange')]]"
+                                   hidden="{{!document.properties.report:lastYear}}">
+            <template>
+              <div class="align-right"><span id$="lastYearPercentage{{index}}">[[_getTablePercentage(item.value,item.lastYearValue,
               index)]]%</span></div>
-          </template>
-        </nuxeo-data-table-column>
+            </template>
+          </nuxeo-data-table-column>
 
-      </nuxeo-data-table>
-    </nuxeo-card>
+        </nuxeo-data-table>
 
+      </nuxeo-card>
+    </div>
     <slot></slot>
 
   </template>
@@ -152,7 +157,15 @@
           this.$.table.shadowRoot.getElementById("container").style.width = '100%';
         }.bind(this), 1000);
       },
-
+      _show: function () {
+       this.$.displaybtns.style.opacity ='100%';
+       this.$$("#displaybtns").querySelector("#edit > report-edit-delete").shadowRoot.querySelector("div").style.opacity='100%';
+       this.$$("#displaybtns").querySelector("#csvExport").shadowRoot.querySelector("#btn").shadowRoot.querySelector("div").style.opacity='100%';
+      },
+       _hide: function () {
+       this.$$("#displaybtns").querySelector("#edit > report-edit-delete").shadowRoot.querySelector("div").style.opacity='20%';
+       this.$$("#displaybtns").querySelector("#csvExport").shadowRoot.querySelector("#btn").shadowRoot.querySelector("div").style.opacity='20%';
+      },
       _buildCSVQuery: function(){
         let mixintype= this.document.properties['report:mixintype'] !== null ? " AND ecm:mixintype='"+this.document.properties['report:mixintype']+"'":"";
         let currentLifeCycleState=this.document.properties['report:lifeCycleState'] !== null ? " AND ecm:currentLifeCycleState='"+this.document.properties['report:lifeCycleState']+"'":"";

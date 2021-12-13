@@ -15,6 +15,9 @@
          top: 3px;
          right: 47px;
         }
+      .buttons {
+         opacity:20%;
+        }
 
     </style>
 
@@ -38,20 +41,23 @@
                          schemas="*"
                          current-page="{{documents}}">
     </nuxeo-page-provider>
-
-    <nuxeo-card heading="[[document.properties.dc:title]]">
-      <div id="edit" hidden$="[[!editMode]]">
-        <div class="csvAction">
-          <nuxeo-csv-export-button id="csvExport" provider="[[csvExport]]" schemas="[[_getSchemas(document)]]"></nuxeo-csv-export-button>
+    <div on-mouseover="_show" on-mouseout="_hide" >
+      <nuxeo-card heading="[[document.properties.dc:title]]">
+        <div id="displaybtns" class="buttons">
+          <div id="csvId" class="csvAction">
+            <nuxeo-csv-export-button id="csvExport" provider="[[csvExport]]" schemas="[[_getSchemas(document)]]"></nuxeo-csv-export-button>
+          </div>
+          <div id="edit" hidden$="[[!editMode]]">
+            <report-edit-delete document="{{document}}"></report-edit-delete>
+          </div>
         </div>
-        <report-edit-delete document="{{document}}"></report-edit-delete>
-      </div>
-      <chart-bar id="chartBar"
-                 labels="[[_getLabels(documents)]]"
-                 values="[[_getValues(documents)]]"
-                 options='{ "legend": { "display": false }, "animation": false }'>
-      </chart-bar>
-    </nuxeo-card>
+        <chart-bar id="chartBar"
+                   labels="[[_getLabels(documents)]]"
+                   values="[[_getValues(documents)]]"
+                   options='{ "legend": { "display": false }, "animation": false }'>
+        </chart-bar>
+      </nuxeo-card>
+    </div>
     <slot></slot>
   </template>
 
@@ -74,6 +80,10 @@
         endDate: {
           type: String,
           value: ''
+        },
+        buttons: {
+          type: Boolean,
+          value: true
         },
         csvExport:{
          type: Object,
@@ -98,7 +108,15 @@
           this.documents = [];
         }
       },
-
+      _show: function () {
+       this.$.displaybtns.style.opacity ='100%';
+       this.$$("#displaybtns").querySelector("#edit > report-edit-delete").shadowRoot.querySelector("div").style.opacity='100%';
+       this.$$("#displaybtns").querySelector("#csvExport").shadowRoot.querySelector("#btn").shadowRoot.querySelector("div").style.opacity='100%';
+      },
+       _hide: function () {
+       this.$$("#displaybtns").querySelector("#edit > report-edit-delete").shadowRoot.querySelector("div").style.opacity='20%';
+       this.$$("#displaybtns").querySelector("#csvExport").shadowRoot.querySelector("#btn").shadowRoot.querySelector("div").style.opacity='20%';
+      },
       /*_labels Modified */
       _labels: function (data) {
         let dateFormat = this.document.properties['report:dateFormat'];
