@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <component name="adhoc.reporting.extensions" version="1.0.0">
-  <!--require>org.nuxeo.runtime.started</require-->
+  <require>org.nuxeo.runtime.started</require>
   <extension target="org.nuxeo.ecm.core.schema.TypeService" point="schema">
     <schema name="chartbar" prefix="chartbar" override="true" src="data/schemas/chartbar.xsd"/>
     <schema name="chartline" prefix="chartline" override="true" src="data/schemas/chartline.xsd"/>
@@ -10,6 +10,7 @@
     <schema name="table" prefix="table" override="true" src="data/schemas/table.xsd"/>
     <schema name="report" prefix="report" override="true" src="data/schemas/report.xsd"/>
     <schema name="list" prefix="list" override="true" src="data/schemas/list.xsd"/>
+    <schema name="option" prefix="option" override="true" src="data/schemas/option.xsd"/>
   </extension>
 
   <extension target="org.nuxeo.ecm.core.schema.TypeService" point="doctype">
@@ -97,6 +98,34 @@
         <type>List</type>
       </subtypes>
     </doctype>
+
+    <doctype name="Option" extends="File">
+      <schema name="option"/>
+    </doctype>
+    <doctype name="Options" extends="Document">
+      <schema name="dublincore"/>
+      <schema name="option"/>
+      <facet name="Folderish"/>
+      <facet name="NXTag"/>
+      <subtypes>
+        <type>Option</type>
+      </subtypes>
+    </doctype>
+    <doctype name="Root" append="true">
+      <subtypes>
+        <type>Options</type>
+      </subtypes>
+    </doctype>
+    <doctype name="Workspace" append="true">
+      <subtypes>
+        <type>ChartBar</type>
+        <type>ChartLine</type>
+        <type>ChartPie</type>
+        <type>Count</type>
+        <type>Table</type>
+        <type>List</type>
+      </subtypes>
+    </doctype>
   </extension>
 
   <extension target="org.nuxeo.ecm.core.lifecycle.LifeCycleService" point="types">
@@ -117,6 +146,12 @@
     </types>
     <types>
       <type name="List">default</type>
+    </types>
+    <types>
+      <type name="Option">default</type>
+    </types>
+    <types>
+      <type name="Options">default</type>
     </types>
   </extension>
 
@@ -156,6 +191,18 @@
       <icon>/img/baseline_format_list_numbered_black_48dp.png</icon>
       <bigIcon>/img/baseline_format_list_numbered_black_48dp.png</bigIcon>
       <description>Recently viewed, Tasks, Modified and Favorites</description>
+    </type>
+    <type id="Option">
+      <label>Option</label>
+      <icon>/img/options.png</icon>
+      <bigIcon>/img/options.png</bigIcon>
+      <description></description>
+    </type>
+    <type id="Options">
+      <label>Options</label>
+      <icon>/img/options.png</icon>
+      <bigIcon>/img/options.png</bigIcon>
+      <description></description>
     </type>
   </extension>
 

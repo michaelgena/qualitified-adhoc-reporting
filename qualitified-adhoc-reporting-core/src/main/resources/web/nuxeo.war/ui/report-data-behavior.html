@@ -141,7 +141,7 @@
     },
 
     _isCurrency: function (doc) {
-      return doc ? doc.properties['count:valuetype'] == 'Currency' : false;
+      return doc ? (doc.properties['count:valuetype'] == 'Currency' || doc.properties['table:valuetype'] == 'Currency') : false;
     },
 
     _formatCurrency: function (value) {
@@ -156,13 +156,25 @@
     },
 
     _setWhereTerm: function (responsibleUserMetdata, responsibleUserFilterValue) {
-      if (responsibleUserMetdata && responsibleUserFilterValue) {
-        var where = {};
-        where[responsibleUserMetdata] = responsibleUserFilterValue;
-        return where;
+       var where = {};
+       if (responsibleUserMetdata && responsibleUserFilterValue) {
+          where[responsibleUserMetdata] = responsibleUserFilterValue;
+       }
+       where['ecm:isVersion'] = false;
+       where['ecm:isTrashed']= false;
+       return where;
+    },
+
+    _formatCurrency: function(val, format) {
+        if(val == null){
+          return "";
+        }
+        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, format);
+     },
+     _getSchemas: function(doc){
+        let schemas = doc.properties['report:schemas'];
+        return schemas !== null && schemas !== '' ? schemas : "dublincore, common, uid";
       }
-      return "";
-    }
 
   };
 </script>

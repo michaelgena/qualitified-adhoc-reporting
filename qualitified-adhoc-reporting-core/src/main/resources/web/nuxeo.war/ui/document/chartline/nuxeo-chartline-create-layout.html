@@ -4,10 +4,14 @@
     </style>
 
     <nuxeo-input role="reportWidget" value="{{document.properties.dc:title}}" label="[[i18n('title')]]" type="text"></nuxeo-input>
-
+    <nuxeo-resource auto on-response="_handleDocTypes" path="config/types/"></nuxeo-resource>
     <h3>[[i18n('label.report.layout.dataSettings')]]</h3>
 
-    <nuxeo-input role="reportWidget" value="{{document.properties.report:primarytype}}" label="[[i18n('label.report.documentType')]]" type="text"></nuxeo-input>
+    <label>[[i18n('label.report.documentType')]]</label>
+    <nuxeo-selectivity data="[[docTypes]]"
+                       min-chars=0
+                       placeholder="[[i18n('templateRenderingPage.validDocTypes.placeholder')]]"
+                       value="{{document.properties.dc:title}}" ></nuxeo-selectivity>
     <nuxeo-input role="reportWidget" value="{{document.properties.report:lifeCycleState}}" label="[[i18n('label.report.lifecycleState')]]" type="text"></nuxeo-input>
     <nuxeo-input value="{{document.properties.report:mixintype}}" label="[[i18n('label.report.facet')]]" type="text" role="reportWidget"></nuxeo-input>
     <nuxeo-input role="reportWidget" value="{{document.properties.report:metrics}}" label="[[i18n('label.report.metrics')]]" type="text"></nuxeo-input>
@@ -30,6 +34,9 @@
 
     <nuxeo-input role="reportWidget" value="{{document.properties.report:dateFormat}}" label="[[i18n('label.report.dateFormat')]]" type="text"></nuxeo-input>
 
+    <h3>[[i18n('label.report.layout.csv')]]</h3>
+    <nuxeo-input role="reportWidget" value="{{document.properties.report:schemas}}" label="[[i18n('label.report.schemas')]]" type="text"></nuxeo-input>
+
   </template>
 
   <script>
@@ -45,7 +52,22 @@
           type: Object,
         },
 
-      }
+      },
+            _handleDocTypes: function(e) {
+      var docTypes = [{
+        id: 'all',
+        text: this.i18n('templateRenderingPage.label.document.type.all'),
+        displayLabel: this.i18n('templateRenderingPage.label.document.type.all')
+      }];
+      Object.keys(e.detail.response.doctypes).sort().forEach(function(docType) {
+        docTypes.push({
+          id: docType,
+          text: docType,
+          displayLabel: docType
+        });
+      });
+      this.set('docTypes', docTypes);
+    }
     });
   </script>
 </dom-module>

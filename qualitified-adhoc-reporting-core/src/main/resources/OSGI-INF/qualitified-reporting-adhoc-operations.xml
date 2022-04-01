@@ -1,0 +1,8 @@
+<component name="org.qualitified.reporting.adhoc.operations">
+    <extension target="org.nuxeo.ecm.core.operation.OperationServiceComponent" point="operations" >
+        <operation class="org.qualitified.reporting.adhoc.operation.GetOptionValue" replace="true"/>
+        <operation class="org.qualitified.reporting.adhoc.operation.DuplicateDashboard"/>
+        <operation class="org.qualitified.reporting.adhoc.operation.UndoDashboard"/>
+        <operation class="org.qualitified.reporting.adhoc.operation.GetUserWorkspace"/>
+    </extension>
+ </component>
