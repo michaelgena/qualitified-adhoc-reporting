@@ -4,7 +4,7 @@
     </style>
 
     <nuxeo-input role="reportWidget" value="{{document.properties.dc:title}}" label="[[i18n('title')]]" type="text"></nuxeo-input>
-
+    <nuxeo-resource auto on-response="_handleDocTypes" path="config/types/"></nuxeo-resource>
     <h3>[[i18n('label.report.layout.dataSettings')]]</h3>
 
     <label>[[i18n('label.report.documentType')]]</label>
@@ -57,6 +57,21 @@
         document: {
           type: Object,
         },
+      },
+      _handleDocTypes: function(e) {
+        var docTypes = [{
+          id: 'all',
+          text: this.i18n('templateRenderingPage.label.document.type.all'),
+          displayLabel: this.i18n('templateRenderingPage.label.document.type.all')
+        }];
+        Object.keys(e.detail.response.doctypes).sort().forEach(function(docType) {
+          docTypes.push({
+            id: docType,
+            text: docType,
+            displayLabel: docType
+          });
+        });
+        this.set('docTypes', docTypes);
       }
     });
   </script>
