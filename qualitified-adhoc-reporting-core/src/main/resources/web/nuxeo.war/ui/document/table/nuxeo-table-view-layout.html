@@ -20,15 +20,6 @@
         text-align:right;
         width:50%;
       }
-      .csvAction {
-         display: inline-flex;
-         position: absolute;
-         top: 3px;
-         right: 47px;
-        }
-      .buttons {
-         opacity:20%;
-      }
     </style>
     <nuxeo-operation id="getOption" op="Qualitified.GetOptionValue"></nuxeo-operation>
     <nuxeo-repository-data start-date="[[startDate]]"
@@ -64,7 +55,7 @@
                          schemas="*"
                          current-page="{{documents}}">
     </nuxeo-page-provider> -->
-    <div on-mouseover="_show" on-mouseout="_hide">
+    <div id="outerDiv" on-mouseover="_show" on-mouseout="_hide">
       <nuxeo-card heading="[[document.properties.dc:title]]">
         <div id="displaybtns" class="buttons">
           <div class="csvAction">
@@ -156,15 +147,6 @@
         setTimeout(function () {
           this.$.table.shadowRoot.getElementById("container").style.width = '100%';
         }.bind(this), 1000);
-      },
-      _show: function () {
-       this.$.displaybtns.style.opacity ='100%';
-       this.$$("#displaybtns").querySelector("#edit > report-edit-delete").shadowRoot.querySelector("div").style.opacity='100%';
-       this.$$("#displaybtns").querySelector("#csvExport").shadowRoot.querySelector("#btn").shadowRoot.querySelector("div").style.opacity='100%';
-      },
-       _hide: function () {
-       this.$$("#displaybtns").querySelector("#edit > report-edit-delete").shadowRoot.querySelector("div").style.opacity='20%';
-       this.$$("#displaybtns").querySelector("#csvExport").shadowRoot.querySelector("#btn").shadowRoot.querySelector("div").style.opacity='20%';
       },
       _buildCSVQuery: function(){
         let mixintype= this.document.properties['report:mixintype'] !== null ? " AND ecm:mixintype='"+this.document.properties['report:mixintype']+"'":"";
