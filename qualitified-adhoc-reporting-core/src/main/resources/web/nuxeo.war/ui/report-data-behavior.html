@@ -174,7 +174,17 @@
      _getSchemas: function(doc){
         let schemas = doc.properties['report:schemas'];
         return schemas !== null && schemas !== '' ? schemas : "dublincore, common, uid";
-      }
+      },
+
+      _show: function () {
+       this.$.displaybtns.style.opacity ='100%';
+       this.$$("#displaybtns").querySelector("#edit > report-edit-delete").shadowRoot.querySelector("div").style.opacity='100%';
+       this.$$("#displaybtns").querySelector("#csvExport").shadowRoot.querySelector("#btn").shadowRoot.querySelector("div").style.opacity='100%';
+      },
+       _hide: function () {
+       this.$$("#displaybtns").querySelector("#edit > report-edit-delete").shadowRoot.querySelector("div").style.opacity='5%';
+       this.$$("#displaybtns").querySelector("#csvExport").shadowRoot.querySelector("#btn").shadowRoot.querySelector("div").style.opacity='5%';
+      },
 
   };
 </script>

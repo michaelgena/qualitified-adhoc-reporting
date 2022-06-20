@@ -8,15 +8,6 @@
         font-size: .8rem;
         margin-top: 20px;
       }
-      .csvAction {
-         display: inline-flex;
-         position: absolute;
-         top: 3px;
-         right: 47px;
-        }
-      .buttons {
-         opacity:20%;
-      }
     </style>
 
     <nuxeo-repository-data start-date="[[_formatDate(startDate)]]"
@@ -39,7 +30,7 @@
                          schemas="*"
                          current-page="{{documents}}">
     </nuxeo-page-provider>
-    <div on-mouseover="_show" on-mouseout="_hide">
+    <div id="outerDiv" on-mouseover="_show" on-mouseout="_hide">
       <nuxeo-card heading="[[document.properties.dc:title]]">
 
         <div id="displaybtns" class="buttons">
@@ -93,15 +84,6 @@
 
       ready:  function () {
        this.csvExport =this.$.provider;
-      },
-      _show: function () {
-       this.$.displaybtns.style.opacity ='100%';
-       this.$$("#displaybtns").querySelector("#edit > report-edit-delete").shadowRoot.querySelector("div").style.opacity='100%';
-       this.$$("#displaybtns").querySelector("#csvExport").shadowRoot.querySelector("#btn").shadowRoot.querySelector("div").style.opacity='100%';
-      },
-       _hide: function () {
-       this.$$("#displaybtns").querySelector("#edit > report-edit-delete").shadowRoot.querySelector("div").style.opacity='20%';
-       this.$$("#displaybtns").querySelector("#csvExport").shadowRoot.querySelector("#btn").shadowRoot.querySelector("div").style.opacity='20%';
       },
       _query: function (entries) {
         if (this.document && entries && entries.length > 0) {

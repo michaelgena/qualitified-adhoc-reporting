@@ -314,12 +314,21 @@
           }
       },
       ready: function () {
-        if (moment().format('M') > 6) {
-          this.startDate = moment().format('YYYY') + '-07-01';
-          this.endDate = moment().format('YYYY') + '-12-31';
-        } else {
-          this.startDate = moment().format('YYYY') + '-01-01';
-          this.endDate = moment().format('YYYY') + '-06-30';
+        if (moment().format('M') < 4) {
+        	this.startDate = moment().format('YYYY') + '-01-01';
+        	this.endDate = moment().format('YYYY') + '-03-31';
+        }
+        else if (moment().format('M') > 3 && moment().format('M') < 7) {
+        	this.startDate = moment().format('YYYY') + '-04-01';
+        	this.endDate = moment().format('YYYY') + '-06-30';
+        }
+        else if (moment().format('M') > 6 && moment().format('M') < 10) {
+        	this.startDate = moment().format('YYYY') + '-07-01';
+        	this.endDate = moment().format('YYYY') + '-09-30';
+        }
+        else{
+        	this.startDate = moment().format('YYYY') + '-10-01';
+        	this.endDate = moment().format('YYYY') + '-12-31';
         }
         this.$.GetUserWorkspace.execute().then(function (resp) {
             this.userWorkspace = resp.value;
