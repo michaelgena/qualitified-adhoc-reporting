@@ -1,6 +1,26 @@
 <dom-module id="nuxeo-count-edit-layout">
   <template>
     <style include="reporting-styles">
+      .metricsDiv {
+        display: flex;
+        /* width: auto; */
+        justify-content: space-evenly;
+      }
+      .dialog {
+        margin-top: -19em;
+        border-radius: 4px;
+        min-width: 400px;
+        top: 27em;
+      }
+      .buttons {
+        text-decoration: underline;
+        color: blue;
+        opacity: 100%;
+      }
+      .metricsInputDiv {
+        display: inline-flex;
+        width: -webkit-fill-available;
+      }
     </style>
 
     <paper-tabs selected="{{selected}}">
@@ -18,7 +38,21 @@
 
         <nuxeo-input role="reportWidget" value="{{document.properties.report:primarytype}}" label="[[i18n('label.report.documentType')]]" type="text"></nuxeo-input>
         <nuxeo-input role="reportWidget" value="{{document.properties.report:lifeCycleState}}" label="[[i18n('label.report.lifecycleState')]]" type="text"></nuxeo-input>
-        <nuxeo-input role="reportWidget" value="{{document.properties.report:responsibleUser}}" label="[[i18n('label.report.responsibleUser')]]" type="text"></nuxeo-input>
+        <nuxeo-dialog id="dialogUserS" class="dialog" on-iron-overlay-opened="_open" >
+          <div  class="metricsDiv">
+            <qualitified-metadata-selection style="flex:2"  input="{{input}}"></qualitified-metadata-selection>
+            <paper-icon-button id="details" noink="" icon="nuxeo:add" on-tap="_addUserFieldText"></paper-icon-button>
+          </div>
+          <nuxeo-input id="responsibleUser" role="reportWidget" value="{{document.properties.report:responsibleUser}}" label="[[i18n('label.report.responsibleUser')]]" type="text"></nuxeo-input>
+          <div class="buttons">
+            <paper-button noink dialog-dismiss on-tap="_closeUser1">Close</paper-button>
+            <paper-button noink  on-tap="_clearUser1">Clear</paper-button>
+          </div>
+        </nuxeo-dialog>
+        <div class="metricsInputDiv">
+          <nuxeo-input style="flex: auto;" id="responsibleUser" role="reportWidget" value="{{document.properties.report:responsibleUser}}" label="[[i18n('label.report.responsibleUser')]]" type="text"></nuxeo-input>
+          <paper-icon-button id="details" noink="" icon="nuxeo:add" role="button" on-tap="_toggleDialogUser1"></paper-icon-button>
+        </div>
 
         <h3>[[i18n('label.report.layout.display')]]</h3>
 
@@ -50,9 +84,56 @@
         <nuxeo-input role="reportWidget" value="{{document.properties.report:primarytype}}" label="[[i18n('label.report.documentType')]]" type="text"></nuxeo-input>
         <nuxeo-input role="reportWidget" value="{{document.properties.report:lifeCycleState}}" label="[[i18n('label.report.lifecycleState')]]" type="text"></nuxeo-input>
         <nuxeo-input value="{{document.properties.report:mixintype}}" label="[[i18n('label.report.facet')]]" type="text" role="reportWidget"></nuxeo-input>
-        <nuxeo-input role="reportWidget" value="{{document.properties.report:metrics}}" label="[[i18n('label.report.metrics')]]" type="text"></nuxeo-input>
-        <nuxeo-input role="reportWidget" value="{{document.properties.report:dateField}}" label="[[i18n('label.report.dateField')]]" type="text"></nuxeo-input>
-        <nuxeo-input role="reportWidget" value="{{document.properties.report:responsibleUser}}" label="[[i18n('label.report.responsibleUser')]]" type="text"></nuxeo-input>
+        <nuxeo-dialog id="dialog" class="dialog" on-iron-overlay-opened="_open" >
+        <div  class="metricsDiv">
+          <nuxeo-selectivity data="[[formats]]"
+                             min-chars=0
+                             placeholder="[[i18n('MetricsType')]]"
+                             value="{{agent}}" ></nuxeo-selectivity>
+          <qualitified-metadata-selection style="flex:2"  input="{{input}}"></qualitified-metadata-selection>
+          <paper-icon-button id="details" noink="" icon="nuxeo:add" on-tap="_addMetricText"></paper-icon-button>
+        </div>
+        <nuxeo-input id="metricsTest" role="reportWidget" value="{{document.properties.report:metrics}}" label="[[i18n('label.report.metrics')]]" type="text"></nuxeo-input>
+        <div class="buttons">
+          <paper-button noink dialog-dismiss on-tap="_close">Close</paper-button>
+          <paper-button noink  on-tap="_clear">Clear</paper-button>
+        </div>
+        </nuxeo-dialog>
+        <div class="metricsInputDiv">
+          <nuxeo-input style="flex: auto;" id="metricsTest" role="reportWidget" value="{{document.properties.report:metrics}}" label="[[i18n('label.report.metrics')]]" type="text"></nuxeo-input>
+          <paper-icon-button id="details" noink="" icon="nuxeo:add" role="button" on-tap="_toggleDialog"></paper-icon-button>
+        </div>
+
+        <nuxeo-dialog id="dialogDate" class="dialog" on-iron-overlay-opened="_open" >
+          <div  class="metricsDiv">
+            <qualitified-metadata-selection style="flex:2"  input="{{input}}"></qualitified-metadata-selection>
+            <paper-icon-button id="details" noink="" icon="nuxeo:add" on-tap="_addDateFieldText"></paper-icon-button>
+          </div>
+          <nuxeo-input id="fieldDate" role="reportWidget" value="{{document.properties.report:dateField}}" label="[[i18n('label.report.dateField')]]" type="text"></nuxeo-input>
+          <div class="buttons">
+            <paper-button noink dialog-dismiss on-tap="_closeDate">Close</paper-button>
+            <paper-button noink  on-tap="_clearDate">Clear</paper-button>
+          </div>
+        </nuxeo-dialog>
+        <div class="metricsInputDiv">
+          <nuxeo-input style="flex: auto;" id="fieldDate" role="reportWidget" value="{{document.properties.report:dateField}}" label="[[i18n('label.report.dateField')]]" type="text"></nuxeo-input>
+          <paper-icon-button id="details" noink="" icon="nuxeo:add" role="button" on-tap="_toggleDialogDate"></paper-icon-button>
+        </div>
+        <nuxeo-dialog id="dialogUser" class="dialog" on-iron-overlay-opened="_open" >
+          <div  class="metricsDiv">
+            <qualitified-metadata-selection style="flex:2"  input="{{input}}"></qualitified-metadata-selection>
+            <paper-icon-button id="details" noink="" icon="nuxeo:add" on-tap="_addUserFieldText"></paper-icon-button>
+          </div>
+          <nuxeo-input id="responsibleUser" role="reportWidget" value="{{document.properties.report:responsibleUser}}" label="[[i18n('label.report.responsibleUser')]]" type="text"></nuxeo-input>
+          <div class="buttons">
+            <paper-button noink dialog-dismiss on-tap="_closeUser">Close</paper-button>
+            <paper-button noink  on-tap="_clearUser">Clear</paper-button>
+          </div>
+        </nuxeo-dialog>
+        <div class="metricsInputDiv">
+          <nuxeo-input style="flex: auto;" id="responsibleUser" role="reportWidget" value="{{document.properties.report:responsibleUser}}" label="[[i18n('label.report.responsibleUser')]]" type="text"></nuxeo-input>
+          <paper-icon-button id="details" noink="" icon="nuxeo:add" role="button" on-tap="_toggleDialogUser"></paper-icon-button>
+        </div>
 
         <h3>[[i18n('label.report.layout.display')]]</h3>
 
@@ -93,11 +174,158 @@
         document: {
           type: Object,
         },
+        input: {
+          type:String,
+          observer: '_inputChanged'
+        },
+        agent: {
+          type:String,
+          notify:true,
+          observer: '_inputChanged'
+        },
+        formats:  Array,
+        metrics: {
+          String,
+          notify:true,
+          value:"",
+        },
+        open: {
+          type: Boolean,
+          value: false
+        },
+        datefield: {
+          String,
+          notify:true,
+          value:"",
+        },
+        userfield: {
+          String,
+          notify:true,
+          value:"",
+        },
+
+      },
+      ready() {
+        this.selected = 0;
+        this.formats = [
+          { id: 'sum', text: 'sum',displayLabel:"sum" },
+          { id: 'avg', text: 'avg',displayLabel:"avg" },
+          { id: 'max', text: 'max',displayLabel:"max" },
+          { id: 'min', text: 'min' ,displayLabel:"min"},
+          { id: 'count', text: 'count' ,displayLabel:"count"},
+        ];
+      },
+      _handleDocTypes: function(e) {
+        var docTypes = [{
+          id: 'all',
+          text: this.i18n('templateRenderingPage.label.document.type.all'),
+          displayLabel: this.i18n('templateRenderingPage.label.document.type.all')
+        }];
+        Object.keys(e.detail.response.doctypes).sort().forEach(function(docType) {
+          docTypes.push({
+            id: docType,
+            text: docType,
+            displayLabel: docType
+          });
+        });
+        this.set('docTypes', docTypes);
       },
 
-      ready: function () {
-        this.selected = 0;
-      }
+      _addMetricText :function () {
+        var metricsInput = this.$.metricsTest;
+
+        if (metricsInput.value == null) {
+          metricsInput.value = this.metrics;
+        } else if (metricsInput.value !== null) {
+          if (!metricsInput.value.includes(this.metrics)) {
+            metricsInput.value += this.metrics;
+          }}
+      },
+
+      _addDateFieldText :function () {
+        var dateInput = this.$.fieldDate;
+        this._inputDateChanged();
+        if (dateInput.value == null) {
+          dateInput.value = this.datefield;
+        } else if (dateInput.value !== null) {
+          if (!dateInput.value.includes(this.datefield)) {
+            dateInput.value += this.datefield;
+          }}
+      },
+
+      _addUserFieldText :function () {
+        var userInput = this.$.responsibleUser;
+        this._inputUserChanged();
+        if (userInput.value == null) {
+          userInput.value = this.userfield;
+        } else if (userInput.value !== null) {
+          if (!userInput.value.includes(this.userfield)) {
+            userInput.value += this.userfield;
+          }}
+      },
+
+      _inputDateChanged: function () {
+        if (this.input ){
+          this.set("datefield", this.input);
+        }
+      },
+
+
+      _inputUserChanged: function () {
+        if (this.input ){
+          this.set("userfield", this.input);
+        }
+      },
+
+      _inputChanged: function () {
+        if (this.input && this.agent){
+          this.set('metrics', this.agent.concat("(",this.input,")"));
+        }
+      },
+//////////////////  Metrics Dialog ////////////////////////////
+      _toggleDialog: function () {
+        this.$['dialog'].toggle();
+      },
+      _close: function () {
+        this.$['dialog'].close();
+      },
+      _clear: function () {
+        this.$.metricsTest.value = "";
+      },
+//////////////////  Date field Dialog ////////////////////////////
+      _toggleDialogDate: function () {
+        this.$['dialogDate'].toggle();
+      },
+      _closeDate: function () {
+        this.$['dialogDate'].close();
+      },
+      _clearDate: function () {
+        this.$.fieldDate.value = "";
+      },
+
+
+//////////////////  Responsible User  Dialog ////////////////////////////
+      _toggleDialogUser: function () {
+        this.$['dialogUser'].toggle();
+      },
+      _closeUser: function () {
+        this.$['dialogUser'].close();
+      },
+      _clearUser: function () {
+        this.$.responsibleUser.value = "";
+      },
+
+      //////////////////  user  field  Dialog Simple ////////////////////////////
+      _toggleDialogUser1: function () {
+        this.$['dialogUserS'].toggle();
+      },
+      _closeUser1: function () {
+        this.$['dialogUserS'].close();
+      },
+      _clearUser1: function () {
+        this.$.responsibleUser.value = "";
+      },
     });
   </script>
 </dom-module>
+

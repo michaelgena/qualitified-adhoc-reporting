@@ -1,0 +1,160 @@
+<dom-module id="qualitified-metadata-selection">
+  <template>
+    <style>
+      .mySelected {
+        display: flex;
+        flex-direction: row;
+        /* width: auto; */
+        justify-content: space-evenly;
+      }
+    </style>
+    <nuxeo-resource auto on-response="_handleDocTypes" path="config/types/"></nuxeo-resource>
+
+    <div class="mySelected">
+      <nuxeo-selectivity data="[[docTypes]]"
+                         min-chars=0
+                         style="flex:auto"
+                         placeholder="select doctype"
+                         value="{{doctypeSelection}}" ></nuxeo-selectivity>
+      <nuxeo-selectivity data="{{schemasAvailble}}"
+                         min-chars=0
+                         style="flex:auto"
+                         placeholder="select schema"
+                         value="{{schemaSelected}}" ></nuxeo-selectivity>
+      <nuxeo-selectivity data="{{propsAvailble}}"
+                         min-chars=0
+                         style="flex:auto"
+                         placeholder="select property"
+                         value="{{propsSelected}}" ></nuxeo-selectivity>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'qualitified-metadata-selection',
+      behaviors: [Nuxeo.LayoutBehavior],
+      properties: {
+        document: {
+          type: Object
+        },
+        doctypeSelection:{
+          type: String,
+          value: "",
+          notify: true,
+          observer: '_typeDocChanged'
+        },
+        schemasAvailble: {
+          type: Array,
+          value: [],
+          notify:true,
+          observer: '_typeDocChanged'
+        },
+        schemaSelected:{
+          type: Array,
+          value: [],
+          observer: '_typeMotChanged',
+          notify:true,
+        },
+        propsSelected:{
+          String,
+          notify:true,
+          value:"",
+          observer: '_sendChanged'
+        },
+        propsAvailble:{
+          type: Array,
+          value: [],
+          observer: '_typeMotChanged',
+          notify:true,
+        },
+        namesPrefixList: {
+          type: Array,
+          value: [],
+          notify:true,
+          observer: '_sendChanged'
+        },
+        input: {
+          String,
+          notify:true
+        },
+        prefixF:{
+          String,
+          notify:true,
+          value:"",
+          observer: '_sendChanged'
+        },
+      },
+      _handleDocTypes: function(e) {
+        var docTypes = [{
+          id: 'all',
+          text: this.i18n('templateRenderingPage.label.document.type.all'),
+          displayLabel: this.i18n('templateRenderingPage.label.document.type.all')
+        }];
+        Object.keys(e.detail.response.doctypes).sort().forEach(function(docType) {
+          docTypes.push({
+            id: docType,
+            text: docType,
+            displayLabel: docType
+          });
+        });
+        this.set('docTypes', docTypes);
+      },
+      _typeDocChanged:function (doctypeSelection) {
+        fetch(window.location.href.split("ui/#!")[0] + 'api/v1/config/types/' + doctypeSelection)
+                .then((resp) => resp.json())
+                .then(function (data) {
+
+                  var Names_prefix = data.schemas.map(function (task, index, array) {
+
+                    var pr= task.prefix;
+                    var na= task.name;
+
+                    var OB= {pr,na}
+                    return OB
+                  });
+                  this.set('namesPrefixList', Names_prefix);
+                  var schemasAvailble = data.schemas.map(item => item.name)
+                  this.set('schemasAvailble', schemasAvailble);
+
+                }.bind(this));
+      },
+      _typeMotChanged:function (schemaSelected) {
+        if (typeof schemaSelected !== 'undefined') {
+
+          var status = 'Not exist';
+
+          for (var i = 0; i < this.namesPrefixList.length; i++) {
+            var name = this.namesPrefixList[i].na;
+            if (name == schemaSelected) {
+              status = 'Exist';
+              if (typeof this.namesPrefixList[i].pr !== 'undefined') {
+                this.set('prefixF', this.namesPrefixList[i].pr);
+              }
+              else {
+                this.set('prefixF', this.namesPrefixList[i].na)
+              }
+            }
+          }
+          fetch(window.location.href.split("ui/#!")[0] + 'api/v1/config/schemas/' + schemaSelected)
+                  .then((resp) => resp.json())
+                  .then(function (data) {
+                    var mapFields = new Map(Object.entries(data.fields))
+                    var myFieldKeys = mapFields.keys();
+                    var propsAvailble = Array.from(myFieldKeys);
+                    this.set('propsAvailble', propsAvailble);
+                  }.bind(this));
+          return status;
+
+        }
+
+      },
+
+      _sendChanged: function() {
+        if( this.propsSelected){
+          this.set('input', this.prefixF.concat(":", this.propsSelected));
+        }
+
+      },
+    });
+  </script>
+</dom-module>
