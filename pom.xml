@@ -9,7 +9,7 @@
 
   <groupId>org.qualitified.reporting.adhoc</groupId>
   <artifactId>qualitified-adhoc-reporting-parent</artifactId>
-  <version>3.10</version>
+  <version>4.10-SNAPSHOT</version>
   <name>Qualitified adhoc reporting parent</name>
   <description>Reporting Adhoc</description>
   <packaging>pom</packaging>
@@ -79,12 +79,12 @@
       <dependency>
         <groupId>org.qualitified.reporting.adhoc</groupId>
         <artifactId>qualitified-adhoc-reporting-core</artifactId>
-        <version>3.10</version>
+        <version>4.10-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.qualitified.reporting.adhoc</groupId>
         <artifactId>qualitified-adhoc-reporting-package</artifactId>
-        <version>3.10</version>
+        <version>4.10-SNAPSHOT</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

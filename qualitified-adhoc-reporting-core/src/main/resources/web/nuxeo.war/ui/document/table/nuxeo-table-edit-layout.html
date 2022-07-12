@@ -81,7 +81,11 @@
           [[i18n('label.report.lastYear')]]
         </paper-checkbox>
 
+        <h3>[[i18n('label.report.layout.csv')]]</h3>
+        <nuxeo-input role="reportWidget" value="{{document.properties.report:schemas}}" label="[[i18n('label.report.schemas')]]" type="text"></nuxeo-input>
+
       </div>
+    </iron-pages>
   </template>
 
   <script>

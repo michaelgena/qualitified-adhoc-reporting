@@ -3,10 +3,28 @@
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <dependencies>
+    <dependency>
+      <groupId>org.nuxeo.ecm.automation</groupId>
+      <artifactId>nuxeo-automation-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.nuxeo.ecm.automation</groupId>
+      <artifactId>nuxeo-automation-core</artifactId>
+    </dependency>
+      <dependency>
+          <groupId>org.nuxeo.ecm.platform</groupId>
+          <artifactId>nuxeo-platform-userworkspace-api</artifactId>
+      </dependency>
+    <dependency>
+      <groupId>org.nuxeo.ecm.platform</groupId>
+      <artifactId>nuxeo-platform-userworkspace-api</artifactId>
+    </dependency>
+  </dependencies>
   <parent>
     <groupId>org.qualitified.reporting.adhoc</groupId>
     <artifactId>qualitified-adhoc-reporting-parent</artifactId>
-    <version>3.10</version>
+    <version>4.10-SNAPSHOT</version>
   </parent>
   <artifactId>qualitified-adhoc-reporting-core</artifactId>
   <name>Qualitified adhoc reporting core</name>

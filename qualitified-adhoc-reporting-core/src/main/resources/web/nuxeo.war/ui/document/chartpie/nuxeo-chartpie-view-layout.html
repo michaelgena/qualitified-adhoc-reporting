@@ -8,6 +8,15 @@
         font-size: .8rem;
         margin-top: 35px;
       }
+      .csvAction {
+       display: inline-flex;
+       position: absolute;
+       top: 3px;
+       right: 47px;
+      }
+      .buttons {
+         opacity:20%;
+      }
 
     </style>
 
@@ -24,17 +33,23 @@
                            where="[[_setWhereTerm(document.properties.report:responsibleUser, responsibleUser)]]"
                            metrics="[[document.properties.report:metrics]]">
     </nuxeo-repository-data>
-
-    <nuxeo-card heading="[[document.properties.dc:title]]">
-      <div id="edit" hidden$="[[!editMode]]">
-        <report-edit-delete document="{{document}}"></report-edit-delete>
-      </div>
-      <chart-pie id="chartPie"
-                 values="[[_values(data)]]"
-                 labels="[[_labels(data)]]"
-                 options='{ "legend": { "display": true, "position": "bottom", "labels": { "boxWidth": 12 } }, "animation": false }'>
-      </chart-pie>
-    </nuxeo-card>
+    <div on-mouseover="_show" on-mouseout="_hide">
+      <nuxeo-card heading="[[document.properties.dc:title]]">
+        <div id="displaybtns" class="buttons">
+          <div class="csvAction">
+            <qualitified-export-csv-button id="csvExport" query="[[queryCsvExport]]" schemas="[[_getSchemas(document)]]"></qualitified-export-csv-button>
+          </div>
+          <div id="edit" hidden$="[[!editMode]]">
+            <report-edit-delete document="{{document}}"></report-edit-delete>
+          </div>
+        </div>
+        <chart-pie id="chartPie"
+                   values="[[_values(data)]]"
+                   labels="[[_labels(data)]]"
+                   options='{ "legend": { "display": true, "position": "bottom", "labels": { "boxWidth": 12 } }, "animation": false }'>
+        </chart-pie>
+      </nuxeo-card>
+    </div>
     <slot></slot>
   </template>
 
@@ -57,7 +72,61 @@
         endDate: {
           type: String,
           value: ''
+        },
+        data: {
+          type: Object,
+        },
+        queryCsvExport: {
+          type: String
+        },
+        startDate: {
+          type: String,
+          observer: '_buildCSVQuery'
+        },
+        endDate: {
+          type: String,
+          observer: '_buildCSVQuery'
+        },
+        responsibleUser: {
+          type: String,
+          value: null,
+          observer: '_buildCSVQuery'
         }
+      },
+
+      ready: function() {
+        this._buildCSVQuery();
+      },
+      _show: function () {
+       this.$.displaybtns.style.opacity ='100%';
+       this.$$("#displaybtns").querySelector("#edit > report-edit-delete").shadowRoot.querySelector("div").style.opacity='100%';
+       this.$$("#displaybtns").querySelector("#csvExport").shadowRoot.querySelector("#btn").shadowRoot.querySelector("div").style.opacity='100%';
+      },
+       _hide: function () {
+       this.$$("#displaybtns").querySelector("#edit > report-edit-delete").shadowRoot.querySelector("div").style.opacity='20%';
+       this.$$("#displaybtns").querySelector("#csvExport").shadowRoot.querySelector("#btn").shadowRoot.querySelector("div").style.opacity='20%';
+      },
+      _buildCSVQuery: function(){
+        let mixintype= this.document.properties['report:mixintype'] !== null ? " AND ecm:mixintype='"+this.document.properties['report:mixintype']+"'":"";
+        let currentLifeCycleState=this.document.properties['report:lifeCycleState'] !== null ? " AND ecm:currentLifeCycleState='"+this.document.properties['report:lifeCycleState']+"'":"";
+        let responsibleUser = (this.document.properties['report:responsibleUser'] !== null && this.responsibleUser !== null) ? " AND "+this.document.properties['report:responsibleUser']+"= '"+ this.responsibleUser+"'":"";
+        let dateFilter = "";
+        if(this.document.properties['report:dateField'] !== null){
+          dateFilter = (this.startDate !== null && this.endDate !== null) ? " AND "+this.document.properties['report:dateField']+" BETWEEN DATE '"+this._formatDate(this.startDate)+"' AND DATE '"+this._extendEndDate(this.endDate)+"'" : "";
+          if(dateFilter === ""){
+            dateFilter = (this.startDate !== null && this.endDate === null) ? " AND "+this.document.properties['report:dateField']+" >= DATE '"+this._formatDate(this.startDate)+"'" : "";
+          }
+          if(dateFilter === ""){
+            dateFilter = (this.startDate === null && this.endDate !== null) ? " AND "+this.document.properties['report:dateField']+" <= DATE '"+this._extendEndDate(this.endDate)+"'" : "";
+          }
+        }
+
+        this.queryCsvExport = "SELECT * FROM "+this.document.properties['report:primarytype']+
+        " WHERE ecm:isProxy = 0 AND ecm:isVersion = 0 AND ecm:isTrashed = 0 "+
+        currentLifeCycleState+
+        mixintype+
+        responsibleUser+
+        dateFilter;
       },
 
       resizeReport: function () {
