@@ -1,0 +1,66 @@
+<dom-module id="qualitified-lifecycle-state">
+    <template>
+        <style>
+        </style>
+        <nuxeo-operation id="updateListLifeCycle" op="LifeCycleEntries"></nuxeo-operation>
+
+
+        <nuxeo-selectivity  data="[[lifeCycleStates]]"
+                            min-chars=0
+                            placeholder="select LifeCycle state"
+                            multiple
+                            value="{{cycleSelected}}" >
+        </nuxeo-selectivity>
+
+
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'qualitified-lifecycle-state',
+            behaviors: [Nuxeo.LayoutBehavior],
+            properties: {
+                document: {
+                    type: Object
+                },
+                doctype:{
+                    type: Array,
+                    notify: true,
+                    observer: '_docTypeChanged'
+                },
+                lifeCycleStates:{
+                    type: Array,
+                    notify: true
+                },
+                cycleSelected:{
+                    String,
+                    notify:true,
+                    value:"",
+                    observer: '_sendChanged'
+                },
+                cycle: {
+                    String,
+                    notify:true
+                },
+            },
+            _docTypeChanged:function(doctype){
+                this.$.updateListLifeCycle.params = {"docTypeSelection": doctype.toString()};
+                this.$.updateListLifeCycle.execute().then(function (resp) {
+                    this.set("lifeCycleStates", resp)
+                }.bind(this))
+                    .catch(function(error) {
+                        var empty = []
+                        this.set("lifeCycleStates", empty)
+                       // alert("No LifeCycle State found for the DocType Selection\n" + error);
+                    }.bind(this));
+            },
+            _sendChanged: function() {
+                if( this.cycleSelected){
+                    this.set('cycle', this.cycleSelected.toString());
+                }
+
+            },
+        });
+    </script>
+</dom-module>
