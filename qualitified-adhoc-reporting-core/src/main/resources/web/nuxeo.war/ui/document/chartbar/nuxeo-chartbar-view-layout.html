@@ -9,7 +9,6 @@
         font-size: .8rem;
         margin-top: 35px;
       }
-
     </style>
 
     <nuxeo-repository-data start-date="[[_formatDate(startDate)]]"
@@ -27,22 +26,28 @@
                            metrics="[[document.properties.report:metrics]]">
     </nuxeo-repository-data>
 
-    <nuxeo-page-provider auto page-size="10"
+    <nuxeo-page-provider id="provider" auto page-size="10"
                          query="[[_query(data)]]"
                          schemas="*"
                          current-page="{{documents}}">
     </nuxeo-page-provider>
-
-    <nuxeo-card heading="[[document.properties.dc:title]]">
-      <div id="edit" hidden$="[[!editMode]]">
-        <report-edit-delete document="{{document}}"></report-edit-delete>
-      </div>
-      <chart-bar id="chartBar"
-                 labels="[[_getLabels(documents)]]"
-                 values="[[_getValues(documents)]]"
-                 options='{ "legend": { "display": false }, "animation": false }'>
-      </chart-bar>
-    </nuxeo-card>
+    <div id="outerDiv" on-mouseover="_show" on-mouseout="_hide" >
+      <nuxeo-card heading="[[document.properties.dc:title]]">
+        <div id="displaybtns" class="buttons">
+          <div id="csvId" class="csvAction">
+            <nuxeo-csv-export-button id="csvExport" provider="[[csvExport]]" schemas="[[_getSchemas(document)]]"></nuxeo-csv-export-button>
+          </div>
+          <div id="edit" hidden$="[[!editMode]]">
+            <report-edit-delete document="{{document}}"></report-edit-delete>
+          </div>
+        </div>
+        <chart-bar id="chartBar"
+                   labels="[[_getLabels(documents)]]"
+                   values="[[_getValues(documents)]]"
+                   options='{ "legend": { "display": false }, "animation": false }'>
+        </chart-bar>
+      </nuxeo-card>
+    </div>
     <slot></slot>
   </template>
 
@@ -65,12 +70,23 @@
         endDate: {
           type: String,
           value: ''
-        }
+        },
+        buttons: {
+          type: Boolean,
+          value: true
+        },
+        csvExport:{
+         type: Object,
+         value: {}
+       }
       },
 
       resizeReport: function () {
         this.$.chartBar.resize();
       },
+      ready:  function () {
+       this.csvExport =this.$.provider;
+     },
 
       _query: function (entries) {
         if (this.document && entries && entries.length > 0) {
@@ -82,7 +98,6 @@
           this.documents = [];
         }
       },
-
       /*_labels Modified */
       _labels: function (data) {
         let dateFormat = this.document.properties['report:dateFormat'];

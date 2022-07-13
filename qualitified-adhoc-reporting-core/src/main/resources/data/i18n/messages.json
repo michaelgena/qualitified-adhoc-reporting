@@ -6,7 +6,7 @@
   "label.document.type.chartline": "Chart Line",
   "label.document.type.list": "Document Reports",
 
-  "analytics.responsibleUser": "Responsible",
+  "analytics.responsible.user": "Responsible",
   "analytics.responsibleUser.warning": "Responsible User Metadata is not set for the following reports",
 
   "label.report.layout.dataSettings": "Data Settings",
@@ -29,6 +29,7 @@
   "label.report.lastYearValue": "Last year's value",
   "label.report.percentageChange": "Percentage change",
   "label.report.responsibleUser": "Responsible User Metadata",
+  "label.report.schemas": "Schemas",
 
   "label.count.numberTypes":"Number Types",
   "label.count.prefix":"Prefix",
@@ -47,9 +48,11 @@
   "label.table.icon":"Icon",
 
   "label.list.option":"Selected option",
+  "label.metadata.feedmetadata": "Feed Metadata",
 
   "home.custom": "Custom",
   "label.metadata.nxql": "Nxql",
   "label.metadata.schemas": "Schemas",
-  "label.metadata.icon": "Icon"
+  "label.metadata.icon": "Icon",
+  "label.report.layout.csv": "CSV"
 }

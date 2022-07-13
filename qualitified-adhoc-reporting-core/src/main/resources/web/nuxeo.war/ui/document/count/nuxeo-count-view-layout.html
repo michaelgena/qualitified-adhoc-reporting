@@ -1,3 +1,4 @@
+<link href="../../elements/qualitified-export-csv-button.html" rel="import">
 <dom-module id="nuxeo-count-view-layout">
   <template>
     <style include="reporting-styles">
@@ -19,9 +20,8 @@
         margin-top: 10px;
         text-align: center;
       }
-
     </style>
-
+    <nuxeo-operation id="getOption" op="Qualitified.GetOptionValue"></nuxeo-operation>
     <nuxeo-repository-data role="widget"
                            start-date="[[startDate]]"
                            end-date="[[_extendEndDate(endDate)]]"
@@ -45,41 +45,43 @@
                            where="[[_setWhereTerm(document.properties.report:responsibleUser, responsibleUser)]]"
                            date-field="[[document.properties.report:dateField]]">
     </nuxeo-repository-data>
+    <div id="outerDiv" on-mouseover="_show" on-mouseout="_hide">
+      <nuxeo-card heading="[[document.properties.dc:title]]">
+        <div id="displaybtns" class="buttons">
+          <div class="csvAction">
+            <qualitified-export-csv-button id="csvExport" query="[[queryCsvExport]]" schemas="[[_getSchemas(document)]]"></qualitified-export-csv-button>
+          </div>
+          <div id="edit" hidden$="[[!editMode]]">
+            <report-edit-delete document="{{document}}"></report-edit-delete>
+          </div>
+        </div>
+        <div id="icon">
+          <iron-icon hidden$="[[!_iconExists(document.properties.report:icon)]]"
+                     src$="[[document.properties.report:icon]]">
+          </iron-icon>
+        </div>
 
-    <nuxeo-card heading="[[document.properties.dc:title]]">
+        <h2 style$="[[document.properties.count:style]]">
+          [[document.properties.count:prefix]]
+          [[value]] <template is="dom-if" if="[[_isCurrency(document)]]"><qualitified-option id="currency" name="Currency" default="$"></qualitified-option></template>
+          [[document.properties.count:suffix]]
+        </h2>
 
-      <div id="edit" hidden$="[[!editMode]]">
-        <report-edit-delete document="{{document}}"></report-edit-delete>
-      </div>
-
-      <div id="icon">
-        <iron-icon hidden$="[[!_iconExists(document.properties.report:icon)]]"
-                   src$="[[document.properties.report:icon]]">
-        </iron-icon>
-      </div>
-
-      <h2 style$="[[document.properties.count:style]]">
-        [[document.properties.count:prefix]]
-        [[_getValue(data)]]
-        [[document.properties.count:suffix]]
-      </h2>
-
-      <!-- last year's value and percentage change -->
-      <template is="dom-if" if="{{document.properties.report:lastYear}}">
+        <!-- last year's value and percentage change -->
+        <template is="dom-if" if="{{document.properties.report:lastYear}}">
         <span class="last-year">
           <span class="last-year-value">
             [[document.properties.count:prefix]]
-            [[_getValue(lastYearData)]]
+            [[lastYearValue]] <template is="dom-if" if="[[_isCurrency(document)]]"><qualitified-option id="currency" name="Currency" default="$"></qualitified-option></template>
             [[document.properties.count:suffix]]
           </span>
           <span id="lastYearPercentage">
             [[[_getPercentage(data,lastYearData)]]%]
           </span>
         </span>
-      </template>
-
-    </nuxeo-card>
-
+        </template>
+      </nuxeo-card>
+    </div>
     <slot></slot>
   </template>
 
@@ -95,12 +97,75 @@
         document: {
           type: Object,
         },
+        value: {
+          type: String
+        },
+        queryCsvExport: {
+          type: String
+        },
+        lastYearValue: {
+          type: String
+        },
+        data: {
+          type: Number,
+          observer: '_dataChanged'
+        },
+        lastYearData: {
+          type: Number,
+          observer: '_lastYearDataChanged'
+        },
+        startDate: {
+          type: String,
+          observer: '_buildCSVQuery'
+        },
+        endDate: {
+          type: String,
+          observer: '_buildCSVQuery'
+        },
+        responsibleUser: {
+          type: String,
+          value: null,
+          observer: '_buildCSVQuery'
+        }
+      },
+      ready: function() {
+        this._buildCSVQuery();
       },
 
+      _buildCSVQuery: function(){
+        let mixintype= this.document.properties['report:mixintype'] !== null ? " AND ecm:mixintype='"+this.document.properties['report:mixintype']+"'":"";
+        let currentLifeCycleState=this.document.properties['report:lifeCycleState'] !== null ? " AND ecm:currentLifeCycleState='"+this.document.properties['report:lifeCycleState']+"'":"";
+        let responsibleUser = (this.document.properties['report:responsibleUser'] !== null && this.responsibleUser !== null) ? " AND "+this.document.properties['report:responsibleUser']+"= '"+ this.responsibleUser+"'":"";
+        let dateFilter = "";
+        if(this.document.properties['report:dateField'] !== null){
+          dateFilter = (this.startDate !== null && this.endDate !== null) ? " AND "+this.document.properties['report:dateField']+" BETWEEN DATE '"+this._formatDate(this.startDate)+"' AND DATE '"+this._extendEndDate(this.endDate)+"'" : "";
+          if(dateFilter === ""){
+            dateFilter = (this.startDate !== null && this.endDate === null) ? " AND "+this.document.properties['report:dateField']+" >= DATE '"+this._formatDate(this.startDate)+"'" : "";
+          }
+          if(dateFilter === ""){
+            dateFilter = (this.startDate === null && this.endDate !== null) ? " AND "+this.document.properties['report:dateField']+" <= DATE '"+this._extendEndDate(this.endDate)+"'" : "";
+          }
+        }
+
+        this.queryCsvExport = "SELECT * FROM "+this.document.properties['report:primarytype']+
+        " WHERE ecm:isProxy = 0 AND ecm:isVersion = 0 AND ecm:isTrashed = 0 "+
+        currentLifeCycleState+
+        mixintype+
+        responsibleUser+
+        dateFilter;
+      },
+
+      _dataChanged: async function(data){
+        this.value = data? await this._getValue(data): "";
+      },
+      _lastYearDataChanged: async function(data){
+        this.lastYearValue = await this._getValue(data);
+      },
       /* Value Type: Number - Currency */
-      _getValue: function (value) {
+      _getValue: async function (value) {
         if (this._isCurrency(this.document)) {
-          return this._formatCurrency(value);
+          const format = await this._getCurrencyFormat();
+          return this._formatCurrency(value, format);
         } else {
           return value;
         }
@@ -114,6 +179,26 @@
         else {
           return false;
         }
+      },
+
+      _getCurrencyFormat: async function(){
+         let params = {};
+         params.name = "CurrencyFormat";
+         this.$.getOption.params = params;
+         let result = await this.$.getOption.execute().then(function(response){
+             if(response === null){
+                return ",";
+             }else{
+                return response.value;
+             }
+         }.bind(this));
+         return result;
+      },
+      _formatCurrency: function(val, format) {
+        if(val == null){
+          return "";
+        }
+        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, format);
       }
 
     });

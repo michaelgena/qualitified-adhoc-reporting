@@ -38,4 +38,5 @@
   <xs:element name="nxql" type="xs:string"/>
   <xs:element name="icon" type="xs:string"/>
   <xs:element name="schemas" type="xs:string"/>
+  <xs:element name="feedMetadata" type="xs:string"/>
 </xs:schema>
