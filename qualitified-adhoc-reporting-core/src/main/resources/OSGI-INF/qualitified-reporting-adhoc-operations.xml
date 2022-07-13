@@ -3,6 +3,7 @@
         <operation class="org.qualitified.reporting.adhoc.operation.GetOptionValue" replace="true"/>
         <operation class="org.qualitified.reporting.adhoc.operation.DuplicateDashboard"/>
         <operation class="org.qualitified.reporting.adhoc.operation.UndoDashboard"/>
+        <operation class="org.qualitified.reporting.adhoc.operation.AvailbleLifeCycle"/>
         <operation class="org.qualitified.reporting.adhoc.operation.GetUserWorkspace"/>
     </extension>
  </component>
